@@ -2,7 +2,6 @@ import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
 
-
 class WelcomeComponent extends React.Component {
     render() {
         return (
@@ -10,8 +9,14 @@ class WelcomeComponent extends React.Component {
                 <p>Welcome Component</p> <br/>
 
 
-                <h4>Tutorial</h4>
-                <p>At the start of a game of Liar’s Dice, each player is given between 1 and 5 dice. Now each game of
+                <h4 style={{textAlign: "center", display: "block"}}>Tutorial</h4>
+                <p style={{
+                    textAlign: "center",
+                    display: "block",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    width: "50%"
+                }}>At the start of a game of Liar’s Dice, each player is given between 1 and 5 dice. Now each game of
                     Liar’s Dice consists of multiple rounds. A round starts with each player rolling their dice and
                     concealing them from the other players. One of the players is chosen at random to start the first
                     round. The player who goes first must set an initial bid. The bid must consist of a face value
@@ -27,7 +32,7 @@ class WelcomeComponent extends React.Component {
                     die. The next round starts with the player who lost the die. If the player who lost the die was
                     eliminated then the next player starts the bidding.</p>
 
-                <div>
+                <div style={{textAlign: "center", display: "block"}}>
                     <button>Create Lobby</button>
                     <button>Join Lobby</button>
                     <button>View Statistics</button>
