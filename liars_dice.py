@@ -13,9 +13,10 @@ class LiarsDice (Game):
         self.hands = [[0 for i in range(num_dice)] for i in range(num_players)]
         self.create_hands()
         self.bid_history = []
-        self.active_player = 0
+        self.current_player = 0
         self.num_players = num_players
         self.active = [True for i in range(num_players)]
+        self.num_dice = num_dice
 
     def create_hands(self):
         for hand in self.hands:
@@ -86,11 +87,18 @@ class LiarsDice (Game):
                     self.hands[last_player].pop()
                     if len(self.hands[last_player]) == 0:
                         self.active[last_player] = False
+                    if self.active[last_player]:
+                        self.current_player = last_player
+                    else:
+                        self.current_player = self.get_next_active_player(last_player)
                 else:
                     # doubt was incorrect
-                    self.hands[self.active_player].pop()
-                    if len(self.hands[self.active_player]) == 0:
-                        self.active[self.active_player] = False
+                    self.hands[self.current_player].pop()
+                    if len(self.hands[self.current_player]) == 0:
+                        self.active[self.current_player] = False
+                    if not self.active[self.current_player]:
+                        self.current_player = self.get_next_active_player(self.current_player)
+
                 self.create_hands()
             elif action[0] == "raise":
                 # raise
@@ -103,15 +111,15 @@ class LiarsDice (Game):
                     raise RuntimeError("Invalid bid: face value must be between 2 and 6")
                 else:
                     self.bid_history.append(action)
+                self.current_player = self.get_next_active_player(self.current_player)
             else:
                 # action is neither raise nor doubt
                 raise RuntimeError("Invalid bid: must either raise or doubt")
 
-        self.active_player = self.get_next_active_player()
         super().perform(action)
 
     def get_last_player(self):
-        result = self.active_player - 1
+        result = self.current_player - 1
         if result < 0:
             result = self.num_players - 1
         while not self.active[result]:
@@ -120,8 +128,8 @@ class LiarsDice (Game):
                 result = self.num_players - 1
         return result
 
-    def get_next_active_player(self):
-        result = self.active_player + 1
+    def get_next_active_player(self, player):
+        result = player + 1
         if result >= self.num_players:
             result = 0
         while not self.active[result]:
@@ -131,10 +139,14 @@ class LiarsDice (Game):
         return result
 
     def reset(self) -> None:
-        super().reset()
+        self.hands = [[0 for i in range(self.num_dice)] for i in range(self.num_players)]
+        self.create_hands()
+        self.bid_history = []
+        self.current_player = 0
+        self.active = [True for i in range(self.num_players)]
 
     def active_player(self) -> int:
-        return self.active_player
+        return self.current_player
 
     def num_players(self) -> int:
         return self.num_players
