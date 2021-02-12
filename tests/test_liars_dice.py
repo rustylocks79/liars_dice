@@ -27,6 +27,7 @@ class LiarsDiceTests (unittest.TestCase):
         # test raise w/ empty BH
         l.perform(("raise", 2, 3))
         self.assertEqual([("raise", 2, 3)], l.bid_history)
+        self.assertEqual(1, l.current_player)
 
         #  quantity > last or (quantities equal and face is greater)
         with self.assertRaises(RuntimeError):

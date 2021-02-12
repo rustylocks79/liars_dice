@@ -14,7 +14,7 @@ class LiarsDice (Game):
         self.create_hands()
         self.bid_history = []
         self.current_player = 0
-        self.num_players = num_players
+        self.total_players = num_players
         self.active = [True for i in range(num_players)]
         self.num_dice = num_dice
 
@@ -68,6 +68,7 @@ class LiarsDice (Game):
                 raise RuntimeError("Invalid action: face value must be between 2 and 6")
             else:
                 self.bid_history.append(action)
+            self.current_player = self.get_next_active_player(self.current_player)
         else:
             bid = self.bid_history[-1]
             last_quantity = bid[1]
@@ -121,32 +122,32 @@ class LiarsDice (Game):
     def get_last_player(self):
         result = self.current_player - 1
         if result < 0:
-            result = self.num_players - 1
+            result = self.total_players - 1
         while not self.active[result]:
             result -= 1
             if result < 0:
-                result = self.num_players - 1
+                result = self.total_players - 1
         return result
 
     def get_next_active_player(self, player):
         result = player + 1
-        if result >= self.num_players:
+        if result >= self.total_players:
             result = 0
         while not self.active[result]:
             result += 1
-            if result >= self.num_players:
+            if result >= self.total_players:
                 result = 0
         return result
 
     def reset(self) -> None:
-        self.hands = [[0 for i in range(self.num_dice)] for i in range(self.num_players)]
+        self.hands = [[0 for i in range(self.num_dice)] for i in range(self.total_players)]
         self.create_hands()
         self.bid_history = []
         self.current_player = 0
-        self.active = [True for i in range(self.num_players)]
+        self.active = [True for i in range(self.total_players)]
 
     def active_player(self) -> int:
         return self.current_player
 
     def num_players(self) -> int:
-        return self.num_players
+        return self.total_players
