@@ -104,6 +104,7 @@ class LiarsDice (Game):
                         self.current_player = self.get_next_active_player(self.current_player)
 
                 self.create_hands()
+                self.bid_history = []
             elif action[0] == "raise":
                 # raise
                 new_quantity = action[1]
