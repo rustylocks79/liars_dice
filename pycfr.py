@@ -128,12 +128,27 @@ class StrategyAgent(Agent):
         """
         self.strategy = strategy
 
+    def pretest(self, game: Game):
+        """
+        Checks if any action should be deterministically taken before applying cfr at the current state.
+        :param game: the game and current state
+        :return: None if no action is to be taken. return action if should be taken.
+        """
+        return None
+
     def get_action(self, game: Game):
         """
         :param game: the game and current state.
         :return: an action chosen random with the probability found in self.strategy.
         """
-        return random.choices(game.actions(), weights=self.strategy[game.info_set()])[0]
+        result = self.pretest(game)
+        if result is None:
+            if game.info_set() in self.strategy:
+                return random.choices(game.actions(), weights=self.strategy[game.info_set()])[0]
+            else:
+                return random.choices(game.actions())
+        else:
+            return result
 
 
 class Node:
@@ -160,12 +175,13 @@ class Node:
 
 
 class CFRTrainer:
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, pretest=None):
         """
         :param game: the game to train an agent for.
         """
         self.game = game
         self.game_tree = {}
+        self.pretest = pretest
 
     def train(self, iterations: int) -> Tuple[dict, dict]:
         """
@@ -197,6 +213,12 @@ class CFRTrainer:
         player = self.game.active_player()
         if self.game.is_terminal():
             return self.game.utility(player) / pi_prime, 1.0
+
+        if self.pretest is not None:
+            deterministic_action = self.pretest(self.game)
+            if deterministic_action is not None:
+                self.game.perform(deterministic_action)
+                return self.cfr(pi, pi_prime, training_player)
 
         info_set = self.game.info_set()
         actions = self.game.actions()
