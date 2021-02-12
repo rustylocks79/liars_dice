@@ -59,7 +59,7 @@ class KuhnPoker(Game):
         """
         return self.ACTIONS
 
-    def preform(self, action) -> None:
+    def perform(self, action) -> None:
         """
         :param action: usually a string or tuple, one of the actions returned by actions() for the active
             player to preform.
@@ -92,12 +92,6 @@ class KuhnPoker(Game):
         """
         return 2
 
-    def get_winner(self) -> int:
-        """
-        :return: the winner of the game.
-        """
-        return 0 if self.utility(0) > self.utility(1) else 1
-
 
 class BetAgent(Agent):
     def get_action(self, game: Game):
@@ -108,13 +102,13 @@ if __name__ == '__main__':
     game = KuhnPoker()
     trainer = CFRTrainer(game)
     print('First Training Phase')
-    game_tree, stats = trainer.train(100_000)
+    game_tree, stats = trainer.train(10_000)
     for key in stats.keys():
         print("\t{}: {}".format(key, stats[key]))
     print("-------\nResetting Strategy")
     trainer.reset_strategy()
     print("-------\nSecond Training Phase")
-    game_tree, stats = trainer.train(900_000)
+    game_tree, stats = trainer.train(90_000)
     for key in stats.keys():
         print("\t{}: {}".format(key, stats[key]))
     print("-------\nSaving Tree to File")

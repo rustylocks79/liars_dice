@@ -54,7 +54,7 @@ class Game:
         """
         pass
 
-    def preform(self, action) -> None:
+    def perform(self, action) -> None:
         """
         :param action: usually a string or tuple, one of the actions returned by actions() for the active
             player to preform.
@@ -98,7 +98,7 @@ class Game:
             })
         for i in range(iterations):
             while not self.is_terminal():
-                self.preform(agents[self.active_player()].get_action(self))
+                self.perform(agents[self.active_player()].get_action(self))
 
             utils = [self.utility(p) for p in range(self.num_players())]
             winner = np.argmax(utils)
@@ -214,7 +214,7 @@ class CFRTrainer:
 
         action_idx = random.choices(np.arange(len(actions)), weights=strategy)[0]
         action = actions[action_idx]
-        self.game.preform(action)
+        self.game.perform(action)
         util, p_tail = self.cfr(pi * strategy[action_idx], pi_prime * probability[action_idx], training_player) \
             if player == training_player else self.cfr(pi, pi_prime, training_player)
 
