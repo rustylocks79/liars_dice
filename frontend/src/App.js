@@ -4,17 +4,17 @@ import {CookiesProvider} from "react-cookie"
 import IndexComponent from "./components/IndexComponent"
 
 function App() {
-  return (
-    <div className="App">
-      <CookiesProvider>
+    return (
+        <div className="App">
+            <CookiesProvider>
                 <BrowserRouter>
                     <Switch>
                         <Route path={"/"} exact component={IndexComponent}/>
                     </Switch>
                 </BrowserRouter>
             </CookiesProvider>
-    </div>
-  );
+        </div>
+    );
 }
 
 export default App;
