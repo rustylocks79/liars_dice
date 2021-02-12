@@ -146,7 +146,7 @@ class StrategyAgent(Agent):
             if game.info_set() in self.strategy:
                 return random.choices(game.actions(), weights=self.strategy[game.info_set()])[0]
             else:
-                return random.choices(game.actions())
+                return random.choices(game.actions())[0]
         else:
             return result
 
