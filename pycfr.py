@@ -54,8 +54,9 @@ class Game:
         """
         pass
 
-    def perform(self, action) -> None:
+    def perform(self, action, verbose: bool = False) -> None:
         """
+        :param verbose: weather the method is allowed to use print.
         :param action: usually a string or tuple, one of the actions returned by actions() for the active
             player to preform.
         :return: None
@@ -81,7 +82,7 @@ class Game:
         """
         pass
 
-    def test(self, iterations: int, agents: list) -> list:
+    def test(self, iterations: int, agents: list, verbose: bool = False) -> list:
         """
         evaluates the performance of the agents.
         :param iterations: the number of iterations to test each agent.
@@ -98,7 +99,7 @@ class Game:
             })
         for i in range(iterations):
             while not self.is_terminal():
-                self.perform(agents[self.active_player()].get_action(self))
+                self.perform(agents[self.active_player()].get_action(self), verbose)
 
             utils = [self.utility(p) for p in range(self.num_players())]
             winner = np.argmax(utils)
@@ -217,7 +218,7 @@ class CFRTrainer:
         if self.pretest is not None:
             deterministic_action = self.pretest(self.game)
             if deterministic_action is not None:
-                self.game.perform(deterministic_action)
+                self.game.perform(deterministic_action, weather)
                 return self.cfr(pi, pi_prime, training_player)
 
         info_set = self.game.info_set()
@@ -237,7 +238,7 @@ class CFRTrainer:
 
         action_idx = random.choices(np.arange(len(actions)), weights=strategy)[0]
         action = actions[action_idx]
-        self.game.perform(action)
+        self.game.perform(action, weather)
         util, p_tail = self.cfr(pi * strategy[action_idx], pi_prime * probability[action_idx], training_player) \
             if player == training_player else self.cfr(pi, pi_prime, training_player)
 

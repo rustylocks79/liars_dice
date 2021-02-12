@@ -59,8 +59,9 @@ class KuhnPoker(Game):
         """
         return self.ACTIONS
 
-    def perform(self, action) -> None:
+    def perform(self, action, verbose) -> None:
         """
+        :param verbose:
         :param action: usually a string or tuple, one of the actions returned by actions() for the active
             player to preform.
         :return: None

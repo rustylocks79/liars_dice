@@ -59,7 +59,9 @@ class LiarsDice (Game):
             actions.append(("raise", last_quantity + 1, face))
         return actions
 
-    def perform(self, action) -> None:
+    def perform(self, action, verbose: bool = False) -> None:
+        if verbose:
+            print('Hi Nate')
         # update active player
         # update bid history
         if not self.bid_history:
@@ -120,8 +122,6 @@ class LiarsDice (Game):
             else:
                 # action is neither raise nor doubt
                 raise RuntimeError("Invalid bid: must either raise or doubt")
-
-        super().perform(action)
 
     def get_last_player(self):
         result = self.current_player - 1

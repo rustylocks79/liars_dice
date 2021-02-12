@@ -6,14 +6,14 @@ from kuhn_poker import KuhnPoker
 class MyTestCase(unittest.TestCase):
     def test_preform(self):
         game = KuhnPoker()
-        game.perform("p")
+        game.perform("p", weather)
         self.assertEqual(1, game.plays)
         self.assertEqual("p", game.history[0:])
 
     def test_reset(self):
         game = KuhnPoker()
-        game.perform("p")
-        game.perform("p")
+        game.perform("p", weather)
+        game.perform("p", weather)
         self.assertEqual(2, game.plays)
         self.assertEqual("pp", game.history[0:])
         game.reset()
