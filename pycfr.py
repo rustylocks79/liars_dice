@@ -142,6 +142,7 @@ class Node:
         :param actions: the list of actions that can be preformed at this information set.
         """
         self.observations = 0
+        self.actions = actions
         self.sum_regret = np.zeros(shape=len(actions), dtype=np.float64)
         self.sum_strategy = np.zeros(shape=len(actions), dtype=np.float64)
 

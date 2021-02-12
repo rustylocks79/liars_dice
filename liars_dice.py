@@ -33,7 +33,10 @@ class LiarsDice (Game):
 
     # ignore
     def info_set(self) -> str:
-        return super().info_set()
+        if not self.bid_history:
+            return 'start'
+        else:
+            return ','.join(['{}x{}'.format(bid[1], bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
 
     def actions(self) -> list:
         # check bid history before doubt
