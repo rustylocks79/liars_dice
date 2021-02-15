@@ -61,7 +61,7 @@ class LiarsDice (Game):
 
     def perform(self, action, verbose: bool = False) -> None:
         if verbose:
-            print('Hi Nate')
+            print("Player {}: {}".format(self.current_player, action))
         # update active player
         # update bid history
         if not self.bid_history:
@@ -79,11 +79,11 @@ class LiarsDice (Game):
             last_quantity = bid[1]
             last_face = bid[2]
 
-            if action == ("doubt",):
+            if action[0] == "doubt":
                 quantity_on_board = 0
                 for hand in self.hands:
                     for face in hand:
-                        if face == last_face:
+                        if face == last_face or face == 1:
                             quantity_on_board += 1
                 if last_quantity > quantity_on_board:
                     # doubt was correct
