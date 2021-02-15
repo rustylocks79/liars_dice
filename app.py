@@ -15,6 +15,8 @@ class User(db.Model):
     username = db.Column(db.Text, unique=True)
     hashed_password = db.Column(db.Text)
     roles = db.Column(db.Text)
+    games_played = db.Column(db.Integer, default=0)
+    games_won = db.Column(db.Integer, default=0)
     correct_doubts = db.Column(db.Integer, default=0)
     incorrect_doubts = db.Column(db.Integer, default=0)
     successful_raises = db.Column(db.Integer, default=0)
@@ -121,7 +123,9 @@ def user():
         "correct_doubts": current_user.correct_doubts,
         "incorrect_doubts": current_user.incorrect_doubts,
         "successful_raises": current_user.successful_raises,
-        "caught_raises": current_user.caught_raises
+        "caught_raises": current_user.caught_raises,
+        "games_played": current_user.games_played,
+        "games_won": current_user.games_won
     }
     return flask.jsonify(response), 200
 
