@@ -99,7 +99,7 @@ class Game:
             })
         for i in range(iterations):
             while not self.is_terminal():
-                self.perform(agents[self.active_player()].get_action(self), verbose)
+                self.perform(agents[self.active_player()].get_action(self, self.active_player()), verbose)
 
             utils = [self.utility(p) for p in range(self.num_players())]
             winner = np.argmax(utils)
@@ -113,9 +113,10 @@ class Game:
 
 
 class Agent:
-    def get_action(self, game: Game):
+    def get_action(self, game, index: int):
         """
         :param game: the game and current state.
+        :param index:
         :return: an action (required to be one of the value in game.actions()) to be preformed by the agent while
             they are the active player.
         """
@@ -137,9 +138,10 @@ class StrategyAgent(Agent):
         """
         return None
 
-    def get_action(self, game: Game):
+    def get_action(self, game, index: int):
         """
         :param game: the game and current state.
+        :param index:
         :return: an action chosen random with the probability found in self.strategy.
         """
         result = self.pretest(game)

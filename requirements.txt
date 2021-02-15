@@ -1,4 +1,5 @@
 Flask~=1.1.2
 Flask-SQLAlchemy~=2.4.4
 flask-praetorian~=1.1.0
+flask-socketio~=5.0.1
 numpy~=1.20.1
