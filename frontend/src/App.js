@@ -10,6 +10,8 @@ import LobbyComponent from "./components/LobbyComponent"
 import JoinGameComponent from "./components/JoinGameComponent"
 import GameComponent from "./components/GameComponent"
 
+import 'fontsource-roboto';
+
 function App() {
     return (
         <div className="App">
