@@ -218,7 +218,7 @@ class CFRTrainer:
         if self.pretest is not None:
             deterministic_action = self.pretest(self.game)
             if deterministic_action is not None:
-                self.game.perform(deterministic_action, weather)
+                self.game.perform(deterministic_action, False)
                 return self.cfr(pi, pi_prime, training_player)
 
         info_set = self.game.info_set()
@@ -238,7 +238,7 @@ class CFRTrainer:
 
         action_idx = random.choices(np.arange(len(actions)), weights=strategy)[0]
         action = actions[action_idx]
-        self.game.perform(action, weather)
+        self.game.perform(action, False)
         util, p_tail = self.cfr(pi * strategy[action_idx], pi_prime * probability[action_idx], training_player) \
             if player == training_player else self.cfr(pi, pi_prime, training_player)
 
