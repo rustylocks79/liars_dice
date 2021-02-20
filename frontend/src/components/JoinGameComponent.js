@@ -9,16 +9,16 @@ class JoinGameComponent extends React.Component {
     render() {
         return (
             <div>
-                <h3 align={"center"} style={{color: 'blue'}}>Join a game!</h3>
+                <h3 align={"center"} style={{color: 'red'}}>Join a game!</h3>
                 <form align={"center"} noValidate autoComplete="off">
                     <TextField id="standard-basic" label="Lobby ID"/>
                 </form>
                 <p></p>
                 <div align={"center"}>
-                    <Button variant="contained" color="secondary">
+                    <Button variant="contained" color="default" href="/welcome">
                         Cancel
                     </Button>
-                    <Button variant="contained" color="primary">
+                    <Button variant="contained" color="secondary">
                         Join Game
                     </Button>
                 </div>
