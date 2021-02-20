@@ -120,12 +120,12 @@ def user():
     current_user = flask_praetorian.current_user()
     response = {
         "username: ": current_user.username,
-        "correct_doubts": current_user.correct_doubts,
-        "incorrect_doubts": current_user.incorrect_doubts,
-        "successful_raises": current_user.successful_raises,
-        "caught_raises": current_user.caught_raises,
-        "games_played": current_user.games_played,
-        "games_won": current_user.games_won
+        "correctDoubts": current_user.correct_doubts,
+        "incorrectDoubts": current_user.incorrect_doubts,
+        "successfulRaises": current_user.successful_raises,
+        "caughtRaises": current_user.caught_raises,
+        "gamesPlayed": current_user.games_played,
+        "gamesWon": current_user.games_won
     }
     return flask.jsonify(response), 200
 
