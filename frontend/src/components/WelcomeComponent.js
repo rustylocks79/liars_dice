@@ -19,7 +19,7 @@ class WelcomeComponent extends React.Component {
 
     componentDidMount() {
         AuthService.user(this.state.jwtToken).then((res) => {
-            this.setState({username: res.data})
+            this.setState({username: res.data}) //TODO: there is more than a user in the data component.
         })
     }
 
