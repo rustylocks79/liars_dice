@@ -1,15 +1,31 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
+import {TextField} from '@material-ui/core';
+import {Button} from "@material-ui/core";
 
 
 class JoinGameComponent extends React.Component {
     render() {
         return (
             <div>
-                <p>Join a game Component</p>
+                <h3 align={"center"} style={{color: 'blue'}}>Join a game!</h3>
+                <form align={"center"} noValidate autoComplete="off">
+                    <TextField id="standard-basic" label="Lobby ID"/>
+                </form>
+                <p></p>
+                <div align={"center"}>
+                    <Button variant="contained" color="secondary">
+                        Cancel
+                    </Button>
+                    <Button variant="contained" color="primary">
+                        Join Game
+                    </Button>
+                </div>
+
             </div>
-        );
+        )
+            ;
     }
 }
 
