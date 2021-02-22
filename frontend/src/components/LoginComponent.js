@@ -40,34 +40,6 @@ class LoginComponent extends React.Component {
         })
     }
 
-    loginBen = (event) => {
-        const {cookies} = this.props;
-        AuthService.login('ben', 'password').then((response) => {
-            cookies.set('JWT-TOKEN', response.data.accessToken)
-        })
-    }
-
-    loginLong = (event) => {
-        const {cookies} = this.props;
-        AuthService.login('long', 'password').then((response) => {
-            cookies.set('JWT-TOKEN', response.data.accessToken)
-        })
-    }
-
-    loginNate = (event) => {
-        const {cookies} = this.props;
-        AuthService.login('nate', 'password').then((response) => {
-            cookies.set('JWT-TOKEN', response.data.accessToken)
-        })
-    }
-
-    loginJeremy = (event) => {
-        const {cookies} = this.props;
-        AuthService.login('jeremy', 'password').then((response) => {
-            cookies.set('JWT-TOKEN', response.data.accessToken)
-        })
-    }
-
     render() {
         return (
             <div>
@@ -117,54 +89,6 @@ class LoginComponent extends React.Component {
                                 Login
                             </Button>
                         </Grid>
-                    </Grid>
-
-                    <br/> <br/> <br/>
-
-                    <Grid
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center"
-                        spacing={2}
-                    >
-                        <Grid item>
-                            <Button
-                                style={{alignSelf: "center"}}
-                                href={"/welcome"}
-                                variant="contained"
-                                color="primary"
-                                onClick={this.loginBen}
-                            >
-                                Login as Ben
-                            </Button> </Grid>
-                        <Grid item>
-                            <Button
-                                href={"/welcome"}
-                                variant="contained"
-                                color="primary"
-                                onClick={this.loginLong}
-                            >
-                                Login as Long
-                            </Button> </Grid>
-                        <Grid item>
-                            <Button
-                                href={"/welcome"}
-                                variant="contained"
-                                color="primary"
-                                onClick={this.loginNate}
-                            >
-                                Login as Nate
-                            </Button> </Grid>
-                        <Grid item>
-                            <Button
-                                href={"/welcome"}
-                                variant="contained"
-                                color="primary"
-                                onClick={this.loginJeremy}
-                            >
-                                Login as Jeremy
-                            </Button> </Grid>
                     </Grid>
                 </Container>
             </div>

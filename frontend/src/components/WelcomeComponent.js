@@ -26,8 +26,13 @@ class WelcomeComponent extends React.Component {
     componentDidMount() {
         AuthService.user(this.state.jwtToken).then((res) => {
             this.setState({username: res.data.username})
-            //console.log(res.data)
         })
+    }
+
+    logout = (event) => {
+        const {cookies} = this.props;
+        cookies.remove('JWT-TOKEN');
+        this.props.history.push('/login')
     }
 
     render() {
@@ -87,6 +92,9 @@ class WelcomeComponent extends React.Component {
                                     View Statistic
                                 </Button>
                             </Container>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button variant={"outlined"} color={"secondary"} onClick={this.logout}>Logout</Button>
                         </Grid>
                     </Grid>
                 </Container>
