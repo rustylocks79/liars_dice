@@ -34,13 +34,13 @@ class WelcomeComponent extends React.Component {
         return (
             <div>
                 <TopBarComponent/>
-                <h1>User: {this.state.username}</h1> <br/>
 
                 <Container fixed>
                     <Grid container spacing={2}>
-                        <Grid item xs={12}>
+                        <Grid item xs={6}>
                             <h4 align={"center"}>Tutorial</h4>
                         </Grid>
+                        <Grid item xs={6}/>
                         <Grid item xs={6}>
                             <Typography paragraph={true} align={"justify"}>
                                 At the start of a game of Liar’s Dice, each player is given between 1 and 5
@@ -78,18 +78,15 @@ class WelcomeComponent extends React.Component {
                                 <Button variant="contained" color="primary" href={"/lobby"}>
                                     Create Lobby
                                 </Button>
-                                <br/><></>
+                                <br/><br/>
                                 <Button variant="contained" color="secondary" href={"/joingame"}>
                                     Join Game
                                 </Button>
-                                <br/><></>
+                                <br/><br/>
                                 <Button variant="contained" color="default" href={"/profile"}>
                                     View Statistic
                                 </Button>
                             </Container>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button variant={"outlined"} color={"secondary"} onClick={this.logout}>Logout</Button>
                         </Grid>
                     </Grid>
                 </Container>
