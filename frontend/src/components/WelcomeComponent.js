@@ -66,7 +66,7 @@ class WelcomeComponent extends React.Component {
                         </Grid>
                         <Grid item xs={6}>
                             <Container maxWidth={"xs"}>
-                                <Button variant="contained" color="primary">
+                                <Button variant="contained" color="primary" href={"/lobby"}>
                                     Create Lobby
                                 </Button>
                                 <br/><></>
