@@ -119,7 +119,7 @@ def signup():
 def user():
     current_user = flask_praetorian.current_user()
     response = {
-        "username: ": current_user.username,
+        "username": current_user.username,
         "correctDoubts": current_user.correct_doubts,
         "incorrectDoubts": current_user.incorrect_doubts,
         "successfulRaises": current_user.successful_raises,
