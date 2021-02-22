@@ -15,13 +15,11 @@ class LoginComponent extends React.Component {
         let name = event.target.name;
         let value = event.target.value;
         this.setState({[name]: value});
-        console.log(name + " " + value)
     }
 
     submitHandler = (event) => {
         event.preventDefault();
         const {cookies} = this.props;
-        console.log(this.state.password)
         AuthService.login(this.state.username, this.state.password).then(res => {
             cookies.set('JWT-TOKEN', res.data.accessToken)
             AuthService.user(res.data.accessToken).then(() => {
@@ -154,7 +152,7 @@ class LoginComponent extends React.Component {
                                 href={"/welcome"}
                                 variant="contained"
                                 color="primary"
-                                onClick={this.loginNate()}
+                                onClick={this.loginNate}
                             >
                                 Login as Nate
                             </Button> </Grid>

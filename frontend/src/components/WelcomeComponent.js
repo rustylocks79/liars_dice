@@ -8,6 +8,12 @@ class WelcomeComponent extends React.Component {
     state = {
         jwtToken: "",
         username: "",
+        correctDoubts: 0,
+        incorrectDoubts: 0,
+        successfulRaises: 0,
+        caughtRaises: 0,
+        gamesPlayed: 0,
+        gamesWon: 0,
         errorMessage: ""
     }
 
@@ -19,7 +25,8 @@ class WelcomeComponent extends React.Component {
 
     componentDidMount() {
         AuthService.user(this.state.jwtToken).then((res) => {
-            this.setState({username: res.data}) //TODO: there is more than a user in the data component.
+            this.setState({username: res.data.username})
+            //console.log(res.data)
         })
     }
 
