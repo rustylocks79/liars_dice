@@ -3,6 +3,7 @@ import {withRouter} from "react-router-dom";
 import React from "react";
 import AuthService from "../Services/AuthService";
 import {Button, Container, Grid, TextField, Typography} from "@material-ui/core";
+import TopBarComponent from "./TopBarComponent";
 
 
 class ProfileComponent extends React.Component {
@@ -41,6 +42,8 @@ class ProfileComponent extends React.Component {
     render() {
         return (
             <div>
+                <TopBarComponent/>
+
                 <Container fixed>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
