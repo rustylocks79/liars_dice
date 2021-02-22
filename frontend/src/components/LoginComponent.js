@@ -80,14 +80,28 @@ class LoginComponent extends React.Component {
                             </form>
                         </Grid>
                         <Grid item>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                type={"submit"}
-                                onClick={this.submitHandler}
-                            >
-                                Login
-                            </Button>
+                            <div style={{
+                                width: "200px",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    type={"submit"}
+                                    onClick={this.submitHandler}
+                                >
+                                    Login
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    href={"/signup"}
+                                >
+                                    Sign Up
+                                </Button>
+                            </div>
                         </Grid>
                     </Grid>
                 </Container>
