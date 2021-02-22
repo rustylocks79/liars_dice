@@ -8,12 +8,6 @@ class WelcomeComponent extends React.Component {
     state = {
         jwtToken: "",
         username: "",
-        correctDoubts: 0,
-        incorrectDoubts: 0,
-        successfulRaises: 0,
-        caughtRaises: 0,
-        gamesPlayed: 0,
-        gamesWon: 0,
         errorMessage: ""
     }
 
@@ -38,7 +32,6 @@ class WelcomeComponent extends React.Component {
     render() {
         return (
             <div>
-                <p>Welcome Component</p> <br/>
                 <h1>User: {this.state.username}</h1> <br/>
 
                 <Container fixed>
