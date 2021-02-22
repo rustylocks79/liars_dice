@@ -3,6 +3,7 @@ import {withRouter} from "react-router-dom";
 import React from "react";
 import {Button, Container, Grid, Typography} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
+import TopBarComponent from "./TopBarComponent";
 
 class WelcomeComponent extends React.Component {
     state = {
@@ -32,6 +33,7 @@ class WelcomeComponent extends React.Component {
     render() {
         return (
             <div>
+                <TopBarComponent/>
                 <h1>User: {this.state.username}</h1> <br/>
 
                 <Container fixed>
@@ -77,11 +79,11 @@ class WelcomeComponent extends React.Component {
                                     Create Lobby
                                 </Button>
                                 <br/><></>
-                                <Button variant="contained" color="secondary" href="/joingame">
+                                <Button variant="contained" color="secondary" href={"/joingame"}>
                                     Join Game
                                 </Button>
                                 <br/><></>
-                                <Button variant="contained" color="default">
+                                <Button variant="contained" color="default" href={"/profile"}>
                                     View Statistic
                                 </Button>
                             </Container>

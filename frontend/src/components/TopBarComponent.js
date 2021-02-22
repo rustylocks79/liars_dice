@@ -1,20 +1,24 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
-import {AppBar, Button, IconButton, Toolbar, Typography} from "@material-ui/core";
+import {AppBar, Button, IconButton, Link, Toolbar, Typography} from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import MenuIcon from '@material-ui/icons/Menu';
+import CasinoOutlinedIcon from '@material-ui/icons/CasinoOutlined';
 import AuthService from "../Services/AuthService";
 
 const styles = theme => ({
         root: {
             flexGrow: 1,
         },
-        menuButton: {
-            marginRight: theme.spacing(2),
+        button: {
+            marginRight: theme.spacing(2)
         },
         title: {
             flexGrow: 1,
+        },
+        other: {
+            marginLeft: theme.spacing(2),
+            fontSize: "large"
         },
     });
 
@@ -50,13 +54,17 @@ class TopBarComponent extends React.Component {
             <div>
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                            <MenuIcon/>
+                        <IconButton edge="start" className={classes.button} color="inherit" aria-label="logo">
+                            <CasinoOutlinedIcon style={{fontSize: 40}}/>
                         </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            News
-                        </Typography>
-                        <Button color="inherit">Login</Button>
+                        <Link href={"/welcome"} color="inherit" variant="h6" className={classes.title}>
+                            Deceiver's Dice
+                        </Link>
+                        <p color="inherit" className={classes.other}>
+                            Logged in as: {this.state.username}
+                        </p>
+                        <Button variant={"contained"} color="secondary" className={classes.other}
+                                onClick={this.logout}>Logout</Button>
                     </Toolbar>
                 </AppBar>
             </div>
