@@ -73,20 +73,18 @@ class WelcomeComponent extends React.Component {
                                 bidding.
                             </Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Container maxWidth={"xs"}>
-                                <Button variant="contained" color="primary" href={"/lobby"}>
-                                    Create Lobby
-                                </Button>
-                                <br/><br/>
-                                <Button variant="contained" color="secondary" href={"/joingame"}>
-                                    Join Game
-                                </Button>
-                                <br/><br/>
-                                <Button variant="contained" color="default" href={"/profile"}>
-                                    View Statistic
-                                </Button>
-                            </Container>
+                        <Grid item xs={6} alignContent={"center"}>
+                            <Button variant="contained" color="primary" href={"/lobby"}>
+                                Create Lobby
+                            </Button>
+                            <br/><br/>
+                            <Button variant="contained" color="secondary" href={"/joingame"}>
+                                Join Game
+                            </Button>
+                            <br/><br/>
+                            <Button variant="contained" color="default" href={"/profile"}>
+                                View Statistics
+                            </Button>
                         </Grid>
                     </Grid>
                 </Container>
