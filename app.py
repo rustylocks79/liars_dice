@@ -7,7 +7,7 @@ import flask_socketio
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
 cors = flask_cors.CORS()
-# socketio = flask_socketio.SocketIO(logger=True, engineio_logger=True)
+socketio = flask_socketio.SocketIO(logger=True, engineio_logger=True, cors_allowed_origins='*')
 
 
 class User(db.Model):
@@ -57,7 +57,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
 guard.init_app(app, User)
 db.init_app(app)
 cors.init_app(app)
-# socketio.init_app(app)
+socketio.init_app(app)
 
 with app.app_context():
     db.create_all()
@@ -130,11 +130,16 @@ def user():
     return flask.jsonify(response), 200
 
 
-# @socketio.on('message')
-# def handle_message(data):
-#     print('received message: ' + data)
+@socketio.on('connect')
+def test_connect():
+    print('A user connected')
+    flask_socketio.send('Connection Received')
+
+
+@socketio.on('message')
+def handle_message(data):
+    print('received message: ' + str(data))
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
-    # socketio.run(app)
+    socketio.run(app)
