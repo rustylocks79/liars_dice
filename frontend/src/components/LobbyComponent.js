@@ -5,11 +5,13 @@ import {Button, TextField, Grid, Container, Typography, Menu, MenuItem} from "@m
 import TopBarComponent from "./TopBarComponent";
 import AuthService from "../Services/AuthService";
 
+
 //Reference for layout: https://stackoverflow.com/questions/50766693/how-to-center-a-component-in-material-ui-and-make-it-responsive
 
 //Reference for clicking + and - on number of dice: https://medium.com/@aghh1504/2-increment-and-decrease-number-onclick-react-5767b765103c
-class LobbyComponent extends React.Component {
 
+//Rendering array in React.js: https://www.youtube.com/watch?v=ke1pkMV44iU
+class LobbyComponent extends React.Component {
     state = {
         jwtToken: "",
         username: "",

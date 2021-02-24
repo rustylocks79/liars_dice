@@ -4,6 +4,7 @@ import React from "react";
 import {Button, Container, Grid, Typography} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
 import TopBarComponent from "./TopBarComponent";
+import socketIOClient from "socket.io-client";
 
 class WelcomeComponent extends React.Component {
     state = {
@@ -16,6 +17,11 @@ class WelcomeComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
+    }
+
+    CreateLobby = (event) => {
+        const socket = socketIOClient("http://127.0.0.1:5000");
+        socket.emit('message', "Hi");
     }
 
     componentDidMount() {
@@ -74,7 +80,7 @@ class WelcomeComponent extends React.Component {
                             </Typography>
                         </Grid>
                         <Grid item xs={6} alignContent={"center"}>
-                            <Button variant="contained" color="primary" href={"/lobby"}>
+                            <Button onClick={this.CreateLobby} variant="contained" color="primary" href={"/lobby"}>
                                 Create Lobby
                             </Button>
                             <br/><br/>
