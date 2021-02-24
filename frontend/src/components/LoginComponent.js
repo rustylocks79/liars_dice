@@ -42,7 +42,7 @@ class LoginComponent extends React.Component {
 
     render() {
         return (
-            <div>
+            <div onKeyPress={this.handleKeyPress}>
                 {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
 
                 <Container fixed>
@@ -54,7 +54,7 @@ class LoginComponent extends React.Component {
                             <h3 align={"right"}>Username</h3>
                         </Grid>
                         <Grid item xs={6}>
-                            <form noValidate autoComplete="off">
+                            <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                                 <TextField
                                     id="username-input"
                                     label="Username"
@@ -68,7 +68,7 @@ class LoginComponent extends React.Component {
                             <h3 align={"right"}>Password</h3>
                         </Grid>
                         <Grid item xs={6}>
-                            <form noValidate autoComplete="off">
+                            <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                                 <TextField
                                     id="password-input"
                                     label="Password"
