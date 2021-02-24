@@ -58,7 +58,7 @@ class SignupComponent extends React.Component {
                             <h3 align={"right"}>Username</h3>
                         </Grid>
                         <Grid item xs={6}>
-                            <form noValidate autoComplete="off">
+                            <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                                 <TextField
                                     id="username-input"
                                     label="Username"
@@ -72,7 +72,7 @@ class SignupComponent extends React.Component {
                             <h3 align={"right"}>Password</h3>
                         </Grid>
                         <Grid item xs={6}>
-                            <form noValidate autoComplete="off">
+                            <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                                 <TextField
                                     id="password-input"
                                     label="Password"
@@ -87,7 +87,7 @@ class SignupComponent extends React.Component {
                             <h3 align={"right"}>Confirm Password</h3>
                         </Grid>
                         <Grid item xs={6}>
-                            <form noValidate autoComplete="off">
+                            <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                                 <TextField
                                     id="check-password-input"
                                     label="checkPassword"
