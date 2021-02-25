@@ -3,48 +3,43 @@ import random as rand
 
 
 class LiarsDice (Game):
-
-    # TODO: add variable num_active_players???
-    # TODO: flag players as active/inactive
-    # TODO: fix the utility method
-    # TODO: update last player to account for nonactive players
-
     def __init__(self, num_players, num_dice):
-        self.hands = [[0 for i in range(num_dice)] for i in range(num_players)]
-        self.create_hands()
+        self.hands = []
         self.bid_history = []
         self.current_player = 0
         self.total_players = num_players
-        self.active = [True for i in range(num_players)]
+        self.active_dice = [num_dice for _ in range(num_players)]
         self.num_dice = num_dice
+        self.create_hands()
 
     def create_hands(self):
-        for hand in self.hands:
-            for i in range(len(hand)):
-                hand[i] = rand.randint(1, 6)
+        self.hands = [[0 for _ in range(6)] for _ in range(self.total_players)]
+        for i in range(self.total_players):
+            for _ in range(self.active_dice[i]):
+                self.hands[i][rand.randint(0, 5)] += 1
 
     def is_terminal(self) -> bool:
-        return sum(self.active) == 1
+        return len([dice for dice in self.active_dice if dice != 0]) == 1
 
     def utility(self, player: int) -> float:
-        if not self.active[player]:
-            return 0
-        return len(self.hands[player])
+        return self.active_dice[player]
 
-    # ignore
     def info_set(self) -> str:
+        """
+        Format: {d}x{f} such that d is the number of dice in other players hands that would need to be something
+                other than 1 or the target face.
+            d = other_players_dice - (claim - known_target_dice)
+            f = target_face_value
+        :return: an information set.
+        """
+        hand = self.hands[self.active_player()]
+        other_players_dice = sum([self.active_dice[p] for p in range(len(self.active_dice)) if p != self.active_player()])
         if not self.bid_history:
             return 'start'
         else:
-            return ','.join(['{}x{}'.format(bid[1], bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
+            return ','.join(['{}x{}'.format(other_players_dice - (bid[1] - (hand[bid[2] - 1] + hand[0])), bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
 
     def actions(self) -> list:
-        # check bid history before doubt
-        # raise: all possible bids (either increase face value keeping quantity or increase quantity w/ any face value)
-        # list all actions up to quantity + 1
-        # example: assume bid history has value already and latest bid was 2 4s
-        #     expect result of that to be doubt raise 2 5's, 2 6's, or raise 3 2's, 3 3's, ... , 3 6's
-        # actions: ("doubt") or ("raise", quantity, face value)
         if len(self.bid_history) == 0:
             return [("raise", 1, i) for i in range(2, 7)]
         bid = self.bid_history[-1]
@@ -62,8 +57,6 @@ class LiarsDice (Game):
     def perform(self, action, verbose: bool = False) -> None:
         if verbose:
             print("Player {}: {}".format(self.current_player, action))
-        # update active player
-        # update bid history
         if not self.bid_history:
             if action[0] == "doubt":
                 raise RuntimeError("Invalid action: cannot doubt on first bid")
@@ -71,63 +64,44 @@ class LiarsDice (Game):
                 raise RuntimeError("Invalid action: quantity must be positive")
             elif not 2 <= action[2] <= 6:
                 raise RuntimeError("Invalid action: face value must be between 2 and 6")
-            else:
-                self.bid_history.append(action)
+            self.bid_history.append(action)
             self.current_player = self.get_next_active_player(self.current_player)
         else:
             bid = self.bid_history[-1]
             last_quantity = bid[1]
             last_face = bid[2]
-
             if action[0] == "doubt":
-                quantity_on_board = 0
-                for hand in self.hands:
-                    for face in hand:
-                        if face == last_face or face == 1:
-                            quantity_on_board += 1
+                quantity_on_board = sum(hand[0] + hand[last_face - 1] for hand in self.hands)
                 if last_quantity > quantity_on_board:
-                    # doubt was correct
-                    # remove die from previous bidder's hand
-                    #
                     last_player = self.get_last_player()
-                    self.hands[last_player].pop()
-                    if len(self.hands[last_player]) == 0:
-                        self.active[last_player] = False
-                    if self.active[last_player]:
+                    self.active_dice[last_player] -= 1
+                    if self.active_dice[last_player] != 0:
                         self.current_player = last_player
                     else:
                         self.current_player = self.get_next_active_player(last_player)
                 else:
-                    # doubt was incorrect
-                    self.hands[self.current_player].pop()
-                    if len(self.hands[self.current_player]) == 0:
-                        self.active[self.current_player] = False
-                    if not self.active[self.current_player]:
+                    self.active_dice[self.current_player] -= 1
+                    if self.active_dice[self.current_player] == 0:
                         self.current_player = self.get_next_active_player(self.current_player)
-
                 self.create_hands()
                 self.bid_history = []
             elif action[0] == "raise":
-                # raise
                 new_quantity = action[1]
                 new_face = action[2]
-                # if quantity > last or (quantities equal and face is greater)
                 if not (new_quantity > last_quantity or (new_quantity == last_quantity and new_face > last_face)):
                     raise RuntimeError("Invalid bid: last bid was {} {}, new bid was {} {}".format(last_quantity, last_face, new_quantity, new_face))
                 elif not 2 <= new_face <= 6:
                     raise RuntimeError("Invalid bid: face value must be between 2 and 6")
-                else:
-                    self.bid_history.append(action)
+                self.bid_history.append(action)
                 self.current_player = self.get_next_active_player(self.current_player)
             else:
-                # action is neither raise nor doubt
                 raise RuntimeError("Invalid bid: must either raise or doubt")
 
     def get_last_player(self):
         result = self.current_player - 1
         if result < 0:
             result = self.total_players - 1
-        while not self.active[result]:
+        while self.active_dice[result] == 0:
             result -= 1
             if result < 0:
                 result = self.total_players - 1
@@ -137,18 +111,17 @@ class LiarsDice (Game):
         result = player + 1
         if result >= self.total_players:
             result = 0
-        while not self.active[result]:
+        while self.active_dice[result] == 0:
             result += 1
             if result >= self.total_players:
                 result = 0
         return result
 
     def reset(self) -> None:
-        self.hands = [[0 for i in range(self.num_dice)] for i in range(self.total_players)]
         self.create_hands()
         self.bid_history = []
         self.current_player = 0
-        self.active = [True for i in range(self.total_players)]
+        self.active_dice = [self.num_dice for _ in range(self.total_players)]
 
     def active_player(self) -> int:
         return self.current_player

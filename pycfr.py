@@ -93,9 +93,9 @@ class Game:
         agent_stats = []
         for p in range(self.num_players()):
             agent_stats.append({
-                "name": type(agents[p]),
-                "wins": 0,
-                "utility": 0,
+                'name': type(agents[p]),
+                'wins': 0,
+                'utility': 0
             })
         for i in range(iterations):
             while not self.is_terminal():
@@ -109,6 +109,8 @@ class Game:
             self.reset()
         for p in range(self.num_players()):
             agent_stats[p]["utility"] /= iterations
+            if isinstance(agents[p], StrategyAgent):
+                agent_stats[p]['unknown_states'] = agents[p].unknown_states
         return agent_stats
 
 
@@ -129,6 +131,7 @@ class StrategyAgent(Agent):
         :param strategy: a strategy dictionary {information set: probability distribution}
         """
         self.strategy = strategy
+        self.unknown_states = 0
 
     def pretest(self, game: Game):
         """
@@ -149,6 +152,7 @@ class StrategyAgent(Agent):
             if game.info_set() in self.strategy:
                 return random.choices(game.actions(), weights=self.strategy[game.info_set()])[0]
             else:
+                self.unknown_states += 1
                 return random.choices(game.actions())[0]
         else:
             return result

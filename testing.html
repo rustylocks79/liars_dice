@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.0/socket.io.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io('http://localhost:5000');
+        socket.on('connect', function() {
+            socket.emit('message', {data: 'I\'m connected!'});
+        });
+    </script>
+</body>
+</html>
