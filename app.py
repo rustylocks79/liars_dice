@@ -1,3 +1,5 @@
+import uuid
+
 import flask
 import flask_sqlalchemy
 import flask_praetorian
@@ -8,6 +10,7 @@ db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
 cors = flask_cors.CORS()
 socketio = flask_socketio.SocketIO(logger=True, engineio_logger=True, cors_allowed_origins='*')
+rooms = {}
 
 
 class User(db.Model):
@@ -136,9 +139,31 @@ def test_connect():
     flask_socketio.send('Connection Received')
 
 
-@socketio.on('message')
-def handle_message(data):
-    print('received message: ' + str(data))
+@socketio.on('create_game')
+def create_game(json):
+    print('received create_game: ' + str(json))
+    lobby_id = uuid.uuid1().hex
+    flask_socketio.join_room(lobby_id)
+    rooms[lobby_id] = {'players': 1}
+    flask_socketio.emit('created_game', {'lobbyId': lobby_id})
+
+
+@socketio.on('join_game')
+def join_game(json):
+    print('received join_game: ' + str(json))
+    lobby_id = json['lobbyId']
+    flask_socketio.join_room(lobby_id)
+    rooms[lobby_id].players += 1
+    flask_socketio.emit('created_game')
+
+
+@socketio.on('start_game')
+def start_game(json):
+    print('received start_game: ' + str(json))
+    lobby_id = json['lobbyId']
+    num_dice = json['numDice']
+    num_players = rooms[lobby_id]['players']
+    print(num_players)
 
 
 if __name__ == "__main__":
