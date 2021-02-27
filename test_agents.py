@@ -3,13 +3,14 @@ import pickle
 
 from liars_dice import LiarsDice
 from pycfr import StrategyAgent, Game, Agent
-from research_driver import check_for_impossible_bet
+from research_driver import check_bet
 import random as rand
 
 
 class LDStrategyAgent(StrategyAgent):
-    def pretest(self, game: Game):
-        return check_for_impossible_bet(game)
+    def pretest(self, game: Game, index: int):
+        return check_bet(game, index)
+
 
 class PlayerAgent (Agent):
 
@@ -25,11 +26,11 @@ class PlayerAgent (Agent):
             return (action, )
 
 class HeuristicAgent (Agent):
-    def get_action(self, game, index:int):
-        num_unknown = sum([len(hand) for hand in game.hands]) - len(game.hands[index])
+    def get_action(self, game, index: int):
+        num_unknown = sum([game.active_dice[p] for p in range(len(game.active_dice)) if p != index])
         if not game.bid_history:
-            face = rand.randint(2,6)
-            num_face_in_hand = game.hands[index].count(face) + game.hands[index].count(1)
+            face = rand.randint(2, 6)
+            num_face_in_hand = game.hands[index][face - 1] + game.hands[index][0]
             quantity = math.floor(num_face_in_hand + 1.0/3*num_unknown)
             if quantity == 0:
                 quantity += 1
@@ -37,7 +38,7 @@ class HeuristicAgent (Agent):
         else:
             last_quantity = game.bid_history[-1][1]
             last_face = game.bid_history[-1][2]
-            num_face_in_hand = game.hands[index].count(last_face) + game.hands[index].count(1)
+            num_face_in_hand = game.hands[index][last_face - 1] + game.hands[index][0]
             expected_value = math.floor(num_face_in_hand + 1.0/3*num_unknown)
             if last_quantity > expected_value:
                 return ("doubt", )

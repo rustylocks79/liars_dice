@@ -3,7 +3,7 @@ import random as rand
 
 
 class LiarsDice (Game):
-    def __init__(self, num_players, num_dice):
+    def __init__(self, num_players, num_dice, sampling=False):
         self.hands = []
         self.bid_history = []
         self.current_player = 0
@@ -12,6 +12,9 @@ class LiarsDice (Game):
         self.num_dice = num_dice
         self.create_hands()
 
+        self.sampling = sampling
+        self.last_loser = -1
+
     def create_hands(self):
         self.hands = [[0 for _ in range(6)] for _ in range(self.total_players)]
         for i in range(self.total_players):
@@ -19,10 +22,16 @@ class LiarsDice (Game):
                 self.hands[i][rand.randint(0, 5)] += 1
 
     def is_terminal(self) -> bool:
-        return len([dice for dice in self.active_dice if dice != 0]) == 1
+        if self.sampling:
+            return self.last_loser != -1
+        else:
+            return len([dice for dice in self.active_dice if dice != 0]) == 1
 
     def utility(self, player: int) -> float:
-        return self.active_dice[player]
+        if self.sampling:
+            return 1 if player != self.last_loser else -1
+        else:
+            return self.active_dice[player]
 
     def info_set(self) -> str:
         """
@@ -74,12 +83,14 @@ class LiarsDice (Game):
                 quantity_on_board = sum(hand[0] + hand[last_face - 1] for hand in self.hands)
                 if last_quantity > quantity_on_board:
                     last_player = self.get_last_player()
+                    self.last_loser = last_player
                     self.active_dice[last_player] -= 1
                     if self.active_dice[last_player] != 0:
                         self.current_player = last_player
                     else:
                         self.current_player = self.get_next_active_player(last_player)
                 else:
+                    self.last_loser = self.current_player
                     self.active_dice[self.current_player] -= 1
                     if self.active_dice[self.current_player] == 0:
                         self.current_player = self.get_next_active_player(self.current_player)
@@ -117,11 +128,23 @@ class LiarsDice (Game):
                 result = 0
         return result
 
+    def sampling_reset(self, num_dice, num_players):
+        if not self.sampling:
+            raise RuntimeError('not in sampling mode. ')
+        self.num_dice = num_dice
+        self.total_players = num_players
+        self.active_dice = [rand.randint(1, num_dice) for _ in range(self.total_players)]
+        self.create_hands()
+        self.bid_history = []
+        self.current_player = rand.randint(0, num_players - 1)
+        self.last_loser = -1
+
     def reset(self) -> None:
+        self.active_dice = [self.num_dice for _ in range(self.total_players)]
         self.create_hands()
         self.bid_history = []
         self.current_player = 0
-        self.active_dice = [self.num_dice for _ in range(self.total_players)]
+        self.last_loser = -1
 
     def active_player(self) -> int:
         return self.current_player
