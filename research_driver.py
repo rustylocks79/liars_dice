@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 
 from liars_dice import LiarsDice
-from pycfr import CFRTrainer, compress, StrategyAgent, Game
+from pycfr import CFRTrainer, compress
 
 
 class CustomTrainer(CFRTrainer):
@@ -45,8 +45,8 @@ def check_bet(game: LiarsDice, index: int):
 
 
 if __name__ == '__main__':
-    game = LiarsDice(2, 5)
-    trainer = CFRTrainer(game, pretest=check_bet)
+    game = LiarsDice(2, 5, sampling=True)
+    trainer = CustomTrainer(game, pretest=check_bet)
     print('First Training Phase')
     game_tree, stats = trainer.train(1_000_000)
     for key in stats.keys():
