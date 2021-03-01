@@ -1,10 +1,10 @@
 import math
 import pickle
+import random as rand
 
 from liars_dice import LiarsDice
 from pycfr import StrategyAgent, Game, Agent
 from research_driver import check_bet
-import random as rand
 
 
 class LDStrategyAgent(StrategyAgent):
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     game = LiarsDice(2, 5)
     strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
     print("-------\nTesting Phase")
-    agents_stats = game.test(100, [LDStrategyAgent(strategy), HeuristicAgent()], False)
+    agents_stats = game.test(10_000, [LDStrategyAgent(strategy), HeuristicAgent()], False)
     for player in range(len(agents_stats)):
         print("\tAgent: {}".format(player))
         for key in agents_stats[player].keys():

@@ -1,5 +1,6 @@
-from pycfr import Game
 import random as rand
+
+from pycfr import Game
 
 
 class LiarsDice (Game):
@@ -41,12 +42,13 @@ class LiarsDice (Game):
             f = target_face_value
         :return: an information set.
         """
-        hand = self.hands[self.active_player()]
-        other_players_dice = sum([self.active_dice[p] for p in range(len(self.active_dice)) if p != self.active_player()])
-        if not self.bid_history:
-            return 'start'
-        else:
-            return ','.join(['{}x{}'.format(other_players_dice - (bid[1] - (hand[bid[2] - 1] + hand[0])), bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
+        # hand = self.hands[self.active_player()]
+        # other_players_dice = sum([self.active_dice[p] for p in range(len(self.active_dice)) if p != self.active_player()])
+        # if not self.bid_history:
+        #     return 'start'
+        # else:
+        #     return ','.join(['{}x{}'.format(other_players_dice - (bid[1] - (hand[bid[2] - 1] + hand[0])), bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
+        return ','.join(['{}x{}'.format(bid[1], bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
 
     def actions(self) -> list:
         if len(self.bid_history) == 0:
@@ -55,12 +57,12 @@ class LiarsDice (Game):
         last_quantity = bid[1]
         last_face = bid[2]
         actions = []
-        if len(self.bid_history) != 0:
-            actions.append(("doubt",))
         for face in range(last_face + 1, 7):
             actions.append(("raise", last_quantity, face))
         for face in range(2, 7):
             actions.append(("raise", last_quantity + 1, face))
+        for face in range(2, 7):
+            actions.append(("raise", last_quantity + 2, face))
         return actions
 
     def perform(self, action, verbose: bool = False) -> None:
