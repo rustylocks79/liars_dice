@@ -1,6 +1,7 @@
 import math
 import pickle
 import time
+from os import path
 from typing import Tuple
 
 import numpy as np
@@ -47,8 +48,11 @@ def check_bet(game: LiarsDice, index: int):
 if __name__ == '__main__':
     game = LiarsDice(2, 5, sampling=True)
     trainer = CustomTrainer(game, pretest=check_bet)
+    if path.exists('trees/liars_dice.pickle'):
+        print('loading previous game tree')
+        trainer.game_tree = pickle.load(open('trees/liars_dice.pickle', 'rb'))
     print('First Training Phase')
-    game_tree, stats = trainer.train(1_000_000)
+    game_tree, stats = trainer.train(1_000)
     for key in stats.keys():
         print("\t{}: {}".format(key, stats[key]))
     print("-------\nSaving Tree to File")
