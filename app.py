@@ -1,10 +1,10 @@
 import uuid
 
 import flask
-import flask_sqlalchemy
-import flask_praetorian
 import flask_cors
+import flask_praetorian
 import flask_socketio
+import flask_sqlalchemy
 
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
@@ -105,7 +105,13 @@ def login():
 def signup():
     request = flask.request.get_json(force=True)
     username = request.get("username", None)
+    if username is None or len(username) < 4:
+        return flask.jsonify({'error': 'invalid username. '}), 400
+    if db.session.query(User).filter(User.username == username).first() is not None:
+        return flask.jsonify({'error': 'user already exists with username: {}. '.format(username)}), 400
     password = request.get("password", None)
+    if password is None or len(password) < 4:
+        return flask.jsonify({'error': 'invalid password. '}), 400
     db.session.add(
         User(
             username=username,
