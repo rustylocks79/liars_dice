@@ -12,8 +12,7 @@ class WelcomeComponent extends React.Component {
         username: "",
         errorMessage: "",
         socket: socketIOClient("http://127.0.0.1:5000"), //storing the connection
-        createLobbyStatus: "Create Lobby",
-        buttonDisableStatus: ""
+        createLobbyStatus: "Create Lobby"
     }
 
     constructor(props) {
@@ -28,7 +27,6 @@ class WelcomeComponent extends React.Component {
 
     changeCreateLobbyStatus = () => {
         this.setState({createLobbyStatus: "Creating Lobby"})
-        this.setState({buttonDisableStatus: "True"})
     }
 
     testSocketIO = (event) => {
@@ -91,9 +89,9 @@ class WelcomeComponent extends React.Component {
                                 bidding.
                             </Typography>
                         </Grid>
-                        <Grid item xs={6} alignContent={"center"}>
-                            <Button onClick={this.CreateLobby} variant="contained" color="primary" href={"/lobby"}>
-                                Create Lobby
+                        <Grid item xs={6}>
+                            <Button onClick={this.testSocketIO} variant="contained" color="primary">
+                                {this.state.createLobbyStatus}
                             </Button>
                             <br/><br/>
                             <Button variant="contained" color="secondary" href={"/joingame"}>
@@ -102,11 +100,6 @@ class WelcomeComponent extends React.Component {
                             <br/><br/>
                             <Button variant="contained" color="default" href={"/profile"}>
                                 View Statistics
-                            </Button>
-                            <br/><br/>
-                            <Button onClick={this.testSocketIO} variant="contained" color="default"
-                                    disabled={this.state.buttonDisableStatus}>
-                                {this.state.createLobbyStatus}
                             </Button>
                         </Grid>
                     </Grid>
