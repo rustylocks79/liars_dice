@@ -12,7 +12,6 @@ class WelcomeComponent extends React.Component {
         username: "",
         errorMessage: "",
         socket: socketIOClient("http://127.0.0.1:5000"), //storing the connection
-        createLobbyStatus: "Create Lobby"
     }
 
     constructor(props) {
@@ -25,13 +24,10 @@ class WelcomeComponent extends React.Component {
 
     }
 
-    changeCreateLobbyStatus = () => {
-        this.setState({createLobbyStatus: "Creating Lobby"})
-    }
 
     testSocketIO = (event) => {
         this.state.socket.emit('create_game', "Hi");
-        this.changeCreateLobbyStatus()
+        this.props.history.push('/lobby');
     }
 
     componentDidMount() {
@@ -91,7 +87,7 @@ class WelcomeComponent extends React.Component {
                         </Grid>
                         <Grid item xs={6}>
                             <Button onClick={this.testSocketIO} variant="contained" color="primary">
-                                {this.state.createLobbyStatus}
+                                Create Game
                             </Button>
                             <br/><br/>
                             <Button variant="contained" color="secondary" href={"/joingame"}>
