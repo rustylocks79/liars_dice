@@ -17,9 +17,9 @@ class LobbyComponent extends React.Component {
         username: "",
         errorMessage: "",
         numOfDice: 1,
-        bots: [],
+        bots: [], //storing the bots
         botID: 1,
-        numOfBots: 0,
+        numOfPlayers: 1,
         show: true
     }
 
@@ -54,33 +54,36 @@ class LobbyComponent extends React.Component {
     }
 
     AddBot = () => {
-        this.setState({numOfBots: this.state.numOfBots + 1});
-        this.setState({botID: this.state.botID + 1});
-        let bot
-        if(this.state.bots.length > 0)
-        {
-            bot = {"name": "bot", "id": this.state.botID}
-        }
-        else
-        {
-            this.setState({botID: 2});
-            bot = {"name": "bot", "id": 1}
-        }
+        if (this.state.numOfPlayers < 10) {
+            //increase the number of player by 1
+            this.setState({numOfPlayers: this.state.numOfPlayers + 1});
+            this.setState({botID: this.state.botID + 1});
+            let bot
+            // when there are already existing bots
+            if (this.state.bots.length > 0) {
+                bot = {"name": "bot", "id": this.state.botID}
+            }
+            //when no bot exists in the game
+            else {
+                //We set the botID to 2 to use it for the next bot.
+                this.setState({botID: 2});
+                bot = {"name": "bot", "id": 1}
+            }
 
-        this.state.bots.push(bot)
+            this.state.bots.push(bot)
+        }
     }
 
     RemoveBot = (index, currentID) => {
 
-        if (index == this.state.bots.length - 1)
-        {
+        if (index == this.state.bots.length - 1) {
             this.setState({botID: currentID})
         }
-        this.setState({numOfBots: this.state.numOfBots - 1})
+        this.setState({numOfPlayers: this.state.numOfPlayers - 1})
         this.state.bots.splice(index, 1)
     }
     ClearBots = () => {
-        this.setState({numOfBots: 0});
+        this.setState({numOfPlayers: 1});
         this.setState({botID: 1});
         this.setState({bots: []});
     }
@@ -92,7 +95,8 @@ class LobbyComponent extends React.Component {
                 {this.state.bots.map(bot => (
                     <div>
                         <p>
-                            <button onClick={() => this.RemoveBot(this.state.bots.indexOf(bot), bot.id)}>x</button> {bot.name} {bot.id}
+                            <button onClick={() => this.RemoveBot(this.state.bots.indexOf(bot), bot.id)}>x</button>
+                            {bot.name} {bot.id}
                         </p>
                     </div>
                 ))}
