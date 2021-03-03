@@ -10,18 +10,27 @@ class WelcomeComponent extends React.Component {
     state = {
         jwtToken: "",
         username: "",
-        errorMessage: ""
+        errorMessage: "",
+        socket: socketIOClient("http://127.0.0.1:5000"), //storing the connection
+        createLobbyStatus: "Create Lobby",
+        buttonDisableStatus: ""
     }
 
     constructor(props) {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
+
     }
 
-    CreateLobby = (event) => {
-        const socket = socketIOClient("http://127.0.0.1:5000");
-        socket.emit('message', "Hi");
+    changeCreateLobbyStatus = () => {
+        this.setState({createLobbyStatus: "Creating Lobby"})
+        this.setState({buttonDisableStatus: "True"})
+    }
+
+    testSocketIO = (event) => {
+        this.state.socket.emit('create_game',"Hi");
+        this.changeCreateLobbyStatus()
     }
 
     componentDidMount() {
@@ -90,6 +99,10 @@ class WelcomeComponent extends React.Component {
                             <br/><br/>
                             <Button variant="contained" color="default" href={"/profile"}>
                                 View Statistics
+                            </Button>
+                            <br/><br/>
+                            <Button onClick={this.testSocketIO} variant="contained" color="default" disabled={this.state.buttonDisableStatus}>
+                                {this.state.createLobbyStatus}
                             </Button>
                         </Grid>
                     </Grid>
