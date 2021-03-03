@@ -52,7 +52,7 @@ class LiarsDice (Game):
 
     def actions(self) -> list:
         if len(self.bid_history) == 0:
-            return [("raise", 1, i) for i in range(2, 7)]
+            return [("raise", q, f) for q in range(1, 3) for f in range(2, 7)]
         bid = self.bid_history[-1]
         last_quantity = bid[1]
         last_face = bid[2]
