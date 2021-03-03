@@ -20,6 +20,9 @@ class WelcomeComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
+        this.state.socket.on("created_game", data => {
+            console.log(data)
+        });
 
     }
 
@@ -29,7 +32,7 @@ class WelcomeComponent extends React.Component {
     }
 
     testSocketIO = (event) => {
-        this.state.socket.emit('create_game',"Hi");
+        this.state.socket.emit('create_game', "Hi");
         this.changeCreateLobbyStatus()
     }
 
@@ -101,7 +104,8 @@ class WelcomeComponent extends React.Component {
                                 View Statistics
                             </Button>
                             <br/><br/>
-                            <Button onClick={this.testSocketIO} variant="contained" color="default" disabled={this.state.buttonDisableStatus}>
+                            <Button onClick={this.testSocketIO} variant="contained" color="default"
+                                    disabled={this.state.buttonDisableStatus}>
                                 {this.state.createLobbyStatus}
                             </Button>
                         </Grid>
