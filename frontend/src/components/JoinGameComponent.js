@@ -19,7 +19,6 @@ class JoinGameComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
-        console.log(this.props)
         this.props.socket.on("joined_game", data => {
             this.props.dispatch({
                 type: 'JOIN_LOBBY_ID',
@@ -27,13 +26,14 @@ class JoinGameComponent extends React.Component {
             })
             this.props.history.push('/lobby');
         });
-
     }
 
     componentDidMount() {
         AuthService.user(this.state.jwtToken).then((res) => {
             this.setState({username: res.data.username})
         })
+
+
     }
 
     handleInput = event => {
@@ -44,7 +44,6 @@ class JoinGameComponent extends React.Component {
         this.props.socket.emit('join_game', {
             lobbyId: this.state.targetLobby
         });
-        //this.props.history.push('/lobby')
     }
 
 

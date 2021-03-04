@@ -60,6 +60,7 @@ class WelcomeComponent extends React.Component {
             type: 'JOIN_LOBBY_SOCKET',
             payload: {socket: this.state.socket}
         })
+        this.props.history.push('/joingame')
     }
 
     componentDidMount() {
@@ -116,8 +117,7 @@ class WelcomeComponent extends React.Component {
                                 Create Game
                             </Button>
                             <br/><br/>
-                            <Button onClick={this.handleJoinGame} variant="contained" color="secondary"
-                                    href={"/joingame"}>
+                            <Button onClick={this.handleJoinGame} variant="contained" color="secondary">
                                 Join Game
                             </Button>
                             <br/><br/>
