@@ -22,7 +22,11 @@ class WelcomeComponent extends React.Component {
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
         this.state.socket.on("created_game", data => {
-            console.log(data)
+            this.props.dispatch({
+                type: 'CREATE_LOBBY',
+                payload: {lobbyId: data.lobbyId}
+            })
+            this.props.history.push('/lobby');
         });
 
         this.handleChange = this.handleChange.bind(this)
@@ -43,18 +47,10 @@ class WelcomeComponent extends React.Component {
         this.setState({postId: this.state.postId + 1})
     }
 
-    changeLobbyID = (event) => {
-        this.props.dispatch({
-            type: 'CREATE_LOBBY',
-            payload: {lobbyId: this.state.username}
-        })
-    }
-
 
     testSocketIO = (event) => {
-        this.changeLobbyID();
         this.state.socket.emit('create_game', "Hi");
-        this.props.history.push('/lobby');
+      //  this.props.history.push('/lobby');
     }
 
     componentDidMount() {
@@ -186,7 +182,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => {
-  return {dispatch}
+    return {dispatch}
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(withCookies(withRouter(WelcomeComponent)))
+export default connect(mapStateToProps, mapDispatchToProps)(withCookies(withRouter(WelcomeComponent)))

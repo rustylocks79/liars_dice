@@ -21,13 +21,14 @@ class LobbyComponent extends React.Component {
         bots: [], //storing the bots
         botID: 1,
         numOfPlayers: 1,
-        show: true
     }
 
     constructor(props) {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
+        //console.log(this.props)
+
     }
 
     componentDidMount() {
@@ -111,7 +112,7 @@ class LobbyComponent extends React.Component {
 
             <div>
                 <TopBarComponent/>
-                <h3 align={"center"} style={{color: 'blue'}}>Lobby #1234</h3>
+                <h3 align={"center"} style={{color: 'blue'}}>Lobby #{this.props.lobbyId.lobbyId}</h3>
 
                 <Container>
                     <Grid container>
@@ -178,7 +179,7 @@ class LobbyComponent extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return {testStrings: state.testStrings}
+    return {testStrings: state.testStrings, lobbyId: state.lobbyId}
 }
 
 export default connect(mapStateToProps)(withCookies(withRouter(LobbyComponent)))
