@@ -3,9 +3,19 @@ import {withRouter} from "react-router-dom";
 import React from "react";
 import {Button, TextField} from '@material-ui/core';
 import TopBarComponent from "./TopBarComponent";
+import {connect} from "react-redux";
 
 
 class JoinGameComponent extends React.Component {
+
+
+    onJoinGame = (event) => {
+        this.props.socket.emit('join_game', {
+            lobbyId: this.props.lobbyId
+        });
+    }
+
+
     render() {
         return (
             <div>
@@ -19,7 +29,7 @@ class JoinGameComponent extends React.Component {
                     <Button variant="contained" color="default" href="/welcome">
                         Cancel
                     </Button>
-                    <Button variant="contained" color="secondary">
+                    <Button variant="contained" color="secondary" onClick={this.onJoinGame}>
                         Join Game
                     </Button>
                 </div>
@@ -28,5 +38,8 @@ class JoinGameComponent extends React.Component {
         );
     }
 }
+const mapStateToProps = state => {
+    return {lobbyId: state.lobbyId, socket: state.socket}
+}
 
-export default withCookies(withRouter(JoinGameComponent))
+export default connect(mapStateToProps) (withCookies(withRouter(JoinGameComponent)))
