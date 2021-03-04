@@ -68,12 +68,6 @@ class WelcomeComponent extends React.Component {
         })
     }
 
-    logout = (event) => {
-        const {cookies} = this.props;
-        cookies.remove('JWT-TOKEN');
-        this.props.history.push('/login')
-    }
-
     render() {
         return (
             <div>
