@@ -10,9 +10,11 @@ import LobbyComponent from "./components/LobbyComponent"
 import JoinGameComponent from "./components/JoinGameComponent"
 import GameComponent from "./components/GameComponent"
 
+import {connect} from 'react-redux'
+
 import 'fontsource-roboto';
 
-function App() {
+function App({testStrings}) {
     return (
         <div className="App">
             <CookiesProvider>
@@ -28,9 +30,22 @@ function App() {
                         <Route path={"/game"} exact component={GameComponent}/>
                     </Switch>
                 </BrowserRouter>
+
+                {/*<ul>*/}
+                {/*    {testStrings.map(post => (*/}
+                {/*        <li key={post.id}>{post.title}</li>*/}
+                {/*    ))}*/}
+                {/*</ul>*/}
+
             </CookiesProvider>
         </div>
     );
 }
 
-export default App;
+const mapStateToProps = state => {
+    return {testStrings: state.testStrings}
+}
+
+export default connect(mapStateToProps)(App)
+
+//export default App;

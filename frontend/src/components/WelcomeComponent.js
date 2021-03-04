@@ -5,6 +5,7 @@ import {Button, Container, Grid, Typography} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
 import TopBarComponent from "./TopBarComponent";
 import socketIOClient from "socket.io-client";
+import {connect} from "react-redux";
 
 class WelcomeComponent extends React.Component {
     state = {
@@ -12,6 +13,8 @@ class WelcomeComponent extends React.Component {
         username: "",
         errorMessage: "",
         socket: socketIOClient("http://127.0.0.1:5000"), //storing the connection
+        value: 'Welcome Component',
+        postId: 2
     }
 
     constructor(props) {
@@ -22,6 +25,22 @@ class WelcomeComponent extends React.Component {
             console.log(data)
         });
 
+        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+    }
+
+    handleChange(event) {
+        this.setState({value: event.target.value})
+    }
+
+    handleSubmit(event) {
+        event.preventDefault()
+        this.props.dispatch({
+            type: 'ADD_STRING',
+            payload: {id: this.state.postId, title: this.state.value}
+        })
+
+        this.setState({postId: this.state.postId + 1})
     }
 
 
@@ -137,10 +156,29 @@ class WelcomeComponent extends React.Component {
                 {/*    </Grid>*/}
                 {/*</Container>*/}
 
+                {/*<ul>*/}
+                {/*    {this.props.testStrings.map(post => (*/}
+                {/*        <li key={post.id}>{post.title}</li>*/}
+                {/*    ))}*/}
+                {/*</ul>*/}
+
+                <div>
+                    <button type="submit" onClick={this.handleSubmit}>
+                        Submit
+                    </button>
+                </div>
 
             </div>
         );
     }
 }
 
-export default withCookies(withRouter(WelcomeComponent))
+const mapStateToProps = state => {
+    return {testStrings: state.testStrings}
+}
+
+const mapDispatchToProps = dispatch => {
+  return {dispatch}
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(withCookies(withRouter(WelcomeComponent)))

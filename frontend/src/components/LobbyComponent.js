@@ -4,6 +4,7 @@ import React from "react";
 import {Button, TextField, Grid, Container, Typography, Menu, MenuItem} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
 import AuthService from "../Services/AuthService";
+import {connect} from "react-redux";
 
 
 //Reference for layout: https://stackoverflow.com/questions/50766693/how-to-center-a-component-in-material-ui-and-make-it-responsive
@@ -165,10 +166,19 @@ class LobbyComponent extends React.Component {
                     </Button>
                 </div>
 
+                <ul>
+                    {this.props.testStrings.map(post => (
+                        <li key={post.id}>{post.title}</li>
+                    ))}
+                </ul>
+
             </div>
-        )
-            ;
+        );
     }
 }
 
-export default withCookies(withRouter(LobbyComponent))
+const mapStateToProps = state => {
+    return {testStrings: state.testStrings}
+}
+
+export default connect(mapStateToProps)(withCookies(withRouter(LobbyComponent)))
