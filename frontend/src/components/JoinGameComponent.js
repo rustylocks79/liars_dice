@@ -1,8 +1,7 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
-import {TextField} from '@material-ui/core';
-import {Button} from "@material-ui/core";
+import {Button, TextField} from '@material-ui/core';
 import TopBarComponent from "./TopBarComponent";
 
 
@@ -26,8 +25,7 @@ class JoinGameComponent extends React.Component {
                 </div>
 
             </div>
-        )
-            ;
+        );
     }
 }
 

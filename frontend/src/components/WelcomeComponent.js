@@ -24,7 +24,7 @@ class WelcomeComponent extends React.Component {
         this.state.socket.on("created_game", data => {
             this.props.dispatch({
                 type: 'CREATE_LOBBY',
-                payload: {lobbyId: data.lobbyId}
+                payload: {lobbyId: data.lobbyId, socket: this.state.socket}
             })
             this.props.history.push('/lobby');
         });
@@ -177,12 +177,8 @@ class WelcomeComponent extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {testStrings: state.testStrings}
-}
-
 const mapDispatchToProps = dispatch => {
     return {dispatch}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withCookies(withRouter(WelcomeComponent)))
+export default connect(mapDispatchToProps)(withCookies(withRouter(WelcomeComponent)))

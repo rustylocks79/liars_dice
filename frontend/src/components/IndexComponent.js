@@ -26,7 +26,6 @@ class IndexComponent extends React.Component {
         return (
             <div>
                 <p>Index Component</p>
-
                 <Link to={"/login"}>Login Screen</Link> <br/>
                 <Link to={"/signup"}>Signup Screen</Link> <br/>
                 <Link to={"/welcome"}>Welcome Screen</Link> <br/>
@@ -34,21 +33,13 @@ class IndexComponent extends React.Component {
                 <Link to={"/joingame"}>Join Game Screen</Link> <br/>
                 <Link to={"/lobby"}>Lobby Screen</Link> <br/>
                 <Link to={"/game"}>Game Screen</Link> <br/>
-
-                <ul>
-                    {this.props.testStrings.map(post => (
-                        <li key={post.id}>{post.title}</li>
-                    ))}
-                    <li>{this.props.lobbyId}</li>
-                    {console.log(this.props.lobbyId)}
-                </ul>
             </div>
         );
     }
 }
 
 const mapStateToProps = state => {
-    return {testStrings: state.testStrings, lobbyId: state.lobbyId}
+    return {lobbyId: state.lobbyId}
 }
 
 export default connect(mapStateToProps)(withCookies(withRouter(IndexComponent)))

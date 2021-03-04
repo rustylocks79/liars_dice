@@ -1,7 +1,7 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
-import {Button, TextField, Grid, Container, Typography, Menu, MenuItem} from "@material-ui/core";
+import {Button, Container, Grid} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
 import AuthService from "../Services/AuthService";
 import {connect} from "react-redux";
@@ -27,8 +27,6 @@ class LobbyComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
-        //console.log(this.props)
-
     }
 
     componentDidMount() {
@@ -37,25 +35,20 @@ class LobbyComponent extends React.Component {
         })
     }
 
-    logout = (event) => {
-        const {cookies} = this.props;
-        cookies.remove('JWT-TOKEN');
-        this.props.history.push('/login')
-    }
-
-    IncrementDie = () => {
+    incrementDie = () => {
         if (this.state.numOfDice < 5) {
             this.setState({numOfDice: this.state.numOfDice + 1});
         }
 
     }
-    DecreaseDie = () => {
+
+    decreaseDie = () => {
         if (this.state.numOfDice > 1) {
             this.setState({numOfDice: this.state.numOfDice - 1});
         }
     }
 
-    AddBot = () => {
+    addBot = () => {
         if (this.state.numOfPlayers < 10) {
             //increase the number of player by 1
             this.setState({numOfPlayers: this.state.numOfPlayers + 1});
@@ -76,28 +69,28 @@ class LobbyComponent extends React.Component {
         }
     }
 
-    RemoveBot = (index, currentID) => {
-
+    removeBot = (index, currentID) => {
         if (index == this.state.bots.length - 1) {
             this.setState({botID: currentID})
         }
         this.setState({numOfPlayers: this.state.numOfPlayers - 1})
         this.state.bots.splice(index, 1)
     }
-    ClearBots = () => {
+
+    clearBots = () => {
         this.setState({numOfPlayers: 1});
         this.setState({botID: 1});
         this.setState({bots: []});
     }
 
-    DisplayBots = () => {
+    displayBots = () => {
         return (
 
             <div color={"red"}>
                 {this.state.bots.map(bot => (
                     <div>
                         <p>
-                            <button onClick={() => this.RemoveBot(this.state.bots.indexOf(bot), bot.id)}>x</button>
+                            <button onClick={() => this.removeBot(this.state.bots.indexOf(bot), bot.id)}>x</button>
                             {bot.name} {bot.id}
                         </p>
                     </div>
@@ -106,13 +99,20 @@ class LobbyComponent extends React.Component {
         );
     }
 
+    onCreateGame = (event) => {
+        this.props.socket.emit('start_game', {
+            lobbyId: this.props.lobbyId,
+            numDice: 0
+        });
+    }
+
 
     render() {
         return (
 
             <div>
                 <TopBarComponent/>
-                <h3 align={"center"} style={{color: 'blue'}}>Lobby #{this.props.lobbyId.lobbyId}</h3>
+                <h3 align={"center"} style={{color: 'blue'}}>Lobby #{this.props.lobbyId}</h3>
 
                 <Container>
                     <Grid container>
@@ -125,13 +125,13 @@ class LobbyComponent extends React.Component {
                         >
                             <h4>Players</h4>
                             {this.state.username} (host)
-                            {this.DisplayBots()}
+                            {this.displayBots()}
                             <div>
-                                <br></br>
-                                <Button onClick={this.ClearBots} variant="contained" color="default" size="small">
+                                <br/>
+                                <Button onClick={this.clearBots} variant="contained" color="default" size="small">
                                     CLear Bots
                                 </Button>
-                                <Button onClick={this.AddBot} variant="contained" color="secondary" size="small">
+                                <Button onClick={this.addBot} variant="contained" color="secondary" size="small">
                                     Add Bot
                                 </Button>
                             </div>
@@ -145,11 +145,11 @@ class LobbyComponent extends React.Component {
                         >
                             <h4>Number of Dice</h4>
 
-                            <Button variant={"contained"} size="small" onClick={this.IncrementDie}>
+                            <Button variant={"contained"} size="small" onClick={this.incrementDie}>
                                 +
                             </Button>
                             <h3>{this.state.numOfDice}</h3>
-                            <Button variant={"contained"} size="small" onClick={this.DecreaseDie}>
+                            <Button variant={"contained"} size="small" onClick={this.decreaseDie}>
                                 -
                             </Button>
                         </Grid>
@@ -157,29 +157,21 @@ class LobbyComponent extends React.Component {
 
                 </Container>
 
-                <p></p>
                 <div align={"center"}>
                     <Button variant="contained" color="default" href="/welcome">
                         Leave Lobby
                     </Button>
-                    <Button variant="contained" color="primary">
+                    <Button variant="contained" color="primary" onClick={this.onCreateGame}>
                         Start Game
                     </Button>
                 </div>
-
-                <ul>
-                    {this.props.testStrings.map(post => (
-                        <li key={post.id}>{post.title}</li>
-                    ))}
-                </ul>
-
             </div>
         );
     }
 }
 
 const mapStateToProps = state => {
-    return {testStrings: state.testStrings, lobbyId: state.lobbyId}
+    return {lobbyId: state.lobbyId, socket: state.socket}
 }
 
 export default connect(mapStateToProps)(withCookies(withRouter(LobbyComponent)))

@@ -1,18 +1,19 @@
 import {createStore} from 'redux'
 
 const initialState = {
-    testStrings: [{id: 1, title: 'Test Post'}],
-    lobbyId: "123456"
+    lobbyId: "123456",
+    socket: null
 }
 
 const reducer = (state = initialState, action) => {
-    if (action.type === 'ADD_STRING') {
+    if (action.type === 'CREATE_LOBBY') {
         return Object.assign({}, state, {
-            testStrings: state.testStrings.concat(action.payload)
+            lobbyId: action.payload.lobbyId,
+            socket: action.payload.socket
         })
     }
 
-    if (action.type === 'CREATE_LOBBY') {
+    if (action.type === 'JOIN_LOBBY') {
         return Object.assign({}, state, {
             lobbyId: action.payload
         })
