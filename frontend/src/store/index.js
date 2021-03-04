@@ -13,9 +13,15 @@ const reducer = (state = initialState, action) => {
         })
     }
 
-    if (action.type === 'JOIN_LOBBY') {
+    if (action.type === 'JOIN_LOBBY_ID') {
         return Object.assign({}, state, {
-            lobbyId: action.payload
+            lobbyId: action.payload.lobbyId,
+        })
+    }
+
+    if (action.type === 'JOIN_LOBBY_SOCKET') {
+        return Object.assign({}, state, {
+            socket: action.payload.socket
         })
     }
 

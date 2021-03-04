@@ -19,6 +19,15 @@ class JoinGameComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
+        console.log(this.props)
+        this.props.socket.on("joined_game", data => {
+            this.props.dispatch({
+                type: 'JOIN_LOBBY_ID',
+                payload: {lobbyId: data.lobbyId}
+            })
+            this.props.history.push('/lobby');
+        });
+
     }
 
     componentDidMount() {
@@ -32,10 +41,10 @@ class JoinGameComponent extends React.Component {
     };
 
     onJoinGame = (event) => {
-        console.log(this.state.targetLobby)
-        // this.props.socket.emit('join_game', {
-        //     lobbyId: this.props.lobbyId
-        // });
+        this.props.socket.emit('join_game', {
+            lobbyId: this.state.targetLobby
+        });
+        //this.props.history.push('/lobby')
     }
 
 
@@ -63,7 +72,7 @@ class JoinGameComponent extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return {lobbyId: state.lobbyId, socket: state.socket}
+    return {socket: state.socket}
 }
 
 export default connect(mapStateToProps)(withCookies(withRouter(JoinGameComponent)))

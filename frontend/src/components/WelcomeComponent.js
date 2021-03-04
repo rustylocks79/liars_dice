@@ -48,9 +48,18 @@ class WelcomeComponent extends React.Component {
     }
 
 
-    testSocketIO = (event) => {
+    handleCreateGame = (event) => {
         this.state.socket.emit('create_game', "Hi");
-      //  this.props.history.push('/lobby');
+        //  this.props.history.push('/lobby');
+    }
+
+    handleJoinGame = (event) => {
+        // this.state.socket.emit('create_game', "Hi");
+        //  this.props.history.push('/lobby');
+        this.props.dispatch({
+            type: 'JOIN_LOBBY_SOCKET',
+            payload: {socket: this.state.socket}
+        })
     }
 
     componentDidMount() {
@@ -109,11 +118,12 @@ class WelcomeComponent extends React.Component {
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
-                            <Button onClick={this.testSocketIO} variant="contained" color="primary">
+                            <Button onClick={this.handleCreateGame} variant="contained" color="primary">
                                 Create Game
                             </Button>
                             <br/><br/>
-                            <Button variant="contained" color="secondary" href={"/joingame"}>
+                            <Button onClick={this.handleJoinGame} variant="contained" color="secondary"
+                                    href={"/joingame"}>
                                 Join Game
                             </Button>
                             <br/><br/>
