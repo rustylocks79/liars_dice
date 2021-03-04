@@ -4,15 +4,38 @@ import React from "react";
 import {Button, TextField} from '@material-ui/core';
 import TopBarComponent from "./TopBarComponent";
 import {connect} from "react-redux";
+import AuthService from "../Services/AuthService";
 
 
 class JoinGameComponent extends React.Component {
+    state = {
+        jwtToken: "",
+        username: "",
+        errorMessage: "",
+        targetLobby: ""
+    }
 
+    constructor(props) {
+        super(props);
+        const {cookies} = props;
+        this.state.jwtToken = cookies.get('JWT-TOKEN')
+    }
+
+    componentDidMount() {
+        AuthService.user(this.state.jwtToken).then((res) => {
+            this.setState({username: res.data.username})
+        })
+    }
+
+    handleInput = event => {
+        this.setState({targetLobby: event.target.value});
+    };
 
     onJoinGame = (event) => {
-        this.props.socket.emit('join_game', {
-            lobbyId: this.props.lobbyId
-        });
+        console.log(this.state.targetLobby)
+        // this.props.socket.emit('join_game', {
+        //     lobbyId: this.props.lobbyId
+        // });
     }
 
 
@@ -22,10 +45,10 @@ class JoinGameComponent extends React.Component {
                 <TopBarComponent/>
 
                 <h3 align={"center"} style={{color: 'red'}}>Join a game!</h3>
-                <form align={"center"} noValidate autoComplete="off">
-                    <TextField id="standard-basic" label="Lobby ID"/>
-                </form>
                 <div align={"center"}>
+                    <form noValidate autoComplete="off" onChange={this.handleInput}>
+                        <TextField id="lobbyField" label="Lobby ID"/>
+                    </form>
                     <Button variant="contained" color="default" href="/welcome">
                         Cancel
                     </Button>
@@ -38,8 +61,9 @@ class JoinGameComponent extends React.Component {
         );
     }
 }
+
 const mapStateToProps = state => {
     return {lobbyId: state.lobbyId, socket: state.socket}
 }
 
-export default connect(mapStateToProps) (withCookies(withRouter(JoinGameComponent)))
+export default connect(mapStateToProps)(withCookies(withRouter(JoinGameComponent)))
