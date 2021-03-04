@@ -158,9 +158,12 @@ def create_game(json):
 def join_game(json):
     print('received join_game: ' + str(json))
     lobby_id = json['lobbyId']
-    flask_socketio.join_room(lobby_id)
-    rooms[lobby_id].players += 1
-    flask_socketio.emit('created_game')
+    if lobby_id in rooms:
+        flask_socketio.join_room(lobby_id)
+        rooms[lobby_id].players += 1
+        flask_socketio.emit('joined_game')
+    else:
+        flask_socketio.emit('invalid_id')
 
 
 @socketio.on('start_game')
