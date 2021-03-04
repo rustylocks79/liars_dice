@@ -43,8 +43,16 @@ class WelcomeComponent extends React.Component {
         this.setState({postId: this.state.postId + 1})
     }
 
+    changeLobbyID = (event) => {
+        this.props.dispatch({
+            type: 'CREATE_LOBBY',
+            payload: {lobbyId: this.state.username}
+        })
+    }
+
 
     testSocketIO = (event) => {
+        this.changeLobbyID();
         this.state.socket.emit('create_game', "Hi");
         this.props.history.push('/lobby');
     }
