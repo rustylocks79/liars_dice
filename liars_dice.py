@@ -48,7 +48,7 @@ class LiarsDice (Game):
         #     return 'start'
         # else:
         #     return ','.join(['{}x{}'.format(other_players_dice - (bid[1] - (hand[bid[2] - 1] + hand[0])), bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
-        return ','.join(['{}x{}'.format(bid[1], bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
+        return str(self.hands[self.active_player()]) + ', ' + ','.join(['{}x{}'.format(bid[1], bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
 
     def actions(self) -> list:
         if len(self.bid_history) == 0:
