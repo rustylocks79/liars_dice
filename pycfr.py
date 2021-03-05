@@ -95,10 +95,12 @@ class Game:
             agent_stats.append({
                 'name': type(agents[p]),
                 'wins': 0,
-                'utility': 0
+                'utility': 0,
+                'average_actions': 0
             })
         for i in range(iterations):
             while not self.is_terminal():
+                agent_stats[self.active_player()]['average_actions'] += 1
                 self.perform(agents[self.active_player()].get_action(self, self.active_player()), verbose)
 
             utils = [self.utility(p) for p in range(self.num_players())]
@@ -109,6 +111,7 @@ class Game:
             self.reset()
         for p in range(self.num_players()):
             agent_stats[p]["utility"] /= iterations
+            agent_stats[p]["average_actions"] /= iterations
             if isinstance(agents[p], StrategyAgent):
                 agent_stats[p]['unknown_states'] = agents[p].unknown_states / agents[p].encountered_states
         return agent_stats
