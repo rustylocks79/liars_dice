@@ -15,7 +15,8 @@ class LDStrategyAgent(StrategyAgent):
 class PlayerAgent (Agent):
 
     def get_action(self, game, index:int):
-        print(game.hands)
+        print(game.active_dice)
+        print(game.hands[0])
         action = input("action: ")
 
         if action == "raise":
@@ -61,10 +62,10 @@ class HeuristicAgent (Agent):
 
 # LDStrategy vs. Heuristic
 if __name__ == '__main__':
-    game = LiarsDice(2, 5, sampling=True)
+    game = LiarsDice(2, 5)
     strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
     print("-------\nTesting Phase")
-    agents_stats = game.test(10_000, [LDStrategyAgent(strategy), HeuristicAgent()], False)
+    agents_stats = game.test(1, [HeuristicAgent(), HeuristicAgent()], True)
     for player in range(len(agents_stats)):
         print("\tAgent: {}".format(player))
         for key in agents_stats[player].keys():

@@ -20,6 +20,7 @@ class JoinGameComponent extends React.Component {
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
         this.props.socket.on("joined_game", data => {
+            console.log(data)
             this.props.dispatch({
                 type: 'JOIN_LOBBY_ID',
                 payload: {lobbyId: data.lobbyId}

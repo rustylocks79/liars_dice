@@ -26,6 +26,7 @@ class LiarsDice (Game):
         if self.sampling:
             return self.last_loser != -1
         else:
+            value = len([dice for dice in self.active_dice if dice != 0]) == 1
             return len([dice for dice in self.active_dice if dice != 0]) == 1
 
     def utility(self, player: int) -> float:
