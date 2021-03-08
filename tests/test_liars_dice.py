@@ -8,7 +8,7 @@ class LiarsDiceTests (unittest.TestCase):
         game = LiarsDice(3, 5)
         self.assertEqual([('raise', 1, 2), ('raise', 1, 3), ('raise', 1, 4), ('raise', 1, 5), ('raise', 1, 6), ('raise', 2, 2), ('raise', 2, 3), ('raise', 2, 4), ('raise', 2, 5), ('raise', 2, 6)], game.actions())
         game.bid_history = [("raise", 2, 2)]
-        self.assertEqual([('raise', 2, 3), ('raise', 2, 4), ('raise', 2, 5), ('raise', 2, 6), ('raise', 3, 2), ('raise', 3, 3), ('raise', 3, 4), ('raise', 3, 5), ('raise', 3, 6), ('raise', 4, 2), ('raise', 4, 3), ('raise', 4, 4), ('raise', 4, 5), ('raise', 4, 6)], game.actions())
+        self.assertEqual([('doubt',), ('raise', 2, 3), ('raise', 2, 4), ('raise', 2, 5), ('raise', 2, 6), ('raise', 3, 2), ('raise', 3, 3), ('raise', 3, 4), ('raise', 3, 5), ('raise', 3, 6), ('raise', 4, 2), ('raise', 4, 3), ('raise', 4, 4), ('raise', 4, 5), ('raise', 4, 6)], game.actions())
 
     def test_perform(self):
         game = LiarsDice(3, 5)
