@@ -57,6 +57,7 @@ class LiarsDice (Game):
         last_quantity = bid[1]
         last_face = bid[2]
         actions = []
+        actions.append(('doubt', ))
         for face in range(last_face + 1, 7):
             actions.append(("raise", last_quantity, face))
         for face in range(2, 7):
@@ -98,6 +99,8 @@ class LiarsDice (Game):
                         self.current_player = self.get_next_active_player(self.current_player)
                 self.create_hands()
                 self.bid_history = []
+                if verbose:
+                    print('Player {} lost a die'.format(self.last_loser))
             elif action[0] == "raise":
                 new_quantity = action[1]
                 new_face = action[2]
