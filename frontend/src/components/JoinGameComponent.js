@@ -54,9 +54,10 @@ class JoinGameComponent extends React.Component {
 
                 <h3 align={"center"} style={{color: 'red'}}>Join a game!</h3>
                 <div align={"center"}>
-                    <form noValidate autoComplete="off" onChange={this.handleInput}>
-                        <TextField id="lobbyField" label="Lobby ID"/>
-                    </form>
+                    {/*<form noValidate autoComplete="off" onChange={this.handleInput} onSubmit={this.onJoinGame}>*/}
+                    {/*    <TextField id="lobbyField" label="Lobby ID"/>*/}
+                    {/*</form>*/}
+                    <TextField id="lobbyField" label="Lobby ID" onChange={this.handleInput}/> <br/>
                     <Button variant="contained" color="default" href="/welcome">
                         Cancel
                     </Button>
