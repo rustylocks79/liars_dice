@@ -61,7 +61,7 @@ class HeuristicAgent (Agent):
 
 # LDStrategy vs. Heuristic
 if __name__ == '__main__':
-    game = LiarsDice(2, 5)
+    game = LiarsDice(2, 5, sampling=True)
     strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
     print("-------\nTesting Phase")
     agents_stats = game.test(10_000, [LDStrategyAgent(strategy), HeuristicAgent()], False)

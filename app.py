@@ -148,7 +148,7 @@ def test_connect():
 @socketio.on('create_game')
 def create_game(json):
     print('received create_game: ' + str(json))
-    lobby_id = uuid.uuid1().hex
+    lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
     rooms[lobby_id] = {'players': 1}
     flask_socketio.emit('created_game', {'lobbyId': lobby_id})
