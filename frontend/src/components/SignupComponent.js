@@ -25,7 +25,8 @@ class SignupComponent extends React.Component {
         if (this.state.password === this.state.checkPassword) {
 
             AuthService.signup(this.state.username, this.state.password).then(res => {
-                this.props.history.push('/login')
+                //this.props.history.push('/login')
+                this.props.history.push('/')
             }).catch(res => {
                 if (res.response) {
                     console.log(res.response)

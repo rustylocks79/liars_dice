@@ -20,8 +20,11 @@ function App({testStrings}) {
             <CookiesProvider>
                 <BrowserRouter>
                     <Switch>
-                        <Route path={"/"} exact component={IndexComponent}/>
-                        <Route path={"/login"} exact component={LoginComponent}/>
+                        {/*<Route path={"/"} exact component={IndexComponent}/>*/}
+                        {/*<Route path={"/login"} exact component={LoginComponent}/>*/}
+
+                        <Route path={"/"} exact component={LoginComponent}/>
+
                         <Route path={"/signup"} exact component={SignupComponent}/>
                         <Route path={"/profile"} exact component={ProfileComponent}/>
                         <Route path={"/welcome"} exact component={WelcomeComponent}/>

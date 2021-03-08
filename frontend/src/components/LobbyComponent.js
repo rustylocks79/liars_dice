@@ -88,7 +88,7 @@ class LobbyComponent extends React.Component {
 
             <div color={"red"}>
                 {this.state.bots.map(bot => (
-                    <div>
+                    <div key={bot.id}>
                         <p>
                             <button onClick={() => this.removeBot(this.state.bots.indexOf(bot), bot.id)}>x</button>
                             {bot.name} {bot.id}
