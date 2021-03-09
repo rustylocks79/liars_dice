@@ -18,10 +18,10 @@ class LobbyComponent extends React.Component {
         username: "",
         errorMessage: "",
         numOfDice: 1,
-        bots: [], //storing the bots
-        players: [], // player = {id: int, name: string, bot: bool}
-        botID: 1,
-        numOfPlayers: 1,
+        players: [], // player = {name: string, bot: bool}
+        numPlayers: 0,
+        botNames: ["Aarron", "Ace", "Bailee", "Buddy", "Chad", "Charles", "James", "Robert", "Patricia", "Barbara"],
+        usedNames: []
     }
 
     constructor(props) {
@@ -33,6 +33,10 @@ class LobbyComponent extends React.Component {
     componentDidMount() {
         AuthService.user(this.state.jwtToken).then((res) => {
             this.setState({username: res.data.username})
+
+            let player = {name: res.data.username, bot: false}
+            this.state.players.push(player)
+            this.setState({numPlayers: this.state.numPlayers + 1})
         })
     }
 
@@ -50,59 +54,63 @@ class LobbyComponent extends React.Component {
     }
 
     addBot = () => {
-        if (this.state.numOfPlayers < 10) {
-            //increase the number of player by 1
-            this.setState({numOfPlayers: this.state.numOfPlayers + 1});
-            this.setState({botID: this.state.botID + 1});
-            let bot
-            // when there are already existing bots
-            if (this.state.bots.length > 0) {
-                bot = {"name": "bot", "id": this.state.botID}
-            }
-            //when no bot exists in the game
-            else {
-                //We set the botID to 2 to use it for the next bot.
-                this.setState({botID: 2});
-                bot = {"name": "bot", "id": 1}
-            }
+        if (this.state.numPlayers < 10) {
+            // increment player count
+            this.setState({numOfPlayers: this.state.numPlayers + 1});
 
-            this.state.bots.push(bot)
+            //create bot
+            let nameSelected = false
+            while (!nameSelected) {
+                let idx = Math.floor(Math.random() * this.state.botNames.length);
+
+                if (!this.state.usedNames.includes(this.state.botNames[idx])) {
+                    let bot = {name: this.state.botNames[idx], bot: true}
+                    this.state.players.push(bot)
+                    this.setState({numPlayers: this.state.numPlayers + 1})
+                    this.state.usedNames.push(this.state.botNames[idx])
+                    nameSelected = true;
+                }
+            }
         }
+
+        console.log(this.state.players)
     }
 
-    removeBot = (index, currentID) => {
-        if (index == this.state.bots.length - 1) {
-            this.setState({botID: currentID})
+    removeBot = (name) => {
+        // remove bot
+        for (let i = 0; i < this.state.players.length; i++) {
+            if (this.state.players[i].name === name && this.state.players[i].bot) {
+                this.state.players.splice(i, 1)
+            }
         }
-        this.setState({numOfPlayers: this.state.numOfPlayers - 1})
-        this.state.bots.splice(index, 1)
+
+        // decrement player count
+        this.setState({numOfPlayers: this.state.numPlayers - 1})
+
+        //remove name from used list
+        for (let i = 0; i < this.state.usedNames.length; i++) {
+            if (this.state.usedNames[i] === name) {
+                this.state.usedNames.splice(i, 1)
+            }
+        }
     }
 
     clearBots = () => {
-        this.setState({numOfPlayers: 1});
-        this.setState({botID: 1});
-        this.setState({bots: []});
-    }
-
-    displayBots = () => {
-        return (
-            <div color={"red"}>
-                {this.state.bots.map(bot => (
-                    <div key={bot.id}>
-                        <p>
-                            <button onClick={() => this.removeBot(this.state.bots.indexOf(bot), bot.id)}>x</button>
-                            {bot.name} {bot.id}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        );
+        this.setState({players: this.state.players.filter(function (player) {return !player.bot})})
+        this.setState({numOfPlayers: this.state.players.length})
     }
 
     displayPlayers = () => {
         return (
             <div>
-
+                {this.state.players.map(player => (
+                    <div key={player.name}>
+                        <p>
+                            <button onClick={() => this.removeBot(player.name)}>x</button>
+                            {player.name}
+                        </p>
+                    </div>
+                ))}
             </div>
         )
     }
@@ -132,8 +140,7 @@ class LobbyComponent extends React.Component {
                               style={{minHeight: '10vh'}}
                         >
                             <h4>Players</h4>
-                            {this.state.username} (host)
-                            {this.displayBots()}
+                            {this.displayPlayers()}
                             <div>
                                 <br/>
                                 <Button onClick={this.clearBots} variant="contained" color="default" size="small">
@@ -164,6 +171,8 @@ class LobbyComponent extends React.Component {
                     </Grid>
 
                 </Container>
+
+                <br/>
 
                 <div align={"center"}>
                     <Button variant="contained" color="default" href="/welcome">
