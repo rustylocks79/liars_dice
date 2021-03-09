@@ -19,6 +19,7 @@ class LobbyComponent extends React.Component {
         errorMessage: "",
         numOfDice: 1,
         bots: [], //storing the bots
+        players: [], // player = {id: int, name: string, bot: bool}
         botID: 1,
         numOfPlayers: 1,
     }
@@ -85,7 +86,6 @@ class LobbyComponent extends React.Component {
 
     displayBots = () => {
         return (
-
             <div color={"red"}>
                 {this.state.bots.map(bot => (
                     <div key={bot.id}>
@@ -97,6 +97,14 @@ class LobbyComponent extends React.Component {
                 ))}
             </div>
         );
+    }
+
+    displayPlayers = () => {
+        return (
+            <div>
+
+            </div>
+        )
     }
 
     onCreateGame = (event) => {

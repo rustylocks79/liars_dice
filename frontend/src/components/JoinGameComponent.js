@@ -44,7 +44,7 @@ class JoinGameComponent extends React.Component {
     onJoinGame = (event) => {
         this.props.socket.emit('join_game', {
             lobbyId: this.state.targetLobby,
-            jwtToken: 'PUT TOKEN HERE'
+            jwtToken: this.state.jwtToken
         });
     }
 
