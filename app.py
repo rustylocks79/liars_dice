@@ -3,6 +3,7 @@ import uuid
 import flask
 import flask_cors
 import flask_praetorian
+import flask_praetorian.base
 import flask_socketio
 import flask_sqlalchemy
 
@@ -158,7 +159,10 @@ def create_game(json):
 def join_game(json):
     print('received join_game: ' + str(json))
     lobby_id = json['lobbyId']
+    jwt_token = json['jwtToken']
     if lobby_id in rooms:
+        current_user = guard.get_user_from_registration_token(jwt_token)
+        print(current_user)
         flask_socketio.join_room(lobby_id)
         rooms[lobby_id]['players'] += 1
         flask_socketio.emit('joined_game', {'lobbyId': lobby_id}, to=lobby_id)
