@@ -168,7 +168,7 @@ def create_game(json):
     print('Received create_game from {}: {}'.format(current_user.username, json))
     lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
-    rooms[lobby_id] = {'players': [current_user.username]}
+    rooms[lobby_id] = {'players': [current_user.username], 'bots': [], 'num_dice': 0}
     flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username]})
 
 
@@ -181,17 +181,39 @@ def join_game(json):
     if lobby_id in rooms:
         print(current_user)
         flask_socketio.join_room(lobby_id)
-        rooms[lobby_id]['players'].append(current_user.username)
-        flask_socketio.emit('joined_game', {'lobbyId': lobby_id, 'players': rooms[lobby_id]['players']}, to=lobby_id)
+        room = rooms[lobby_id]
+        room['players'].append(current_user.username)
+        flask_socketio.emit('joined_game', {
+            'lobbyId': lobby_id,
+            'players': room['players'],
+            'bots': room['bots'],
+            'numDice': room['num_dice']}, to=lobby_id)
     else:
         flask_socketio.emit('invalid_id')
+
+
+@socketio.on('update_game')
+def update_game(json):
+    lobby_id = json['lobbyId']
+    jwt_token = json['jwtToken']
+    num_dice = json['num_dice']
+    bots = json['bots']
+    current_user = get_current_user_from_token(jwt_token)
+    print('received update_game from {}: {}'.format(current_user.username, json))
+    room = rooms[lobby_id]
+    room['bots'] = bots
+    room['num_dice'] = num_dice
+    flask_socketio.emit('updated_game', {
+        'lobbyId': lobby_id,
+        'bots': room['bots'],
+        'num_dice': room['num_dice']
+    }, to=lobby_id)
 
 
 @socketio.on('start_game')
 def start_game(json):
     print('received start_game: ' + str(json))
     lobby_id = json['lobbyId']
-    num_dice = json['numDice']
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
     print('received start_game from {}: {}'.format(current_user.username, json))
