@@ -19,7 +19,6 @@ class LobbyComponent extends React.Component {
         errorMessage: "",
         numOfDice: 1,
         players: [], // player = {name: string, bot: bool}
-        numPlayers: 0,
         botNames: ["Aarron", "Ace", "Bailee", "Buddy", "Chad", "Charles", "James", "Robert", "Patricia", "Barbara"],
         usedNames: []
     }
@@ -39,7 +38,7 @@ class LobbyComponent extends React.Component {
 
             let player = {name: res.data.username, bot: false}
             this.state.players.push(player)
-            this.setState({numPlayers: this.state.numPlayers + 1})
+            this.setState({})
         })
     }
 
@@ -57,26 +56,19 @@ class LobbyComponent extends React.Component {
     }
 
     addBot = () => {
-        if (this.state.numPlayers < 10) {
-            // increment player count
-            this.setState({numOfPlayers: this.state.numPlayers + 1});
-
-            //create bot
+        if (this.state.players.length < 10) {
             let nameSelected = false
             while (!nameSelected) {
                 let idx = Math.floor(Math.random() * this.state.botNames.length);
-
                 if (!this.state.usedNames.includes(this.state.botNames[idx])) {
                     let bot = {name: this.state.botNames[idx], bot: true}
                     this.state.players.push(bot)
-                    this.setState({numPlayers: this.state.numPlayers + 1})
                     this.state.usedNames.push(this.state.botNames[idx])
                     nameSelected = true;
+                    this.setState({})
                 }
             }
         }
-
-        console.log(this.state.players)
     }
 
     removeBot = (name) => {
@@ -87,20 +79,21 @@ class LobbyComponent extends React.Component {
             }
         }
 
-        // decrement player count
-        this.setState({numOfPlayers: this.state.numPlayers - 1})
-
         //remove name from used list
         for (let i = 0; i < this.state.usedNames.length; i++) {
             if (this.state.usedNames[i] === name) {
                 this.state.usedNames.splice(i, 1)
             }
         }
+
+        this.setState({})
     }
 
     clearBots = () => {
-        this.setState({players: this.state.players.filter(function (player) {return !player.bot})})
-        this.setState({numOfPlayers: this.state.players.length})
+        let newPlayerList = this.state.players.filter(function (player) {return !player.bot})
+        this.setState({players: newPlayerList})
+        this.setState({numOfPlayers: newPlayerList.length})
+        this.setState({usedNames: []})
     }
 
     displayPlayers = () => {
