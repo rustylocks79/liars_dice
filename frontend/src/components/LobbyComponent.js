@@ -29,20 +29,23 @@ class LobbyComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
+        this.state.players = this.props.players
         this.props.socket.on('joined_game', data => {
             console.log('received event joined_game from server' + JSON.stringify(data))
             this.setState({players: data.players})
         })
+        console.log("PROPS: " + this.props.players)
+        console.log("STATE: " + this.state.players)
     }
 
     componentDidMount() {
-        AuthService.user(this.state.jwtToken).then((res) => {
-            this.setState({username: res.data.username})
-
-            //let player = name: res.data.username
-            this.state.players.push(res.data.username)
-            this.setState({})
-        })
+        // AuthService.user(this.state.jwtToken).then((res) => {
+        //     this.setState({username: res.data.username})
+        //
+        //     //let player = name: res.data.username
+        //     this.state.players.push(res.data.username)
+        //     this.setState({})
+        // })
     }
 
     incrementDie = () => {
@@ -101,7 +104,14 @@ class LobbyComponent extends React.Component {
     displayPlayers = () => {
         return (
             <div>
-                {this.state.players.map(player => (
+                {/*{this.state.players.map(player => (*/}
+                {/*    <div key={player}>*/}
+                {/*        <p>*/}
+                {/*            {player}*/}
+                {/*        </p>*/}
+                {/*    </div>*/}
+                {/*))}*/}
+                {this.props.players.map(player => (
                     <div key={player}>
                         <p>
                             {player}
@@ -193,7 +203,7 @@ class LobbyComponent extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return {lobbyId: state.lobbyId, socket: state.socket}
+    return {lobbyId: state.lobbyId, socket: state.socket, players: state.players}
 }
 
 export default connect(mapStateToProps)(withCookies(withRouter(LobbyComponent)))

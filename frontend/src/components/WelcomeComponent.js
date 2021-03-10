@@ -25,7 +25,7 @@ class WelcomeComponent extends React.Component {
             console.log('Received created_game from server: ' + JSON.stringify(data))
             this.props.dispatch({
                 type: 'CREATE_LOBBY',
-                payload: {lobbyId: data.lobbyId, socket: this.state.socket}
+                payload: {lobbyId: data.lobbyId, socket: this.state.socket, players: data.players}
             })
             this.props.history.push('/lobby');
         });

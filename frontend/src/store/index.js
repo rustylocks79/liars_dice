@@ -2,14 +2,16 @@ import {createStore} from 'redux'
 
 const initialState = {
     lobbyId: "123456",
-    socket: null
+    socket: null,
+    players: []
 }
 
 const reducer = (state = initialState, action) => {
     if (action.type === 'CREATE_LOBBY') {
         return Object.assign({}, state, {
             lobbyId: action.payload.lobbyId,
-            socket: action.payload.socket
+            socket: action.payload.socket,
+            players: action.payload.players
         })
     }
 
