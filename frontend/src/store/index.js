@@ -3,7 +3,9 @@ import {createStore} from 'redux'
 const initialState = {
     lobbyId: "123456",
     socket: null,
-    players: []
+    players: [],
+    bots: [],
+    numDice: 0
 }
 
 const reducer = (state = initialState, action) => {
@@ -11,13 +13,18 @@ const reducer = (state = initialState, action) => {
         return Object.assign({}, state, {
             lobbyId: action.payload.lobbyId,
             socket: action.payload.socket,
-            players: action.payload.players
+            players: action.payload.players,
+            bots: action.payload.bots,
+            numDice: action.payload.numDice
         })
     }
 
     if (action.type === 'JOIN_LOBBY_ID') {
         return Object.assign({}, state, {
             lobbyId: action.payload.lobbyId,
+            players: action.payload.players,
+            bots: action.payload.bots,
+            numDice: action.payload.numDice
         })
     }
 

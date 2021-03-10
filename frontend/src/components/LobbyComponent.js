@@ -17,11 +17,11 @@ class LobbyComponent extends React.Component {
         jwtToken: "",
         username: "",
         errorMessage: "",
-        numOfDice: 1,
+        numDice: 0,
         players: [], // player = {name: string}
         bots: [],
-        botNames: ["BOT_Aarron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
-            "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"],
+        botNames: [ "BOT_Aaron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
+                    "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"    ],
         usedNames: []
     }
 
@@ -29,12 +29,18 @@ class LobbyComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
-        this.state.players = this.props.players
+
+        //redux stuff
+        this.state.players = this.props.playersStore
+        this.state.numDice = this.props.numDiceStore
+        this.state.bots = this.props.botsStore
+
         this.props.socket.on('joined_game', data => {
             console.log('received event joined_game from server' + JSON.stringify(data))
             this.setState({players: data.players})
         })
-        console.log("PROPS: " + this.props.players)
+
+        console.log("PROPS: " + this.props.playersStore)
         console.log("STATE: " + this.state.players)
     }
 
@@ -49,15 +55,14 @@ class LobbyComponent extends React.Component {
     }
 
     incrementDie = () => {
-        if (this.state.numOfDice < 5) {
-            this.setState({numOfDice: this.state.numOfDice + 1});
+        if (this.state.numDice < 5) {
+            this.setState({numDice: this.state.numDice + 1});
         }
-
     }
 
     decreaseDie = () => {
-        if (this.state.numOfDice > 1) {
-            this.setState({numOfDice: this.state.numOfDice - 1});
+        if (this.state.numDice > 1) {
+            this.setState({numDice: this.state.numDice - 1});
         }
     }
 
@@ -111,7 +116,7 @@ class LobbyComponent extends React.Component {
                 {/*        </p>*/}
                 {/*    </div>*/}
                 {/*))}*/}
-                {this.props.players.map(player => (
+                {this.props.playersStore.map(player => (
                     <div key={player}>
                         <p>
                             {player}
@@ -178,7 +183,7 @@ class LobbyComponent extends React.Component {
                             <Button variant={"contained"} size="small" onClick={this.incrementDie}>
                                 +
                             </Button>
-                            <h3>{this.state.numOfDice}</h3>
+                            <h3>{this.state.numDice}</h3>
                             <Button variant={"contained"} size="small" onClick={this.decreaseDie}>
                                 -
                             </Button>
@@ -203,7 +208,8 @@ class LobbyComponent extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return {lobbyId: state.lobbyId, socket: state.socket, players: state.players}
+    return {lobbyId: state.lobbyId, socket: state.socket, playersStore: state.players,
+            botsStore: state.bots, numDiceStore: state.numDice}
 }
 
 export default connect(mapStateToProps)(withCookies(withRouter(LobbyComponent)))
