@@ -168,7 +168,7 @@ def create_game(json):
     print('Received create_game from {}: {}'.format(current_user.username, json))
     lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
-    rooms[lobby_id] = {'players': [current_user.username], 'bots': [], 'num_dice': 5}
+    rooms[lobby_id] = {'players': [current_user.username], 'bots': [], 'num_dice': 5, 'host': current_user.username}
     flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username]})
 
 
@@ -185,6 +185,7 @@ def join_game(json):
         room['players'].append(current_user.username)
         flask_socketio.emit('joined_game', {
             'lobbyId': lobby_id,
+            'host': room['host'],
             'players': room['players'],
             'bots': room['bots'],
             'numDice': room['num_dice']}, to=lobby_id)
@@ -196,9 +197,10 @@ def join_game(json):
 def update_game(json):
     lobby_id = json['lobbyId']
     jwt_token = json['jwtToken']
-    num_dice = json['num_dice']
     bots = json['bots']
+    num_dice = json['numDice']
     current_user = get_current_user_from_token(jwt_token)
+    # TODO: check host
     print('received update_game from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
     room['bots'] = bots
@@ -206,7 +208,7 @@ def update_game(json):
     flask_socketio.emit('updated_game', {
         'lobbyId': lobby_id,
         'bots': room['bots'],
-        'num_dice': room['num_dice']
+        'numDice': room['num_dice']
     }, to=lobby_id)
 
 

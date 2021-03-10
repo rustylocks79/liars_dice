@@ -3,7 +3,6 @@ import {withRouter} from "react-router-dom";
 import React from "react";
 import {Button, Container, Grid} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
-import AuthService from "../Services/AuthService";
 import {connect} from "react-redux";
 
 
@@ -36,8 +35,18 @@ class LobbyComponent extends React.Component {
         this.state.bots = this.props.botsStore
 
         this.props.socket.on('joined_game', data => {
-            console.log('received event joined_game from server' + JSON.stringify(data))
-            this.setState({players: data.players})
+            console.log('received event joined_game from server: ' + JSON.stringify(data))
+            this.setState({
+                players: data.players,
+                bots: data.bots,
+                numDice: data.numDice})
+        })
+        this.props.socket.on('updated_game', data => {
+            console.log('received event updated_game from server: ' + JSON.stringify(data))
+            this.setState({
+                bots: data.bots,
+                numDice: data.numDice
+            })
         })
 
         console.log("PROPS: " + this.props.playersStore)
@@ -54,16 +63,27 @@ class LobbyComponent extends React.Component {
         // })
     }
 
+    updateGame(numDice, bots) {
+        this.props.socket.emit('update_game', {
+            lobbyId: this.props.lobbyId,
+            jwtToken: this.state.jwtToken,
+            bots: bots,
+            numDice: numDice})
+    }
+
     incrementDie = () => {
-        if (this.state.numDice < 5) {
-            this.setState({numDice: this.state.numDice + 1});
-        }
+        this.updateGame(Math.min((this.state.numDice + 1), 5), this.state.bots)
+        // if (this.state.numDice < 5) {
+        //     this.setState({numDice: this.state.numDice + 1});
+        // }
+        // this.updateGame()
     }
 
     decreaseDie = () => {
-        if (this.state.numDice > 1) {
-            this.setState({numDice: this.state.numDice - 1});
-        }
+        // if (this.state.numDice > 1) {
+        //     this.setState({numDice: this.state.numDice - 1});
+        // }
+        this.updateGame(Math.max((this.state.numDice - 1), 1), this.state.bots)
     }
 
     addBot = () => {
@@ -72,21 +92,23 @@ class LobbyComponent extends React.Component {
             while (!nameSelected) {
                 let idx = Math.floor(Math.random() * this.state.botNames.length);
                 if (!this.state.usedNames.includes(this.state.botNames[idx])) {
+                    let bots = this.state.bots
                     let bot = {name: this.state.botNames[idx]}
-                    this.state.bots.push(bot)
+                    bots.push(bot)
                     this.state.usedNames.push(this.state.botNames[idx])
                     nameSelected = true;
-                    this.setState({})
+                    this.updateGame(this.state.numDice, bots)
                 }
             }
         }
     }
 
     removeBot = (name) => {
+        let bots = this.state.bots
         // remove bot
-        for (let i = 0; i < this.state.bots.length; i++) {
-            if (this.state.bots[i].name === name) {
-                this.state.bots.splice(i, 1)
+        for (let i = 0; i < bots.length; i++) {
+            if (bots[i].name === name) {
+                bots.splice(i, 1)
             }
         }
 
@@ -96,33 +118,34 @@ class LobbyComponent extends React.Component {
                 this.state.usedNames.splice(i, 1)
             }
         }
-
-        this.setState({})
+        this.updateGame(this.state.numDice, bots)
+        // this.setState({})
     }
 
     clearBots = () => {
         //let newPlayerList = this.state.players.filter(function (player) {return !player.bot})
-        this.setState({bots: []})
+        // this.setState({bots: []})
         this.setState({usedNames: []})
+        this.updateGame(this.state.numDice, [])
     }
 
     displayPlayers = () => {
         return (
             <div>
-                {/*{this.state.players.map(player => (*/}
-                {/*    <div key={player}>*/}
-                {/*        <p>*/}
-                {/*            {player}*/}
-                {/*        </p>*/}
-                {/*    </div>*/}
-                {/*))}*/}
-                {this.props.playersStore.map(player => (
+                {this.state.players.map(player => (
                     <div key={player}>
                         <p>
                             {player}
                         </p>
                     </div>
                 ))}
+                {/*{this.props.playersStore.map(player => (*/}
+                {/*    <div key={player}>*/}
+                {/*        <p>*/}
+                {/*            {player}*/}
+                {/*        </p>*/}
+                {/*    </div>*/}
+                {/*))}*/}
                 {this.state.bots.map(bot => (
                     <div key={bot.name}>
                         <p>
