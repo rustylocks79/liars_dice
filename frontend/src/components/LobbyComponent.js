@@ -28,6 +28,9 @@ class LobbyComponent extends React.Component {
         super(props);
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
+        this.props.socket.on('joined_game', data => {
+            console.log('received event joined_game from server' + JSON.stringify(data))
+        })
     }
 
     componentDidMount() {

@@ -6,11 +6,13 @@ import flask_praetorian
 import flask_praetorian.base
 import flask_socketio
 import flask_sqlalchemy
+from flask_praetorian import PraetorianError
+from flask_praetorian.constants import AccessType
 
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
 cors = flask_cors.CORS()
-socketio = flask_socketio.SocketIO(logger=True, engineio_logger=True, cors_allowed_origins='*')
+socketio = flask_socketio.SocketIO(cors_allowed_origins='*')
 rooms = {}
 
 
@@ -92,6 +94,20 @@ with app.app_context():
     db.session.commit()
 
 
+def get_current_user_from_token(jwt_token: str):
+    data = guard.extract_jwt_token(jwt_token, access_type=AccessType.access)
+    user_id = data.get('id')
+    PraetorianError.require_condition(
+        user_id is not None,
+        "Could not fetch an id from the registration token",
+    )
+    user = guard.user_class.identify(user_id)
+    PraetorianError.require_condition(
+        user is not None,
+        "Could not identify the user from the registration token",
+    )
+    return user
+
 @app.route("/login", methods=["POST"])
 def login():
     request = flask.request.get_json(force=True)
@@ -143,29 +159,30 @@ def user():
 @socketio.on('connect')
 def test_connect():
     print('A user connected')
-    flask_socketio.send('Connection Received')
 
 
 @socketio.on('create_game')
 def create_game(json):
-    print('received create_game: ' + str(json))
+    jwt_token = json['jwtToken']
+    current_user = get_current_user_from_token(jwt_token)
+    print('Received create_game from {}: {}'.format(current_user.username, json))
     lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
-    rooms[lobby_id] = {'players': 1}
-    flask_socketio.emit('created_game', {'lobbyId': lobby_id})
+    rooms[lobby_id] = {'players': [current_user.username]}
+    flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username]})
 
 
 @socketio.on('join_game')
 def join_game(json):
-    print('received join_game: ' + str(json))
     lobby_id = json['lobbyId']
     jwt_token = json['jwtToken']
+    current_user = get_current_user_from_token(jwt_token)
+    print('received join_game from {}: {}'.format(current_user.username, json))
     if lobby_id in rooms:
-        current_user = guard.get_user_from_registration_token(jwt_token)
         print(current_user)
         flask_socketio.join_room(lobby_id)
-        rooms[lobby_id]['players'] += 1
-        flask_socketio.emit('joined_game', {'lobbyId': lobby_id}, to=lobby_id)
+        rooms[lobby_id]['players'].append(current_user.username)
+        flask_socketio.emit('joined_game', {'lobbyId': lobby_id, 'players': rooms[lobby_id]['players']}, to=lobby_id)
     else:
         flask_socketio.emit('invalid_id')
 
@@ -175,6 +192,9 @@ def start_game(json):
     print('received start_game: ' + str(json))
     lobby_id = json['lobbyId']
     num_dice = json['numDice']
+    jwt_token = json['jwtToken']
+    current_user = get_current_user_from_token(jwt_token)
+    print('received start_game from {}: {}'.format(current_user.username, json))
     num_players = rooms[lobby_id]['players']
     print(num_players)
 

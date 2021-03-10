@@ -22,40 +22,20 @@ class WelcomeComponent extends React.Component {
         const {cookies} = props;
         this.state.jwtToken = cookies.get('JWT-TOKEN')
         this.state.socket.on("created_game", data => {
+            console.log('Received created_game from server: ' + JSON.stringify(data))
             this.props.dispatch({
                 type: 'CREATE_LOBBY',
                 payload: {lobbyId: data.lobbyId, socket: this.state.socket}
             })
             this.props.history.push('/lobby');
         });
-
-        this.handleChange = this.handleChange.bind(this)
-        this.handleSubmit = this.handleSubmit.bind(this)
     }
-
-    handleChange(event) {
-        this.setState({value: event.target.value})
-    }
-
-    handleSubmit(event) {
-        event.preventDefault()
-        this.props.dispatch({
-            type: 'ADD_STRING',
-            payload: {id: this.state.postId, title: this.state.value}
-        })
-
-        this.setState({postId: this.state.postId + 1})
-    }
-
 
     handleCreateGame = (event) => {
-        this.state.socket.emit('create_game', "Hi");
-        //  this.props.history.push('/lobby');
+        this.state.socket.emit('create_game', {'jwtToken': this.state.jwtToken});
     }
 
     handleJoinGame = (event) => {
-        // this.state.socket.emit('create_game', "Hi");
-        //  this.props.history.push('/lobby');
         this.props.dispatch({
             type: 'JOIN_LOBBY_SOCKET',
             payload: {socket: this.state.socket}
@@ -169,13 +149,6 @@ class WelcomeComponent extends React.Component {
                 {/*        <li key={post.id}>{post.title}</li>*/}
                 {/*    ))}*/}
                 {/*</ul>*/}
-
-                <div>
-                    <button type="submit" onClick={this.handleSubmit}>
-                        Submit
-                    </button>
-                </div>
-
             </div>
         );
     }
