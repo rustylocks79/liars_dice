@@ -18,8 +18,10 @@ class LobbyComponent extends React.Component {
         username: "",
         errorMessage: "",
         numOfDice: 1,
-        players: [], // player = {name: string, bot: bool}
-        botNames: ["Aarron", "Ace", "Bailee", "Buddy", "Chad", "Charles", "James", "Robert", "Patricia", "Barbara"],
+        players: [], // player = {name: string}
+        bots: [],
+        botNames: ["BOT_Aarron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
+            "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"],
         usedNames: []
     }
 
@@ -29,6 +31,7 @@ class LobbyComponent extends React.Component {
         this.state.jwtToken = cookies.get('JWT-TOKEN')
         this.props.socket.on('joined_game', data => {
             console.log('received event joined_game from server' + JSON.stringify(data))
+            this.setState({players: data.players})
         })
     }
 
@@ -36,8 +39,8 @@ class LobbyComponent extends React.Component {
         AuthService.user(this.state.jwtToken).then((res) => {
             this.setState({username: res.data.username})
 
-            let player = {name: res.data.username, bot: false}
-            this.state.players.push(player)
+            //let player = name: res.data.username
+            this.state.players.push(res.data.username)
             this.setState({})
         })
     }
@@ -56,13 +59,13 @@ class LobbyComponent extends React.Component {
     }
 
     addBot = () => {
-        if (this.state.players.length < 10) {
+        if ((this.state.players.length + this.state.bots.length) < 10) {
             let nameSelected = false
             while (!nameSelected) {
                 let idx = Math.floor(Math.random() * this.state.botNames.length);
                 if (!this.state.usedNames.includes(this.state.botNames[idx])) {
-                    let bot = {name: this.state.botNames[idx], bot: true}
-                    this.state.players.push(bot)
+                    let bot = {name: this.state.botNames[idx]}
+                    this.state.bots.push(bot)
                     this.state.usedNames.push(this.state.botNames[idx])
                     nameSelected = true;
                     this.setState({})
@@ -73,9 +76,9 @@ class LobbyComponent extends React.Component {
 
     removeBot = (name) => {
         // remove bot
-        for (let i = 0; i < this.state.players.length; i++) {
-            if (this.state.players[i].name === name && this.state.players[i].bot) {
-                this.state.players.splice(i, 1)
+        for (let i = 0; i < this.state.bots.length; i++) {
+            if (this.state.bots[i].name === name) {
+                this.state.bots.splice(i, 1)
             }
         }
 
@@ -90,9 +93,8 @@ class LobbyComponent extends React.Component {
     }
 
     clearBots = () => {
-        let newPlayerList = this.state.players.filter(function (player) {return !player.bot})
-        this.setState({players: newPlayerList})
-        this.setState({numOfPlayers: newPlayerList.length})
+        //let newPlayerList = this.state.players.filter(function (player) {return !player.bot})
+        this.setState({bots: []})
         this.setState({usedNames: []})
     }
 
@@ -100,10 +102,17 @@ class LobbyComponent extends React.Component {
         return (
             <div>
                 {this.state.players.map(player => (
-                    <div key={player.name}>
+                    <div key={player}>
                         <p>
-                            <button onClick={() => this.removeBot(player.name)}>x</button>
-                            {player.name}
+                            {player}
+                        </p>
+                    </div>
+                ))}
+                {this.state.bots.map(bot => (
+                    <div key={bot.name}>
+                        <p>
+                            <button onClick={() => this.removeBot(bot.name)}>x</button>
+                            {bot.name}
                         </p>
                     </div>
                 ))}
