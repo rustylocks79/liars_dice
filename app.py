@@ -168,7 +168,7 @@ def create_game(json):
     print('Received create_game from {}: {}'.format(current_user.username, json))
     lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
-    rooms[lobby_id] = {'players': [current_user.username], 'bots': [], 'num_dice': 0}
+    rooms[lobby_id] = {'players': [current_user.username], 'bots': [], 'num_dice': 5}
     flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username]})
 
 
