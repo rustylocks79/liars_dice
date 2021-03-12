@@ -7,10 +7,10 @@ import WelcomeComponent from "./components/WelcomeComponent"
 import ProfileComponent from "./components/ProfileComponent"
 import LobbyComponent from "./components/LobbyComponent"
 import JoinGameComponent from "./components/JoinGameComponent"
-import GameComponent from "./components/GameComponent"
 import {connect} from 'react-redux'
 
 import 'fontsource-roboto';
+import GameScreenComponent from "./components/GameScreenComponent";
 
 function App() {
     return (
@@ -28,7 +28,7 @@ function App() {
                         <Route path={"/welcome"} exact component={WelcomeComponent}/>
                         <Route path={"/lobby"} exact component={LobbyComponent}/>
                         <Route path={"/joingame"} exact component={JoinGameComponent}/>
-                        <Route path={"/game"} exact component={GameComponent}/>
+                        <Route path={"/game"} exact component={GameScreenComponent}/>
                     </Switch>
                 </BrowserRouter>
             </CookiesProvider>
