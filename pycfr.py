@@ -96,12 +96,10 @@ class Game:
                 'name': type(agents[p]),
                 'wins': 0,
                 'utility': 0,
-                'average_actions': 0
             })
         for i in range(iterations):
             while not self.is_terminal():
-                agent_stats[self.active_player()]['average_actions'] += 1
-                self.perform(agents[self.active_player()].get_action(self, self.active_player()), verbose)
+                self.perform(agents[self.active_player()].get_action(self), verbose)
 
             utils = [self.utility(p) for p in range(self.num_players())]
             winner = np.argmax(utils)
@@ -111,17 +109,15 @@ class Game:
             self.reset()
         for p in range(self.num_players()):
             agent_stats[p]["utility"] /= iterations
-            agent_stats[p]["average_actions"] /= iterations
             if isinstance(agents[p], StrategyAgent):
-                agent_stats[p]['unknown_states'] = agents[p].unknown_states / agents[p].encountered_states
+                agent_stats[p]['unknown_states'] = agents[p].unknown_states / agents[p].encountered_states if agents[p].encountered_states != 0 else 0
         return agent_stats
 
 
 class Agent:
-    def get_action(self, game, index: int):
+    def get_action(self, game):
         """
         :param game: the game and current state.
-        :param index:
         :return: an action (required to be one of the value in game.actions()) to be preformed by the agent while
             they are the active player.
         """
@@ -137,7 +133,7 @@ class StrategyAgent(Agent):
         self.unknown_states = 0
         self.encountered_states = 0
 
-    def pretest(self, game: Game, index: int):
+    def pretest(self, game: Game):
         """
         Checks if any action should be deterministically taken before applying cfr at the current state.
         :param index:
@@ -146,13 +142,13 @@ class StrategyAgent(Agent):
         """
         return None
 
-    def get_action(self, game, index: int):
+    def get_action(self, game):
         """
         :param game: the game and current state.
         :param index:
         :return: an action chosen random with the probability found in self.strategy.
         """
-        result = self.pretest(game, index)
+        result = self.pretest(game)
         if result is None:
             self.encountered_states += 1
             if game.info_set() in self.strategy:

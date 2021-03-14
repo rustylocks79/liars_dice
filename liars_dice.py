@@ -1,9 +1,12 @@
+import math
 import random as rand
 
-from pycfr import Game
+import numpy as np
+
+from pycfr import Game, StrategyAgent, Agent
 
 
-class LiarsDice (Game):
+class LiarsDice(Game):
     def __init__(self, num_players, num_dice, sampling=False):
         self.hands = []
         self.bid_history = []
@@ -49,7 +52,8 @@ class LiarsDice (Game):
         #     return 'start'
         # else:
         #     return ','.join(['{}x{}'.format(other_players_dice - (bid[1] - (hand[bid[2] - 1] + hand[0])), bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
-        return str(self.hands[self.active_player()]) + ', ' + ','.join(['{}x{}'.format(bid[1], bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
+        return str(self.hands[self.active_player()]) + ', ' + ','.join(
+            ['{}x{}'.format(bid[1], bid[2]) for bid in self.bid_history[-min(3, len(self.bid_history)):]])
 
     def actions(self) -> list:
         if len(self.bid_history) == 0:
@@ -58,7 +62,7 @@ class LiarsDice (Game):
         last_quantity = bid[1]
         last_face = bid[2]
         actions = []
-        actions.append(('doubt', ))
+        actions.append(('doubt',))
         for face in range(last_face + 1, 7):
             actions.append(("raise", last_quantity, face))
         for face in range(2, 7):
@@ -106,7 +110,9 @@ class LiarsDice (Game):
                 new_quantity = action[1]
                 new_face = action[2]
                 if not (new_quantity > last_quantity or (new_quantity == last_quantity and new_face > last_face)):
-                    raise RuntimeError("Invalid bid: last bid was {} {}, new bid was {} {}".format(last_quantity, last_face, new_quantity, new_face))
+                    raise RuntimeError(
+                        "Invalid bid: last bid was {} {}, new bid was {} {}".format(last_quantity, last_face,
+                                                                                    new_quantity, new_face))
                 elif not 2 <= new_face <= 6:
                     raise RuntimeError("Invalid bid: face value must be between 2 and 6")
                 self.bid_history.append(action)
@@ -157,3 +163,109 @@ class LiarsDice (Game):
 
     def num_players(self) -> int:
         return self.total_players
+
+
+class EasyAgent(StrategyAgent):
+    def pretest(self, game: LiarsDice):
+        player = game.active_player()
+        hand = game.hands[player]
+        num_unknown = sum([game.active_dice[p] for p in range(len(game.active_dice)) if p != player])
+        if not game.bid_history:
+            face = rand.randint(2, 6)
+            num_face_in_hand = hand[face - 1] + hand[0]
+            quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if quantity == 0:
+                quantity += 1
+            return "raise", quantity, face
+        else:
+            last_quantity = game.bid_history[-1][1]
+            last_face = game.bid_history[-1][2]
+            num_face_in_hand = hand[last_face - 1] + hand[0]
+            expected_value = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if last_quantity > expected_value:
+                return "doubt",
+            else:
+                quantity = last_quantity + 1
+                return "raise", quantity, last_face
+
+
+class MediumAgent(StrategyAgent):
+    def pretest(self, game: LiarsDice):
+        player = game.active_player()
+        hand = game.hands[player]
+        num_unknown = sum([game.active_dice[p] for p in range(len(game.active_dice)) if p != player])
+        if not game.bid_history:
+            face = rand.randint(2, 6)
+            num_face_in_hand = hand[face - 1] + hand[0]
+            quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if quantity == 0:
+                quantity += 1
+            return "raise", quantity, face
+        else:
+            last_quantity = game.bid_history[-1][1]
+            last_face = game.bid_history[-1][2]
+            num_face_in_hand = hand[last_face - 1] + hand[0]
+            expected_value = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if last_quantity > expected_value:
+                return "doubt",
+            else:
+                most_face = np.argmax(hand) + 1
+                if most_face == 1:
+                    return 'raise', last_quantity + 1, last_face
+                elif most_face > last_face:
+                    return 'raise', last_quantity, most_face
+                else:
+                    return "raise", last_quantity + 1, most_face
+
+
+class HardAgent(StrategyAgent):
+    def pretest(self, game: LiarsDice):
+        player = game.active_player()
+        hand = game.hands[player]
+        num_unknown = sum([game.active_dice[p] for p in range(len(game.active_dice)) if p != player])
+        if not game.bid_history:
+            face = np.argmax(hand[1:]) + 2
+            num_face_in_hand = hand[face - 1] + hand[0]
+            quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if quantity == 0:
+                quantity += 1
+            return "raise", quantity, face
+        else:
+            last_quantity = game.bid_history[-1][1]
+            last_face = game.bid_history[-1][2]
+            num_face_in_hand = hand[last_face - 1] + hand[0]
+            expected_value = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if last_quantity > expected_value:
+                return "doubt",
+            else:
+                most_face = np.argmax(hand) + 1
+                if most_face == 1:
+                    return 'raise', last_quantity + 1, last_face
+                elif most_face > last_face:
+                    return 'raise', last_quantity, most_face
+                else:
+                    return "raise", last_quantity + 1, most_face
+
+
+class HeuristicAgent(Agent):
+    def get_action(self, game):
+        player = game.active_player()
+        hand = game.hands[player]
+        num_unknown = sum([game.active_dice[p] for p in range(len(game.active_dice)) if p != player])
+        if not game.bid_history:
+            face = rand.randint(2, 6)
+            num_face_in_hand = hand[face - 1] + hand[0]
+            quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if quantity == 0:
+                quantity += 1
+            return "raise", quantity, face
+        else:
+            last_quantity = game.bid_history[-1][1]
+            last_face = game.bid_history[-1][2]
+            num_face_in_hand = hand[last_face - 1] + hand[0]
+            expected_value = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
+            if last_quantity > expected_value:
+                return "doubt",
+            else:
+                quantity = last_quantity + 1
+                return "raise", quantity, last_face
