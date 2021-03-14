@@ -2,11 +2,10 @@ import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
 
-
 class GameComponent extends React.Component {
     render() {
         return (
-            <div>
+            <div style={{height: '700px'}}>
                 <p>Game Component</p>
             </div>
         );
