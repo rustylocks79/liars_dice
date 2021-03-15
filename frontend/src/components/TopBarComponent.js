@@ -44,7 +44,7 @@ class TopBarComponent extends React.Component {
     logout = (event) => {
         const {cookies} = this.props;
         cookies.remove('JWT-TOKEN');
-        this.props.history.push('/login')
+        this.props.history.push('/')
     }
 
     render() {
