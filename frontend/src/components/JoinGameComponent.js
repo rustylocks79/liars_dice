@@ -23,7 +23,13 @@ class JoinGameComponent extends React.Component {
             console.log('Received joined_game from server: ' + JSON.stringify(data))
             this.props.dispatch({
                 type: 'JOIN_LOBBY_ID',
-                payload: {lobbyId: data.lobbyId, players: data.players, bots: data.bots, numDice: data.numDice}
+                payload: {
+                    lobbyId: data.lobbyId,
+                    players: data.players,
+                    bots: data.bots,
+                    numDice: data.numDice,
+                    host: data.host
+                }
             })
             this.props.history.push('/lobby');
         });

@@ -18,11 +18,11 @@ class LobbyComponent extends React.Component {
         username: "",
         errorMessage: "",
         numDice: 0,
-        host: '', //TODO: store host as to determine weather to render the modification tools
+        host: '',
         players: [], // player = {name: string}
         bots: [],
-        botNames: [ "BOT_Aaron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
-                    "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"],
+        botNames: ["BOT_Aaron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
+            "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"],
         usedNames: []
     }
 
@@ -35,13 +35,17 @@ class LobbyComponent extends React.Component {
         this.state.players = this.props.playersStore
         this.state.numDice = this.props.numDiceStore
         this.state.bots = this.props.botsStore
+        this.state.host = this.props.hostStore
+
+        console.log(this.state.host)
 
         this.props.socket.on('joined_game', data => {
             console.log('received event joined_game from server: ' + JSON.stringify(data))
             this.setState({
                 players: data.players,
                 bots: data.bots,
-                numDice: data.numDice})
+                numDice: data.numDice
+            })
         })
         this.props.socket.on('updated_game', data => {
             console.log('received event updated_game from server: ' + JSON.stringify(data))
@@ -56,7 +60,7 @@ class LobbyComponent extends React.Component {
                 players: data.players
             })
             console.log(this.state.username)
-            if(data.lostPlayer === this.state.username) {
+            if (data.lostPlayer === this.state.username) {
                 this.props.history.push('/welcome')
             }
         })
@@ -91,7 +95,8 @@ class LobbyComponent extends React.Component {
             lobbyId: this.props.lobbyId,
             jwtToken: this.state.jwtToken,
             bots: bots,
-            numDice: numDice})
+            numDice: numDice
+        })
     }
 
     incrementDie = () => {
@@ -145,20 +150,25 @@ class LobbyComponent extends React.Component {
     }
 
     displayPlayers() {
-        //TODO: display host in different color
         return (
             <div>
                 {this.state.players.map(player => (
                     <div key={player}>
-                        <p>
-                            {player}
-                        </p>
+                        {player === this.state.host &&
+                        <p style={{color: "maroon", fontWeight: "bold"}}>{player} (host)</p>
+                        }
+
+                        {player !== this.state.host &&
+                        <p style={{color: "black"}}>{player}</p>
+                        }
                     </div>
                 ))}
                 {this.state.bots.map(bot => (
                     <div key={bot.name}>
                         <p>
-                            <button onClick={() => this.removeBot(bot.name)}>x</button>
+                            {this.state.username === this.state.host &&
+                                <button onClick={() => this.removeBot(bot.name)}>x</button>
+                            }
                             {bot.name}
                         </p>
                     </div>
@@ -185,6 +195,8 @@ class LobbyComponent extends React.Component {
                         >
                             <h4>Players</h4>
                             {this.displayPlayers()}
+
+                            {this.state.username === this.state.host &&
                             <div>
                                 <br/>
                                 <Button onClick={this.clearBots} variant="contained" color="default" size="small">
@@ -194,6 +206,8 @@ class LobbyComponent extends React.Component {
                                     Add Bot
                                 </Button>
                             </div>
+                            }
+
                         </Grid>
                         <Grid item xs={2} container
                               spacing={0}
@@ -204,13 +218,19 @@ class LobbyComponent extends React.Component {
                         >
                             <h4>Number of Dice</h4>
 
+                            {this.state.username === this.state.host &&
                             <Button variant={"contained"} size="small" onClick={this.incrementDie}>
                                 +
                             </Button>
+                            }
+
                             <h3>{this.state.numDice}</h3>
+
+                            {this.state.username === this.state.host &&
                             <Button variant={"contained"} size="small" onClick={this.decreaseDie}>
                                 -
                             </Button>
+                            }
                         </Grid>
                     </Grid>
 
@@ -222,9 +242,11 @@ class LobbyComponent extends React.Component {
                     <Button variant="contained" color="default" onClick={this.onLeaveGame}>
                         Leave Lobby
                     </Button>
+                    {this.state.username === this.state.host &&
                     <Button variant="contained" color="primary" onClick={this.onStartGame}>
                         Start Game
                     </Button>
+                    }
                 </div>
             </div>
         );
@@ -232,8 +254,10 @@ class LobbyComponent extends React.Component {
 }
 
 const mapStateToProps = state => {
-    return {lobbyId: state.lobbyId, socket: state.socket, playersStore: state.players,
-            botsStore: state.bots, numDiceStore: state.numDice}
+    return {
+        lobbyId: state.lobbyId, socket: state.socket, playersStore: state.players,
+        botsStore: state.bots, numDiceStore: state.numDice, hostStore: state.host
+    }
 }
 
 export default connect(mapStateToProps)(withCookies(withRouter(LobbyComponent)))

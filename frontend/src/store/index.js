@@ -5,7 +5,8 @@ const initialState = {
     socket: null,
     players: [],
     bots: [],
-    numDice: 0
+    numDice: 0,
+    host: ""
 }
 
 const reducer = (state = initialState, action) => {
@@ -15,7 +16,8 @@ const reducer = (state = initialState, action) => {
             socket: action.payload.socket,
             players: action.payload.players,
             bots: action.payload.bots,
-            numDice: action.payload.numDice
+            numDice: action.payload.numDice,
+            host: action.payload.host
         })
     }
 
@@ -24,7 +26,8 @@ const reducer = (state = initialState, action) => {
             lobbyId: action.payload.lobbyId,
             players: action.payload.players,
             bots: action.payload.bots,
-            numDice: action.payload.numDice
+            numDice: action.payload.numDice,
+            host: action.payload.host
         })
     }
 
