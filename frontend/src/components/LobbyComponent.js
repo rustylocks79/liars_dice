@@ -178,7 +178,6 @@ class LobbyComponent extends React.Component {
     }
 
     render() {
-        //TODO: only render modification tools if host.
         return (
             <div>
                 <TopBarComponent/>
