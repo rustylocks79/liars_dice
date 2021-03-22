@@ -29,9 +29,10 @@ class SignupComponent extends React.Component {
                 this.props.history.push('/')
             }).catch(res => {
                 if (res.response) {
-                    console.log(res.response)
-                    if (res.response.status === 401) {
-                        this.setState({errorMessage: 'Invalid Username or Password'});
+                    //console.log(res.response)
+                    if (res.response.status === 400) {
+                        //this.setState({errorMessage: 'Invalid Username or Password'});
+                        this.setState({errorMessage: res.response.data.error})
                     } else {
                         this.setState({errorMessage: "unknown error"})
                     }

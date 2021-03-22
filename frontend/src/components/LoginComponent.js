@@ -27,7 +27,7 @@ class LoginComponent extends React.Component {
             })
         }).catch(res => {
             if (res.response) {
-                console.log(res.response)
+                //console.log(res.response)
                 if (res.response.status === 401) {
                     this.setState({errorMessage: 'Invalid Username or Password'});
                 } else {
