@@ -126,7 +126,7 @@ class LobbyComponent extends React.Component {
         }
     }
 
-    removeBot(name) {
+    removeBot = (name) => {
         let bots = this.state.bots
         // remove bot
         for (let i = 0; i < bots.length; i++) {
@@ -144,12 +144,12 @@ class LobbyComponent extends React.Component {
         this.updateGame(this.state.numDice, bots)
     }
 
-    clearBots() {
+    clearBots = () => {
         this.setState({usedNames: []})
         this.updateGame(this.state.numDice, [])
     }
 
-    displayPlayers() {
+    displayPlayers = () => {
         return (
             <div>
                 {this.state.players.map(player => (
