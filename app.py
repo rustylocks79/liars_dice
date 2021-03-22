@@ -123,13 +123,25 @@ def login():
 def signup():
     request = flask.request.get_json(force=True)
     username = request.get("username", None)
-    if username is None or len(username) < 4 or ' ' in username:
+    if username is None:
         return flask.jsonify({'error': 'invalid username. '}), 400
+    elif len(username) < 4:
+        return flask.jsonify({'error': 'Username must be more than 4 characters. '}), 400
+    elif len(username) > 32:
+        return flask.jsonify({'error': 'Username cannot contain more than 32 characters. '}), 400
+    elif ' ' in username:
+        return flask.jsonify({'error': 'Username cannot contain spaces. '}), 400
     if db.session.query(User).filter(User.username == username).first() is not None:
-        return flask.jsonify({'error': 'user already exists with username: {}. '.format(username)}), 400
+        return flask.jsonify({'error': 'User already exists with username: {}. '.format(username)}), 400
     password = request.get("password", None)
-    if password is None or len(password) < 4 or ' ' in password:
+    if password is None:
         return flask.jsonify({'error': 'invalid password. '}), 400
+    elif len(password) < 4:
+        return flask.jsonify({'error': 'Password must be more than 4 characters. '}), 400
+    elif len(password) > 32:
+        return flask.jsonify({'error': 'Password cannot contain more than 32 characters. '}), 400
+    elif ' ' in password:
+        return flask.jsonify({'error': 'Password cannot contain spaces. '}), 400
     db.session.add(
         User(
             username=username,
@@ -158,8 +170,13 @@ def user():
 
 
 @socketio.on('connect')
-def test_connect():
+def connect():
     print('A user connected')
+
+
+@socketio.on('disconnect')
+def disconnect():
+    print('A user disconnected')
 
 
 @socketio.on('create_game')
@@ -170,7 +187,7 @@ def create_game(json):
     lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
     rooms[lobby_id] = {'players': [current_user.username], 'bots': [], 'num_dice': 5, 'host': current_user.username}
-    flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username]})
+    flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username], 'host': current_user.username})
 
 
 @socketio.on('join_game')
@@ -185,7 +202,8 @@ def join_game(json):
         room = rooms[lobby_id]
         if len(room['players']) >= 10:
             flask_socketio.emit('error', {'reason', 'The lobby is full. '})
-            pass  # TODO: break because more player. Also delete bots.
+        if len(room['players']) + len(room['bots']) >= 10:
+            room['bots'].pop()
         room['players'].append(current_user.username)
         flask_socketio.emit('joined_game', {
             'lobbyId': lobby_id,

@@ -31,6 +31,12 @@ class WelcomeComponent extends React.Component {
         });
     }
 
+    componentDidMount() {
+        AuthService.user(this.state.jwtToken).then((res) => {
+            this.setState({username: res.data.username})
+        })
+    }
+
     onCreateGame = (event) => {
         this.state.socket.emit('create_game', {'jwtToken': this.state.jwtToken});
     }
@@ -41,12 +47,6 @@ class WelcomeComponent extends React.Component {
             payload: {socket: this.state.socket}
         })
         this.props.history.push('/joingame')
-    }
-
-    componentDidMount() {
-        AuthService.user(this.state.jwtToken).then((res) => {
-            this.setState({username: res.data.username})
-        })
     }
 
     render() {

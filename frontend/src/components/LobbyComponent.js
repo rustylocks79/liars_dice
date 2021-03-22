@@ -22,7 +22,7 @@ class LobbyComponent extends React.Component {
         players: [], // player = {name: string}
         bots: [],
         botNames: [ "BOT_Aaron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
-                    "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"    ],
+                    "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"],
         usedNames: []
     }
 
@@ -62,6 +62,7 @@ class LobbyComponent extends React.Component {
         })
         this.props.socket.on('started_game', data => {
             console.log('received event started_game from server: ' + JSON.stringify(data))
+            this.props.history.push('/game')
         })
     }
 
@@ -85,7 +86,7 @@ class LobbyComponent extends React.Component {
         })
     }
 
-    updateGame(numDice, bots) {
+    updateGame = (numDice, bots) => {
         this.props.socket.emit('update_game', {
             lobbyId: this.props.lobbyId,
             jwtToken: this.state.jwtToken,
@@ -93,15 +94,17 @@ class LobbyComponent extends React.Component {
             numDice: numDice})
     }
 
-    incrementDie() {
+    incrementDie = () => {
         this.updateGame(Math.min((this.state.numDice + 1), 5), this.state.bots)
     }
 
-    decreaseDie() {
+    decreaseDie = () => {
         this.updateGame(Math.max((this.state.numDice - 1), 1), this.state.bots)
     }
 
-    addBot() {
+    addBot = () => {
+        console.log(this.state.players)
+        console.log(this.state.bots)
         if ((this.state.players.length + this.state.bots.length) < 10) {
             let nameSelected = false
             while (!nameSelected) {
