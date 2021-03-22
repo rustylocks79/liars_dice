@@ -29,7 +29,7 @@ class JoinGameComponent extends React.Component {
         });
         this.props.socket.on('error', data => {
             console.log('Received error from server: ' + JSON.stringify(data))
-            //TODO: Ben please make it display data.reason
+            this.setState({errorMessage: data.reason})
         })
     }
 
@@ -54,6 +54,8 @@ class JoinGameComponent extends React.Component {
         return (
             <div>
                 <TopBarComponent/>
+
+                {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
 
                 <h3 align={"center"} style={{color: 'red'}}>Join a game!</h3>
                 <div align={"center"}>
