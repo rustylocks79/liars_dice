@@ -108,6 +108,7 @@ def get_current_user_from_token(jwt_token: str):
     )
     return user
 
+
 @app.route("/login", methods=["POST"])
 def login():
     request = flask.request.get_json(force=True)
@@ -122,12 +123,12 @@ def login():
 def signup():
     request = flask.request.get_json(force=True)
     username = request.get("username", None)
-    if username is None or len(username) < 4:
+    if username is None or len(username) < 4 or ' ' in username:
         return flask.jsonify({'error': 'invalid username. '}), 400
     if db.session.query(User).filter(User.username == username).first() is not None:
         return flask.jsonify({'error': 'user already exists with username: {}. '.format(username)}), 400
     password = request.get("password", None)
-    if password is None or len(password) < 4:
+    if password is None or len(password) < 4 or ' ' in password:
         return flask.jsonify({'error': 'invalid password. '}), 400
     db.session.add(
         User(
@@ -182,6 +183,9 @@ def join_game(json):
         print(current_user)
         flask_socketio.join_room(lobby_id)
         room = rooms[lobby_id]
+        if len(room['players']) >= 10:
+            flask_socketio.emit('error', {'reason', 'The lobby is full. '})
+            pass  # TODO: break because more player. Also delete bots.
         room['players'].append(current_user.username)
         flask_socketio.emit('joined_game', {
             'lobbyId': lobby_id,
@@ -190,7 +194,7 @@ def join_game(json):
             'bots': room['bots'],
             'numDice': room['num_dice']}, to=lobby_id)
     else:
-        flask_socketio.emit('invalid_id')
+        flask_socketio.emit('error', {'reason': lobby_id + ' is not a valid lobby id. '})
 
 
 @socketio.on('update_game')
@@ -212,9 +216,24 @@ def update_game(json):
     }, to=lobby_id)
 
 
+@socketio.on('leave_game')
+def leave_game(json):
+    lobby_id = json['lobbyId']
+    jwt_token = json['jwtToken']
+    current_user = get_current_user_from_token(jwt_token)
+    print('received leave_game from {}: {}'.format(current_user.username, json))
+    room = rooms[lobby_id]
+    room['players'].remove(current_user.username)
+    #TODO: handle hosting
+    flask_socketio.emit('left_game', {
+        'lobbyId': lobby_id,
+        'players': room['players'],
+        'lostPlayer': current_user.username
+    }, to=lobby_id)
+
+
 @socketio.on('start_game')
 def start_game(json):
-    print('received start_game: ' + str(json))
     lobby_id = json['lobbyId']
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)

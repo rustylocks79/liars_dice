@@ -27,6 +27,10 @@ class JoinGameComponent extends React.Component {
             })
             this.props.history.push('/lobby');
         });
+        this.props.socket.on('error', data => {
+            console.log('Received error from server: ' + JSON.stringify(data))
+            //TODO: Ben please make it display data.reason
+        })
     }
 
     componentDidMount() {
@@ -35,7 +39,7 @@ class JoinGameComponent extends React.Component {
         })
     }
 
-    handleInput = event => {
+    handleInput = (event) => {
         this.setState({targetLobby: event.target.value});
     };
 
@@ -45,7 +49,6 @@ class JoinGameComponent extends React.Component {
             jwtToken: this.state.jwtToken
         });
     }
-
 
     render() {
         return (

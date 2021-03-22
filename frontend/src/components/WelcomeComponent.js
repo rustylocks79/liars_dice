@@ -31,11 +31,11 @@ class WelcomeComponent extends React.Component {
         });
     }
 
-    handleCreateGame = (event) => {
+    onCreateGame = (event) => {
         this.state.socket.emit('create_game', {'jwtToken': this.state.jwtToken});
     }
 
-    handleJoinGame = (event) => {
+    onJoinGame = (event) => {
         this.props.dispatch({
             type: 'JOIN_LOBBY_SOCKET',
             payload: {socket: this.state.socket}
@@ -93,11 +93,11 @@ class WelcomeComponent extends React.Component {
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
-                            <Button onClick={this.handleCreateGame} variant="contained" color="primary">
+                            <Button onClick={this.onCreateGame} variant="contained" color="primary">
                                 Create Game
                             </Button>
                             <br/><br/>
-                            <Button onClick={this.handleJoinGame} variant="contained" color="secondary">
+                            <Button onClick={this.onJoinGame} variant="contained" color="secondary">
                                 Join Game
                             </Button>
                             <br/><br/>

@@ -4,6 +4,7 @@ import React from "react";
 import {Button, Container, Grid} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
 import {connect} from "react-redux";
+import AuthService from "../Services/AuthService";
 
 
 //Reference for layout: https://stackoverflow.com/questions/50766693/how-to-center-a-component-in-material-ui-and-make-it-responsive
@@ -17,6 +18,7 @@ class LobbyComponent extends React.Component {
         username: "",
         errorMessage: "",
         numDice: 0,
+        host: '', //TODO: store host as to determine weather to render the modification tools
         players: [], // player = {name: string}
         bots: [],
         botNames: [ "BOT_Aaron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
@@ -48,19 +50,39 @@ class LobbyComponent extends React.Component {
                 numDice: data.numDice
             })
         })
-
-        console.log("PROPS: " + this.props.playersStore)
-        console.log("STATE: " + this.state.players)
+        this.props.socket.on('left_game', data => {
+            console.log('received event left_game from server: ' + JSON.stringify(data))
+            this.setState({
+                players: data.players
+            })
+            console.log(this.state.username)
+            if(data.lostPlayer === this.state.username) {
+                this.props.history.push('/welcome')
+            }
+        })
+        this.props.socket.on('started_game', data => {
+            console.log('received event started_game from server: ' + JSON.stringify(data))
+        })
     }
 
     componentDidMount() {
-        // AuthService.user(this.state.jwtToken).then((res) => {
-        //     this.setState({username: res.data.username})
-        //
-        //     //let player = name: res.data.username
-        //     this.state.players.push(res.data.username)
-        //     this.setState({})
-        // })
+        AuthService.user(this.state.jwtToken).then((res) => {
+            this.setState({username: res.data.username})
+        })
+    }
+
+    onStartGame = (event) => {
+        this.props.socket.emit('start_game', {
+            lobbyId: this.props.lobbyId,
+            jwtToken: this.state.jwtToken
+        });
+    }
+
+    onLeaveGame = (event) => {
+        this.props.socket.emit('leave_game', {
+            lobbyId: this.props.lobbyId,
+            jwtToken: this.state.jwtToken
+        })
     }
 
     updateGame(numDice, bots) {
@@ -71,22 +93,15 @@ class LobbyComponent extends React.Component {
             numDice: numDice})
     }
 
-    incrementDie = () => {
+    incrementDie() {
         this.updateGame(Math.min((this.state.numDice + 1), 5), this.state.bots)
-        // if (this.state.numDice < 5) {
-        //     this.setState({numDice: this.state.numDice + 1});
-        // }
-        // this.updateGame()
     }
 
-    decreaseDie = () => {
-        // if (this.state.numDice > 1) {
-        //     this.setState({numDice: this.state.numDice - 1});
-        // }
+    decreaseDie() {
         this.updateGame(Math.max((this.state.numDice - 1), 1), this.state.bots)
     }
 
-    addBot = () => {
+    addBot() {
         if ((this.state.players.length + this.state.bots.length) < 10) {
             let nameSelected = false
             while (!nameSelected) {
@@ -103,7 +118,7 @@ class LobbyComponent extends React.Component {
         }
     }
 
-    removeBot = (name) => {
+    removeBot(name) {
         let bots = this.state.bots
         // remove bot
         for (let i = 0; i < bots.length; i++) {
@@ -119,17 +134,15 @@ class LobbyComponent extends React.Component {
             }
         }
         this.updateGame(this.state.numDice, bots)
-        // this.setState({})
     }
 
-    clearBots = () => {
-        //let newPlayerList = this.state.players.filter(function (player) {return !player.bot})
-        // this.setState({bots: []})
+    clearBots() {
         this.setState({usedNames: []})
         this.updateGame(this.state.numDice, [])
     }
 
-    displayPlayers = () => {
+    displayPlayers() {
+        //TODO: display host in different color
         return (
             <div>
                 {this.state.players.map(player => (
@@ -139,13 +152,6 @@ class LobbyComponent extends React.Component {
                         </p>
                     </div>
                 ))}
-                {/*{this.props.playersStore.map(player => (*/}
-                {/*    <div key={player}>*/}
-                {/*        <p>*/}
-                {/*            {player}*/}
-                {/*        </p>*/}
-                {/*    </div>*/}
-                {/*))}*/}
                 {this.state.bots.map(bot => (
                     <div key={bot.name}>
                         <p>
@@ -158,17 +164,9 @@ class LobbyComponent extends React.Component {
         )
     }
 
-    onCreateGame = (event) => {
-        this.props.socket.emit('start_game', {
-            lobbyId: this.props.lobbyId,
-            numDice: 0
-        });
-    }
-
-
     render() {
+        //TODO: only render modification tools if host.
         return (
-
             <div>
                 <TopBarComponent/>
                 <h3 align={"center"} style={{color: 'blue'}}>Lobby #{this.props.lobbyId}</h3>
@@ -218,10 +216,10 @@ class LobbyComponent extends React.Component {
                 <br/>
 
                 <div align={"center"}>
-                    <Button variant="contained" color="default" href="/welcome">
+                    <Button variant="contained" color="default" onClick={this.onLeaveGame}>
                         Leave Lobby
                     </Button>
-                    <Button variant="contained" color="primary" onClick={this.onCreateGame}>
+                    <Button variant="contained" color="primary" onClick={this.onStartGame}>
                         Start Game
                     </Button>
                 </div>
