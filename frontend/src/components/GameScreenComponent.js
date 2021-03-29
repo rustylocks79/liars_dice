@@ -51,9 +51,12 @@ const styles = theme => ({
 
 
 class GameScreenComponent extends React.Component {
+    state = {
+        errorMessage: ""
+    }
+
     constructor(props, context) {
         super(props, context);
-        //TODO: get a socket here.
     }
 
     render() {
@@ -121,6 +124,16 @@ class GameScreenComponent extends React.Component {
     }
 }
 
+const mapDispatchToProps = dispatch => {
+    return {dispatch}
+}
 
+const mapStateToProps = state => {
+    return {
+        socket: state.socket,
+    }
+}
 
-export default withStyles(styles, {withTheme: true})(withCookies(withRouter(GameScreenComponent)))
+export default  connect(mapDispatchToProps, mapStateToProps)
+                (withStyles(styles, {withTheme: true}))
+                (withCookies(withRouter(GameScreenComponent)))

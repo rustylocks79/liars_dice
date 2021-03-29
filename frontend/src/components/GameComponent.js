@@ -35,10 +35,14 @@ class GameComponent extends React.Component {
     }
 }
 
+const mapDispatchToProps = dispatch => {
+    return {dispatch}
+}
+
 const mapStateToProps = state => {
     return {
         socket: state.socket,
     }
 }
 
-export default connect(mapStateToProps)(withCookies(withRouter(GameComponent)))
+export default connect(mapDispatchToProps, mapStateToProps)(withCookies(withRouter(GameComponent)))
