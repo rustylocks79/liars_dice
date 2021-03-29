@@ -1,8 +1,31 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
+import {connect} from "react-redux";
 
 class GameComponent extends React.Component {
+    state = {
+        errorMessage: "",
+
+        username: "",
+
+        //TODO: players and bots lists, or combine into one?
+        players: [],
+
+        currentPlayer: "",
+        diceCounts: [],
+        hand: [],
+
+        //TODO: how are we storing bid?
+        // [count, quantity]? two separate variables? custom class/struct?
+        currentBid: "",
+        bidOwner: ""
+    }
+
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         return (
             <div style={{height: '500px'}}>
@@ -12,4 +35,10 @@ class GameComponent extends React.Component {
     }
 }
 
-export default withCookies(withRouter(GameComponent))
+const mapStateToProps = state => {
+    return {
+        socket: state.socket,
+    }
+}
+
+export default connect(mapStateToProps)(withCookies(withRouter(GameComponent)))
