@@ -135,5 +135,5 @@ const mapStateToProps = state => {
 }
 
 export default  connect(mapDispatchToProps, mapStateToProps)
-                (withStyles(styles, {withTheme: true}))
+                withStyles(styles, {withTheme: true})
                 (withCookies(withRouter(GameScreenComponent)))
