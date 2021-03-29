@@ -48,6 +48,11 @@ const styles = theme => ({
 
 
 class GameScreenComponent extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        //TODO: get a socket here.
+    }
+
     render() {
         const {classes} = this.props;
 

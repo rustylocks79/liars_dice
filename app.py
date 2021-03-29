@@ -9,6 +9,8 @@ import flask_sqlalchemy
 from flask_praetorian import PraetorianError
 from flask_praetorian.constants import AccessType
 
+from liars_dice import LiarsDice
+
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
 cors = flask_cors.CORS()
@@ -181,12 +183,13 @@ def disconnect():
 
 @socketio.on('create_game')
 def create_game(json):
+    print()
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
     print('Received create_game from {}: {}'.format(current_user.username, json))
     lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
-    rooms[lobby_id] = {'players': [current_user.username], 'bots': [], 'num_dice': 5, 'host': current_user.username}
+    rooms[lobby_id] = {'players': [(current_user.username, flask.request.sid)], 'bots': [], 'num_dice': 5, 'host': current_user.username, 'game': None}
     flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username], 'host': current_user.username})
 
 
@@ -204,13 +207,13 @@ def join_game(json):
             flask_socketio.emit('error', {'reason', 'The lobby is full. '})
         if len(room['players']) + len(room['bots']) >= 10:
             room['bots'].pop()
-        room['players'].append(current_user.username)
+        room['players'].append((current_user.username, flask.request.sid))
         flask_socketio.emit('joined_game', {
             'lobbyId': lobby_id,
             'host': room['host'],
-            'players': room['players'],
+            'players': [username for username, _ in room['players']],
             'bots': room['bots'],
-            'numDice': room['num_dice']}, to=lobby_id)
+            'numDice': room['num_dice']}, room=lobby_id)
     else:
         flask_socketio.emit('error', {'reason': lobby_id + ' is not a valid lobby id. '})
 
@@ -231,7 +234,7 @@ def update_game(json):
         'lobbyId': lobby_id,
         'bots': room['bots'],
         'numDice': room['num_dice']
-    }, to=lobby_id)
+    }, room=lobby_id)
 
 
 @socketio.on('leave_game')
@@ -241,13 +244,13 @@ def leave_game(json):
     current_user = get_current_user_from_token(jwt_token)
     print('received leave_game from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
-    room['players'].remove(current_user.username)
+    room['players'].remove((current_user.username, flask.request.sid))
     #TODO: handle hosting
     flask_socketio.emit('left_game', {
         'lobbyId': lobby_id,
-        'players': room['players'],
+        'players': [username for username, _ in room['players']],
         'lostPlayer': current_user.username
-    }, to=lobby_id)
+    }, room=lobby_id)
 
 
 @socketio.on('start_game')
@@ -256,8 +259,46 @@ def start_game(json):
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
     print('received start_game from {}: {}'.format(current_user.username, json))
-    num_players = rooms[lobby_id]['players']
-    print(num_players)
+    room = rooms[lobby_id]
+    num_dice = room['num_dice']
+    num_players = len(room['players']) + len(room['bots'])
+    room['game'] = LiarsDice(num_players, num_dice)
+    for idx, username, sid in enumerate(room['players']):
+        flask_socketio.emit('started_game', {
+            'index': idx,
+            'hand': room['game'].hands[idx],
+            'currentPlayer': room['game'].active_player(),
+            'activeDice': room['game'].active_dice
+        }, to=sid)
+
+
+def perform(json):
+    lobby_id = json['lobbyId']
+    jwt_token = json['jwtToken']
+    current_user = get_current_user_from_token(jwt_token)
+    print('received start_game from {}: {}'.format(current_user.username, json))
+    room = rooms[lobby_id]
+    # TODO: check active player
+    operation = json['operation']
+    if operation == 'bid':
+        quantity = json['quantity']
+        face = json['face']
+        room['game'].perform(('bid', quantity, face))
+    elif operation == 'doubt':
+        room['game'].perform(('doubt',))
+    else:
+        pass  # TODO: error
+    
+    # TODO: how are we going to solve bots turns.
+
+    for idx, username, sid in enumerate(room['players']):
+        flask_socketio.emit('performed', {
+            'index': idx,
+            'hand': room['game'].hands[idx],
+            'currentPlayer': room['game'].active_player(),
+            'activeDice': room['game'].active_dice,
+            'bidHistory': room['game'].bid_history
+        }, to=sid)
 
 
 if __name__ == "__main__":

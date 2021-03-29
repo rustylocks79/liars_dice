@@ -66,6 +66,10 @@ class LobbyComponent extends React.Component {
         })
         this.props.socket.on('started_game', data => {
             console.log('received event started_game from server: ' + JSON.stringify(data))
+            console.log(data.index)
+            console.log(data.activeDice)
+            console.log(data.currentPlayer)
+            console.log(data.activeDice)
             this.props.history.push('/game')
         })
     }
