@@ -7,6 +7,8 @@ import {withStyles} from "@material-ui/core/styles";
 import GameComponent from "./GameComponent";
 import {connect} from "react-redux";
 
+import compose from 'recompose/compose'
+
 
 const styles = theme => ({
     root: {
@@ -134,6 +136,7 @@ const mapStateToProps = state => {
     }
 }
 
-export default  connect(mapDispatchToProps, mapStateToProps)
-                withStyles(styles, {withTheme: true})
-                (withCookies(withRouter(GameScreenComponent)))
+export default  compose(
+    withStyles(styles, {withTheme: true}),
+    connect(mapDispatchToProps, mapStateToProps)
+) (withCookies(withRouter(GameScreenComponent)))
