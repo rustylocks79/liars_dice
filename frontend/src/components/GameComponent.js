@@ -5,7 +5,7 @@ import React from "react";
 class GameComponent extends React.Component {
     render() {
         return (
-            <div style={{height: '700px'}}>
+            <div style={{height: '500px'}}>
                 <p>Game Component</p>
             </div>
         );
