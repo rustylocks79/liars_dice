@@ -6,7 +6,13 @@ const initialState = {
     players: [],
     bots: [],
     numDice: 0,
-    host: ""
+    host: "",
+
+    hand: [],
+    //TODO: dice counts, players and bots separate dice count lists, or a combined list of players
+    currentBid: "",
+    bidOwner: "",
+    currentPlayer: ""
 }
 
 const reducer = (state = initialState, action) => {
