@@ -263,7 +263,8 @@ def start_game(json):
     num_dice = room['num_dice']
     num_players = len(room['players']) + len(room['bots'])
     room['game'] = LiarsDice(num_players, num_dice)
-    for idx, username, sid in enumerate(room['players']):
+    for idx, user_info in enumerate(room['players']):
+        username, sid = user_info
         flask_socketio.emit('started_game', {
             'index': idx,
             'hand': room['game'].hands[idx],
@@ -291,7 +292,8 @@ def perform(json):
     
     # TODO: how are we going to solve bots turns.
 
-    for idx, username, sid in enumerate(room['players']):
+    for idx, user_info in enumerate(room['players']):
+        username, sid = user_info
         flask_socketio.emit('performed', {
             'index': idx,
             'hand': room['game'].hands[idx],
