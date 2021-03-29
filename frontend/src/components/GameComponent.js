@@ -12,6 +12,7 @@ class GameComponent extends React.Component {
         //TODO: players and bots lists, or combine into one?
         players: [],
 
+        //TODO: are these necessary, or would the store be enough
         currentPlayer: "",
         diceCounts: [],
         hand: [],
