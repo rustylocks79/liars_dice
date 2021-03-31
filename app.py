@@ -310,7 +310,7 @@ def action_raise(json):
     # TODO: check active player
     quantity = int(json['quantity'])
     face = int(json['face'])
-    room['game'].perform(('bid', quantity, face))
+    room['game'].perform(('raise', quantity, face))
     # TODO: how are we going to solve bots turns.
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
