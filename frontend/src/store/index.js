@@ -50,7 +50,8 @@ const reducer = (state = initialState, action) => {
             activeDice: action.payload.activeDice,
             currentPlayer: action.payload.currentPlayer,
             players: action.payload.players,
-            bots: action.payload.bots
+            bots: action.payload.bots,
+            bidHistory: []
         })
     }
 
