@@ -2,7 +2,7 @@ import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
 import TopBarComponent from "./TopBarComponent";
-import {Button, Grid, Paper} from "@material-ui/core";
+import {Button, Grid, Paper, TextField, Select, MenuItem} from "@material-ui/core";
 import {withStyles} from "@material-ui/core/styles";
 import GameComponent from "./GameComponent";
 import {connect} from "react-redux";
@@ -54,7 +54,9 @@ const styles = theme => ({
 
 class GameScreenComponent extends React.Component {
     state = {
-        errorMessage: ""
+        errorMessage: "",
+        numOfDiceRaise: 0,
+        face: 1
     }
 
     constructor(props, context) {
@@ -66,9 +68,77 @@ class GameScreenComponent extends React.Component {
         console.log(this.props.bots)
     }
 
+    allDice = () => {
+        var i;
+        var sum = 0;
+        for (i = 0; i < this.props.activeDice.length; i++) {
+            sum += this.props.activeDice[i];
+        }
+        return sum;
+    }
+
+    createTable = () => {
+        let table = []
+
+        // Outer loop to create parent
+        for (let i = 0; i < this.props.players.length; i++) {
+            let children = []
+            //Inner loop to create children
+            children.push(<td>{this.props.players[i]} - {this.props.activeDice[i]} </td>)
+            //Create the parent and add the children
+            table.push(<tr>{children}</tr>)
+        }
+
+        for (let i = 0; i < this.props.bots.length; i++) {
+            let children = []
+            //Inner loop to create children
+            children.push(
+                <td>{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length - 1]} </td>)
+            //Create the parent and add the children
+            table.push(<tr>{children}</tr>)
+        }
+        return table
+    }
+
+    // playersWithNumOfDice = () => {
+    //     return (
+    //         <div>
+    //             {this.props.players.map(player => (
+    //                 <div key={player}>
+    //                     <p style={{color: "black"}}>{player} - {this.props.activeDice[this.props.index]}</p>
+    //                 </div>
+    //             ))}
+    //
+    //             {this.props.bots.map(bot => (
+    //                 <div key={bot.name}>
+    //                     <p>
+    //                         {bot.name}
+    //                     </p>
+    //                 </div>
+    //             ))}
+    //         </div>
+    //     )
+    // }
+
+    changeNumOfDiceRaise = (event) => {
+        let name = event.target.name;
+        let value = event.target.value;
+        this.setState({numOfDiceRaise: value});
+    }
+    changeFaceValue = (event) =>
+    {
+        let value = event.target.value;
+        this.setState({face: value});
+    }
+
+    onClickRaised = () => {
+        console.log(this.state.numOfDiceRaise)
+        console.log(this.state.face)
+    }
+
+
     render() {
         const {classes} = this.props;
-
         return (
             <div>
                 <TopBarComponent/>
@@ -103,12 +173,8 @@ class GameScreenComponent extends React.Component {
                         <Paper className={classes.paper5}>
                             <b>Game State</b>
 
-                            <p>12 Dice</p>
-                            <p>Orange - 4</p>
-                            <p>Blue - 3</p>
-                            <p>Purple - 2</p>
-                            <p>Red - 3</p>
-
+                            <p>{this.allDice()} Dice</p>
+                            <table>{this.createTable()}</table>
                         </Paper>
                     </Grid>
 
@@ -118,12 +184,43 @@ class GameScreenComponent extends React.Component {
 
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
                         <Button variant="contained" color="secondary" size="large">Doubt</Button>
-                        <Button variant="contained" color="Primary" size="large">Raise</Button>
-
+                        <Button variant="contained"
+                                color="Primary"
+                                size="large"
+                                type={"submit"}
+                                onClick={this.onClickRaised}>Raise</Button>
                     </Grid>
 
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
-                        2 x 3
+
+                        <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
+                            <TextField
+                                type={"number"}
+                                name={"num"}
+                                onChange={this.changeNumOfDiceRaise}
+                            /> x
+                            {/*<select>*/}
+                            {/*    <option value="2">2</option>*/}
+                            {/*    <option value="3">3</option>*/}
+                            {/*    <option value="4">4</option>*/}
+                            {/*    <option value="5">5</option>*/}
+                            {/*    <option value="6">6</option>*/}
+                            {/*</select>*/}
+                            <Select
+                                // labelId="demo-simple-select-label"
+                                // id="demo-simple-select"
+                                value={this.state.face}
+                                onChange={this.changeFaceValue}
+                            >
+                                <MenuItem value={2}>2</MenuItem>
+                                <MenuItem value={3}>3</MenuItem>
+                                <MenuItem value={4}>4</MenuItem>
+                                <MenuItem value={5}>5</MenuItem>
+                                <MenuItem value={6}>6</MenuItem>
+                            </Select>
+                        </form>
+
+
                     </Grid>
                 </Grid>
             </div>
@@ -146,7 +243,7 @@ const mapStateToProps = state => {
     }
 }
 
-export default  compose(
+export default compose(
     withStyles(styles, {withTheme: true}),
     connect(mapStateToProps)
-) (withCookies(withRouter(GameScreenComponent)))
+)(withCookies(withRouter(GameScreenComponent)))
