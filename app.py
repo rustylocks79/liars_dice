@@ -225,16 +225,18 @@ def update_game(json):
     bots = json['bots']
     num_dice = json['numDice']
     current_user = get_current_user_from_token(jwt_token)
-    # TODO: check host
     print('received update_game from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
-    room['bots'] = bots
-    room['num_dice'] = num_dice
-    flask_socketio.emit('updated_game', {
-        'lobbyId': lobby_id,
-        'bots': room['bots'],
-        'numDice': room['num_dice']
-    }, room=lobby_id)
+    if current_user != room['host']:
+        flask_socketio.emit('error', {'reason', 'invalid permissions. '})
+    else:
+        room['bots'] = bots
+        room['num_dice'] = num_dice
+        flask_socketio.emit('updated_game', {
+            'lobbyId': lobby_id,
+            'bots': room['bots'],
+            'numDice': room['num_dice']
+        }, room=lobby_id)
 
 
 @socketio.on('leave_game')
@@ -245,10 +247,14 @@ def leave_game(json):
     print('received leave_game from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
     room['players'].remove((current_user.username, flask.request.sid))
-    #TODO: handle hosting
+    if len(room['players']) == 0:
+        del rooms[lobby_id]
+    elif room['host'] == current_user.username:
+        room['host'] = room['players'][0][0]
     flask_socketio.emit('left_game', {
         'lobbyId': lobby_id,
         'players': [username for username, _ in room['players']],
+        'host': room['host'],
         'lostPlayer': current_user.username
     }, room=lobby_id)
 
@@ -308,9 +314,7 @@ def bid(json):
     # TODO: how are we going to solve bots turns.
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
-        flask_socketio.emit('bid_result', {
-            'index': idx,
-            'hand': room['game'].hands[idx],
+        flask_socketio.emit('bid', {
             'currentPlayer': room['game'].active_player(),
             'currentBid': room['game'].bid_history[-1]
         }, to=sid)

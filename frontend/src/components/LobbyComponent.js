@@ -57,7 +57,8 @@ class LobbyComponent extends React.Component {
         this.props.socket.on('left_game', data => {
             console.log('received event left_game from server: ' + JSON.stringify(data))
             this.setState({
-                players: data.players
+                players: data.players,
+                host: data.host
             })
             console.log(this.state.username)
             if (data.lostPlayer === this.state.username) {

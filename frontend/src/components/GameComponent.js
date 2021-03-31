@@ -9,6 +9,8 @@ class GameComponent extends React.Component {
 
         username: "",
 
+        //TODO: I am really confused on how long is going to access this state in GameScreen. Perhaps it would be better to keep all of these in the store.
+
         //TODO: players and bots lists, or combine into one?
         //TODO: I really don't know. Do we want all players clumped together.
         players: [],
