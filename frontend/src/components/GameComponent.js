@@ -10,6 +10,7 @@ class GameComponent extends React.Component {
         username: "",
 
         //TODO: players and bots lists, or combine into one?
+        //TODO: I really don't know. Do we want all players clumped together.
         players: [],
 
         //TODO: are these necessary, or would the store be enough
@@ -25,6 +26,7 @@ class GameComponent extends React.Component {
 
     constructor(props) {
         super(props);
+
     }
 
     render() {

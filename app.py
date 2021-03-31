@@ -273,33 +273,46 @@ def start_game(json):
         }, to=sid)
 
 
-def perform(json):
+@socketio.on('doubt')
+def doubt(json):
     lobby_id = json['lobbyId']
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
-    print('received start_game from {}: {}'.format(current_user.username, json))
+    print('received doubt from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
     # TODO: check active player
-    operation = json['operation']
-    if operation == 'bid':
-        quantity = json['quantity']
-        face = json['face']
-        room['game'].perform(('bid', quantity, face))
-    elif operation == 'doubt':
-        room['game'].perform(('doubt',))
-    else:
-        pass  # TODO: error
-    
+    room['game'].perform(('doubt',))
     # TODO: how are we going to solve bots turns.
-
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
-        flask_socketio.emit('performed', {
+        flask_socketio.emit('doubted', {
             'index': idx,
             'hand': room['game'].hands[idx],
             'currentPlayer': room['game'].active_player(),
             'activeDice': room['game'].active_dice,
-            'bidHistory': room['game'].bid_history
+            'currentBid': room['game'].bid_history[-1]
+        }, to=sid)
+
+
+@socketio.on('bid')
+def bid(json):
+    lobby_id = json['lobbyId']
+    jwt_token = json['jwtToken']
+    current_user = get_current_user_from_token(jwt_token)
+    print('received raise from {}: {}'.format(current_user.username, json))
+    room = rooms[lobby_id]
+    # TODO: check active player
+    quantity = json['quantity']
+    face = json['face']
+    room['game'].perform(('bid', quantity, face))
+    # TODO: how are we going to solve bots turns.
+    for idx, user_info in enumerate(room['players']):
+        username, sid = user_info
+        flask_socketio.emit('bid_result', {
+            'index': idx,
+            'hand': room['game'].hands[idx],
+            'currentPlayer': room['game'].active_player(),
+            'currentBid': room['game'].bid_history[-1]
         }, to=sid)
 
 

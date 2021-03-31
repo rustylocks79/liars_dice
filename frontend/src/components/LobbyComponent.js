@@ -66,10 +66,12 @@ class LobbyComponent extends React.Component {
         })
         this.props.socket.on('started_game', data => {
             console.log('received event started_game from server: ' + JSON.stringify(data))
+            // TODO: transfer all following variables by store.
             console.log(data.index)
             console.log(data.activeDice)
             console.log(data.currentPlayer)
-            console.log(data.activeDice)
+            console.log(this.state.players)
+            console.log(this.state.bots) // TODO: do we want to synchronize bots name.
             this.props.history.push('/game')
         })
     }
