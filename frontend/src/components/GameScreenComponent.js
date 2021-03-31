@@ -19,7 +19,9 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '100px'
+        height: '300px',
+        maxHeight: '1000px',
+        overflow: 'auto'
 
     },
     paper1: {
@@ -27,7 +29,7 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '700px'
+        height: '100px'
     },
     paper2: {
         padding: theme.spacing(2),
@@ -56,7 +58,7 @@ class GameScreenComponent extends React.Component {
     state = {
         errorMessage: "",
         numOfDiceRaise: 0,
-        face: 1
+        face: 2,
     }
 
     constructor(props, context) {
@@ -133,10 +135,31 @@ class GameScreenComponent extends React.Component {
         let value = event.target.value;
         this.setState({numOfDiceRaise: value});
     }
-    changeFaceValue = (event) =>
-    {
+    changeFaceValue = (event) => {
         let value = event.target.value;
         this.setState({face: value});
+    }
+
+    displayRoundHistory = (event) => {
+        let table = []
+
+
+        for (let i = this.props.bidHistory.length - 1; i >= 0; i--) {
+            let children = []
+            //Inner loop to create children
+            if( i === this.props.bidHistory.length - 1)
+            {
+                children.push(<td><b>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]}</b></td>)
+
+            }
+            else {
+                children.push(<td>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]} </td>)
+            }
+                        //Create the parent and add the children
+            table.push(<tr>{children}</tr>)
+        }
+
+        return table
     }
 
     onClickRaised = () => {
@@ -165,15 +188,15 @@ class GameScreenComponent extends React.Component {
                     spacing={1}
                 >
                     <Grid item xs={2}>
-                        <Paper className={classes.paper}>
+                        <Paper className={classes.paper1}>
                             <b>Round</b>
+                            <p>2</p>
                         </Paper>
                         <Paper className={classes.paper}>
-                            <b>Recent Bid</b>
+                            <h4>Round History</h4>
+                            <table>{this.displayRoundHistory()}</table>
                         </Paper>
-                        <Paper className={classes.paper}>
-                            <b>Round History</b>
-                        </Paper>
+
                     </Grid>
 
                     <Grid item xs={7}>
@@ -252,7 +275,8 @@ const mapStateToProps = state => {
         activeDice: state.activeDice,
         currentPlayer: state.currentPlayer,
         players: state.players,
-        bots: state.bots
+        bots: state.bots,
+        bidHistory: state.bidHistory
     }
 }
 
