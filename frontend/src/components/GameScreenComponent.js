@@ -2,7 +2,7 @@ import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
 import TopBarComponent from "./TopBarComponent";
-import {Button, Grid, Paper, TextField, Select, MenuItem} from "@material-ui/core";
+import {Button, Grid, MenuItem, Paper, Select, TextField} from "@material-ui/core";
 import {withStyles} from "@material-ui/core/styles";
 import GameComponent from "./GameComponent";
 import {connect} from "react-redux";
@@ -61,14 +61,22 @@ class GameScreenComponent extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        console.log(this.props.index)
-        console.log(this.props.activeDice)
-        console.log(this.props.currentPlayer)
-        console.log(this.props.players)
-        console.log(this.props.bots)
+        const {cookies} = props;
+        this.state.jwtToken = cookies.get('JWT-TOKEN')
+        this.props.socket.on('raised', data => {
+            console.log('received event raised from server: ' + JSON.stringify(data))
+            this.props.dispatch({
+                type: 'RAISE',
+                payload: {
+                    bidHistory: data.bidHistory,
+                    currentPlayer: data.currentPlayer
+                }
+            })
+        })
     }
 
     allDice = () => {
+        console.log(this.props.lobbyId)
         var i;
         var sum = 0;
         for (i = 0; i < this.props.activeDice.length; i++) {
@@ -132,8 +140,12 @@ class GameScreenComponent extends React.Component {
     }
 
     onClickRaised = () => {
-        console.log(this.state.numOfDiceRaise)
-        console.log(this.state.face)
+        this.props.socket.emit('raise', {
+            'lobbyId': this.props.lobbyId,
+            'jwtToken': this.state.jwtToken,
+            'quantity': this.state.numOfDiceRaise,
+            'face': this.state.face
+        })
     }
 
 
@@ -235,6 +247,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
     return {
         socket: state.socket,
+        lobbyId: state.lobbyId,
         index: state.index,
         activeDice: state.activeDice,
         currentPlayer: state.currentPlayer,

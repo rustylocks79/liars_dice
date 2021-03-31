@@ -1,7 +1,7 @@
 import {createStore} from 'redux'
 
 const initialState = {
-    lobbyId: "123456",
+    lobbyId: "",
     socket: null,
     players: [],
     bots: [],
@@ -10,10 +10,10 @@ const initialState = {
 
     hand: [],
     activeDice: [],
-    //TODO: dice counts, players and bots separate dice count lists, or a combined list of players
     currentBid: "",
     bidOwner: "",
-    currentPlayer: ""
+    currentPlayer: "",
+    bidHistory: []
 }
 
 const reducer = (state = initialState, action) => {
@@ -46,12 +46,18 @@ const reducer = (state = initialState, action) => {
 
     if (action.type === 'START_GAME') {
         return Object.assign({}, state, {
-            socket: action.payload.socket,
             index: action.payload.index,
             activeDice: action.payload.activeDice,
             currentPlayer: action.payload.currentPlayer,
             players: action.payload.players,
             bots: action.payload.bots
+        })
+    }
+
+    if(action.type === 'RAISE') {
+        return Object.assign({}, state, {
+            bidHistory: action.payload.bidHistory,
+            currentPlayer: action.payload.currentPlayer
         })
     }
     return state

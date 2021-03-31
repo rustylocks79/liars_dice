@@ -280,7 +280,7 @@ def start_game(json):
 
 
 @socketio.on('doubt')
-def doubt(json):
+def action_doubt(json):
     lobby_id = json['lobbyId']
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
@@ -300,23 +300,23 @@ def doubt(json):
         }, to=sid)
 
 
-@socketio.on('bid')
-def bid(json):
+@socketio.on('raise')
+def action_raise(json):
     lobby_id = json['lobbyId']
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
     print('received raise from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
     # TODO: check active player
-    quantity = json['quantity']
-    face = json['face']
+    quantity = int(json['quantity'])
+    face = int(json['face'])
     room['game'].perform(('bid', quantity, face))
     # TODO: how are we going to solve bots turns.
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
-        flask_socketio.emit('bid', {
+        flask_socketio.emit('raised', {
             'currentPlayer': room['game'].active_player(),
-            'currentBid': room['game'].bid_history[-1]
+            'bidHistory': room['game'].bid_history
         }, to=sid)
 
 
