@@ -227,7 +227,7 @@ def update_game(json):
     current_user = get_current_user_from_token(jwt_token)
     print('received update_game from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
-    if current_user != room['host']:
+    if current_user.username != room['host']:
         flask_socketio.emit('error', {'reason', 'invalid permissions. '})
     else:
         room['bots'] = bots

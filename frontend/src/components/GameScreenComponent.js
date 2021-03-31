@@ -2,7 +2,7 @@ import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
 import TopBarComponent from "./TopBarComponent";
-import {Grid, Paper, Button, TextField} from "@material-ui/core";
+import {Button, Grid, Paper} from "@material-ui/core";
 import {withStyles} from "@material-ui/core/styles";
 import GameComponent from "./GameComponent";
 import {connect} from "react-redux";
@@ -59,6 +59,11 @@ class GameScreenComponent extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        console.log(this.props.index)
+        console.log(this.props.activeDice)
+        console.log(this.props.currentPlayer)
+        console.log(this.props.players)
+        console.log(this.props.bots)
     }
 
     render() {
@@ -133,10 +138,15 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
     return {
         socket: state.socket,
+        index: state.index,
+        activeDice: state.activeDice,
+        currentPlayer: state.currentPlayer,
+        players: state.players,
+        bots: state.bots
     }
 }
 
 export default  compose(
     withStyles(styles, {withTheme: true}),
-    connect(mapDispatchToProps, mapStateToProps)
+    connect(mapStateToProps)
 ) (withCookies(withRouter(GameScreenComponent)))

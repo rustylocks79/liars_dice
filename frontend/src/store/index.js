@@ -9,6 +9,7 @@ const initialState = {
     host: "",
 
     hand: [],
+    activeDice: [],
     //TODO: dice counts, players and bots separate dice count lists, or a combined list of players
     currentBid: "",
     bidOwner: "",
@@ -43,6 +44,16 @@ const reducer = (state = initialState, action) => {
         })
     }
 
+    if (action.type === 'START_GAME') {
+        return Object.assign({}, state, {
+            socket: action.payload.socket,
+            index: action.payload.index,
+            activeDice: action.payload.activeDice,
+            currentPlayer: action.payload.currentPlayer,
+            players: action.payload.players,
+            bots: action.payload.bots
+        })
+    }
     return state
 }
 

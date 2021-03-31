@@ -68,11 +68,16 @@ class LobbyComponent extends React.Component {
         this.props.socket.on('started_game', data => {
             console.log('received event started_game from server: ' + JSON.stringify(data))
             // TODO: transfer all following variables by store.
-            console.log(data.index)
-            console.log(data.activeDice)
-            console.log(data.currentPlayer)
-            console.log(this.state.players)
-            console.log(this.state.bots) // TODO: do we want to synchronize bots name.
+            this.props.dispatch({
+                type: 'START_GAME',
+                payload: {
+                    index: data.index,
+                    activeDice: data.activeDice,
+                    currentPlayer: data.currentPlayer,
+                    players: this.state.players,
+                    bots: this.state.bots
+                }
+            })
             this.props.history.push('/game')
         })
     }
@@ -261,8 +266,12 @@ class LobbyComponent extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        lobbyId: state.lobbyId, socket: state.socket, playersStore: state.players,
-        botsStore: state.bots, numDiceStore: state.numDice, hostStore: state.host
+        lobbyId: state.lobbyId,
+        socket: state.socket,
+        playersStore: state.players,
+        botsStore: state.bots,
+        numDiceStore: state.numDice,
+        hostStore: state.host
     }
 }
 
