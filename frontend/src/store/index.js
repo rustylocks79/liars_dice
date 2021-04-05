@@ -61,6 +61,14 @@ const reducer = (state = initialState, action) => {
             currentPlayer: action.payload.currentPlayer
         })
     }
+
+    if(action.type === 'DOUBT') {
+        return Object.assign({}, state, {
+            bidHistory: [],
+            currentPlayer: action.payload.currentPlayer,
+            activeDice: action.payload.activeDice
+        })
+    }
     return state
 }
 

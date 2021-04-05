@@ -292,11 +292,9 @@ def action_doubt(json):
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
         flask_socketio.emit('doubted', {
-            'index': idx,
             'hand': room['game'].hands[idx],
             'currentPlayer': room['game'].active_player(),
-            'activeDice': room['game'].active_dice,
-            'currentBid': room['game'].bid_history[-1]
+            'activeDice': room['game'].active_dice
         }, to=sid)
 
 

@@ -79,6 +79,17 @@ class GameScreenComponent extends React.Component {
                 }
             })
         })
+        this.props.socket.on('doubted', data => {
+            console.log('received event doubted from server: ' + JSON.stringify(data))
+            this.props.dispatch({
+                type: 'DOUBT',
+                payload: {
+                    currentPlayer: data.currentPlayer,
+                    activeDice: data.activeDice
+                }
+            })
+            this.setState({round: this.state.round + 1})
+        })
         this.setPlayerColors();
     }
 
@@ -102,7 +113,7 @@ class GameScreenComponent extends React.Component {
     }
 
     allDice = () => {
-        console.log(this.props.lobbyId)
+        // console.log(this.props.lobbyId)
         var i;
         var sum = 0;
         for (i = 0; i < this.props.activeDice.length; i++) {
@@ -191,12 +202,19 @@ class GameScreenComponent extends React.Component {
         return table
     }
 
-    onClickRaised = () => {
+    onRaised = () => {
         this.props.socket.emit('raise', {
             'lobbyId': this.props.lobbyId,
             'jwtToken': this.state.jwtToken,
             'quantity': this.state.numOfDiceRaise,
             'face': this.state.face
+        })
+    }
+
+    onDoubted = () => {
+        this.props.socket.emit('doubt', {
+            'lobbyId': this.props.lobbyId,
+            'jwtToken': this.state.jwtToken
         })
     }
 
@@ -247,12 +265,15 @@ class GameScreenComponent extends React.Component {
                     </Grid>
 
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
-                        <Button variant="contained" color="secondary" size="large">Doubt</Button>
+                        <Button variant="contained"
+                                color="secondary"
+                                size="large"
+                                onClick={this.onDoubted}>Doubt</Button>
                         <Button variant="contained"
                                 color="Primary"
                                 size="large"
                                 type={"submit"}
-                                onClick={this.onClickRaised}>Raise</Button>
+                                onClick={this.onRaised}>Raise</Button>
                     </Grid>
 
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
