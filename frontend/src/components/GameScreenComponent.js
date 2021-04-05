@@ -86,7 +86,8 @@ class GameScreenComponent extends React.Component {
                 type: 'DOUBT',
                 payload: {
                     currentPlayer: data.currentPlayer,
-                    activeDice: data.activeDice
+                    activeDice: data.activeDice,
+                    hand: data.hand
                 }
             })
             this.setState({round: this.state.round + 1})
