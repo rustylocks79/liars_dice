@@ -8,7 +8,7 @@ import GameComponent from "./GameComponent";
 import {connect} from "react-redux";
 
 import compose from 'recompose/compose'
-
+import AuthService from "../Services/AuthService";
 
 const styles = theme => ({
     root: {
@@ -56,9 +56,13 @@ const styles = theme => ({
 
 class GameScreenComponent extends React.Component {
     state = {
+        jwtToken: "",
+        username: "",
         errorMessage: "",
         numOfDiceRaise: 0,
         face: 2,
+        playerColors: [],
+        round: 1
     }
 
     constructor(props, context) {
@@ -75,6 +79,26 @@ class GameScreenComponent extends React.Component {
                 }
             })
         })
+        this.setPlayerColors();
+    }
+
+    componentDidMount() {
+        AuthService.user(this.state.jwtToken).then((res) => {
+            this.setState({username: res.data.username})
+        })
+    }
+
+    setPlayerColors = () => {
+        this.state.playerColors.push({color: 'Red'});
+        this.state.playerColors.push({color: 'RebeccaPurple'});
+        this.state.playerColors.push({color: 'LightSalmon'});
+        this.state.playerColors.push({color: 'DarkCyan'});
+        this.state.playerColors.push({color: 'Green'});
+        this.state.playerColors.push({color: 'DarkGoldenRod'});
+        this.state.playerColors.push({color: 'YellowGreen'});
+        this.state.playerColors.push({color: 'Tomato'});
+        this.state.playerColors.push({color: 'Silver'});
+        this.state.playerColors.push({color: 'SkyBlue'});
     }
 
     allDice = () => {
@@ -87,14 +111,21 @@ class GameScreenComponent extends React.Component {
         return sum;
     }
 
-    createTable = () => {
+    displayPlayers = () => {
         let table = []
 
         // Outer loop to create parent
         for (let i = 0; i < this.props.players.length; i++) {
             let children = []
             //Inner loop to create children
-            children.push(<td>{this.props.players[i]} - {this.props.activeDice[i]} </td>)
+            if (this.state.username === this.props.players[i]) {
+                children.push(<td
+                    style={this.state.playerColors[i]}>(Me) {this.props.players[i]} - {this.props.activeDice[i]}</td>)
+
+            } else {
+                children.push(<td
+                    style={this.state.playerColors[i]}>{this.props.players[i]} - {this.props.activeDice[i]} </td>)
+            }
             //Create the parent and add the children
             table.push(<tr>{children}</tr>)
         }
@@ -103,7 +134,7 @@ class GameScreenComponent extends React.Component {
             let children = []
             //Inner loop to create children
             children.push(
-                <td>{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length - 1]} </td>)
+                <td style={this.state.playerColors[i + this.props.players.length]}>{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length - 1]} </td>)
             //Create the parent and add the children
             table.push(<tr>{children}</tr>)
         }
@@ -143,19 +174,17 @@ class GameScreenComponent extends React.Component {
     displayRoundHistory = (event) => {
         let table = []
 
-
         for (let i = this.props.bidHistory.length - 1; i >= 0; i--) {
             let children = []
             //Inner loop to create children
-            if( i === this.props.bidHistory.length - 1)
-            {
-                children.push(<td><b>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]}</b></td>)
+            if (i === this.props.bidHistory.length - 1) {
+                children.push(<td><b>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]}</b>
+                </td>)
 
-            }
-            else {
+            } else {
                 children.push(<td>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]} </td>)
             }
-                        //Create the parent and add the children
+            //Create the parent and add the children
             table.push(<tr>{children}</tr>)
         }
 
@@ -189,12 +218,12 @@ class GameScreenComponent extends React.Component {
                 >
                     <Grid item xs={2}>
                         <Paper className={classes.paper1}>
-                            <b>Round</b>
-                            <p>2</p>
+                            <h3>Round</h3>
+                            {this.state.round}
                         </Paper>
                         <Paper className={classes.paper}>
-                            <h4>Round History</h4>
-                            <table>{this.displayRoundHistory()}</table>
+                            <h3>Round History</h3>
+                            <table align={"center"}>{this.displayRoundHistory()}</table>
                         </Paper>
 
                     </Grid>
@@ -206,10 +235,10 @@ class GameScreenComponent extends React.Component {
 
                     <Grid item xs={2}>
                         <Paper className={classes.paper5}>
-                            <b>Game State</b>
-
-                            <p>{this.allDice()} Dice</p>
-                            <table>{this.createTable()}</table>
+                            <h3>Game State</h3>
+                            <table align={"center"}>{this.displayPlayers()}</table>
+                            <br></br>
+                            <b>{this.allDice()} Dice Total</b>
                         </Paper>
                     </Grid>
 
