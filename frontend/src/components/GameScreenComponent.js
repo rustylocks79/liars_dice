@@ -123,6 +123,7 @@ class GameScreenComponent extends React.Component {
     }
 
     displayPlayers = () => {
+        console.log(this.props.activeDice)
         let table = []
 
         // Outer loop to create parent
@@ -145,7 +146,7 @@ class GameScreenComponent extends React.Component {
             let children = []
             //Inner loop to create children
             children.push(
-                <td style={this.state.playerColors[i + this.props.players.length]}>{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length - 1]} </td>)
+                <td style={this.state.playerColors[i + this.props.players.length]}>{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length]} </td>)
             //Create the parent and add the children
             table.push(<tr>{children}</tr>)
         }
