@@ -51,7 +51,8 @@ const reducer = (state = initialState, action) => {
             currentPlayer: action.payload.currentPlayer,
             players: action.payload.players,
             bots: action.payload.bots,
-            bidHistory: []
+            bidHistory: [],
+            hand: action.payload.hand
         })
     }
 
@@ -66,7 +67,8 @@ const reducer = (state = initialState, action) => {
         return Object.assign({}, state, {
             bidHistory: [],
             currentPlayer: action.payload.currentPlayer,
-            activeDice: action.payload.activeDice
+            activeDice: action.payload.activeDice,
+            hand: action.payload.hand
         })
     }
     return state

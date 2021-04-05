@@ -75,7 +75,8 @@ class GameScreenComponent extends React.Component {
                 type: 'RAISE',
                 payload: {
                     bidHistory: data.bidHistory,
-                    currentPlayer: data.currentPlayer
+                    currentPlayer: data.currentPlayer,
+                    hand: data.hand
                 }
             })
         })
@@ -305,8 +306,6 @@ class GameScreenComponent extends React.Component {
                                 <MenuItem value={6}>6</MenuItem>
                             </Select>
                         </form>
-
-
                     </Grid>
                 </Grid>
             </div>
@@ -327,7 +326,8 @@ const mapStateToProps = state => {
         currentPlayer: state.currentPlayer,
         players: state.players,
         bots: state.bots,
-        bidHistory: state.bidHistory
+        bidHistory: state.bidHistory,
+        hand: state.hand
     }
 }
 

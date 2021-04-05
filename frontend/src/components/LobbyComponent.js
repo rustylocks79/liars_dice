@@ -75,7 +75,8 @@ class LobbyComponent extends React.Component {
                     activeDice: data.activeDice,
                     currentPlayer: data.currentPlayer,
                     players: this.state.players,
-                    bots: this.state.bots
+                    bots: this.state.bots,
+                    hand: data.hand
                 }
             })
             this.props.history.push('/game')
