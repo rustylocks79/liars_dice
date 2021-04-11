@@ -267,6 +267,7 @@ class GameScreenComponent extends React.Component {
                         <Button variant="contained" color="default">Exit</Button>
                     </Grid>
 
+                    {/* TODO: Only display when it turn*/}
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
                         <Button variant="contained"
                                 color="secondary"

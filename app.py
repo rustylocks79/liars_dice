@@ -1,3 +1,4 @@
+import pickle
 import uuid
 
 import flask
@@ -9,7 +10,7 @@ import flask_sqlalchemy
 from flask_praetorian import PraetorianError
 from flask_praetorian.constants import AccessType
 
-from liars_dice import LiarsDice
+from liars_dice import LiarsDice, MediumAgent
 
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
@@ -269,6 +270,10 @@ def start_game(json):
     num_dice = room['num_dice']
     num_players = len(room['players']) + len(room['bots'])
     room['game'] = LiarsDice(num_players, num_dice)
+    strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
+    for bot in room['bots']:
+        bot['instance'] = MediumAgent(strategy)
+    # TODO: instantiate all bots.
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
         flask_socketio.emit('started_game', {
@@ -288,7 +293,6 @@ def action_doubt(json):
     room = rooms[lobby_id]
     # TODO: check active player
     room['game'].perform(('doubt',))
-    # TODO: how are we going to solve bots turns.
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
         flask_socketio.emit('doubted', {
@@ -296,6 +300,7 @@ def action_doubt(json):
             'currentPlayer': room['game'].active_player(),
             'activeDice': room['game'].active_dice
         }, to=sid)
+    poll_bots(lobby_id)
 
 
 @socketio.on('raise')
@@ -309,13 +314,35 @@ def action_raise(json):
     quantity = int(json['quantity'])
     face = int(json['face'])
     room['game'].perform(('raise', quantity, face))
-    # TODO: how are we going to solve bots turns.
-    for idx, user_info in enumerate(room['players']):
-        username, sid = user_info
-        flask_socketio.emit('raised', {
-            'currentPlayer': room['game'].active_player(),
-            'bidHistory': room['game'].bid_history
-        }, to=sid)
+    flask_socketio.emit('raised', {
+        'currentPlayer': room['game'].active_player(),
+        'bidHistory': room['game'].bid_history
+    }, to=lobby_id)
+    poll_bots(lobby_id)
+
+
+def poll_bots(lobby_id: str):
+    room = rooms[lobby_id]
+    active_player = room['game'].active_player()
+    if active_player >= len(room['players']):
+        bot = room['bots'][active_player - len(room['players'])]
+        action = bot['instance'].get_action(room['game'])
+        room['game'].perform(action)
+        if action[0] == 'raise':
+            flask_socketio.emit('raised', {
+                'currentPlayer': room['game'].active_player(),
+                'bidHistory': room['game'].bid_history
+            }, to=lobby_id)
+        elif action[0] == 'doubt':
+            for idx, user_info in enumerate(room['players']):
+                username, sid = user_info
+                flask_socketio.emit('doubted', {
+                    'hand': room['game'].hands[idx],
+                    'currentPlayer': room['game'].active_player(),
+                    'activeDice': room['game'].active_dice
+                }, to=sid)
+        else:
+            raise RuntimeError('Invalid Action: ' + action[0])
 
 
 if __name__ == "__main__":

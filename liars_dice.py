@@ -176,7 +176,7 @@ class EasyAgent(StrategyAgent):
             quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
             if quantity == 0:
                 quantity += 1
-            return "raise", quantity, face
+            return "raise", int(quantity), int(face)
         else:
             last_quantity = game.bid_history[-1][1]
             last_face = game.bid_history[-1][2]
@@ -186,7 +186,7 @@ class EasyAgent(StrategyAgent):
                 return "doubt",
             else:
                 quantity = last_quantity + 1
-                return "raise", quantity, last_face
+                return "raise", int(quantity), int(last_face)
 
 
 class MediumAgent(StrategyAgent):
@@ -200,7 +200,7 @@ class MediumAgent(StrategyAgent):
             quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
             if quantity == 0:
                 quantity += 1
-            return "raise", quantity, face
+            return "raise", int(quantity), int(face)
         else:
             last_quantity = game.bid_history[-1][1]
             last_face = game.bid_history[-1][2]
@@ -211,11 +211,11 @@ class MediumAgent(StrategyAgent):
             else:
                 most_face = np.argmax(hand) + 1
                 if most_face == 1:
-                    return 'raise', last_quantity + 1, last_face
+                    return 'raise', int(last_quantity + 1), int(last_face)
                 elif most_face > last_face:
-                    return 'raise', last_quantity, most_face
+                    return 'raise', int(last_quantity), int(most_face)
                 else:
-                    return "raise", last_quantity + 1, most_face
+                    return "raise", int(last_quantity + 1), int(most_face)
 
 
 class HardAgent(StrategyAgent):
@@ -229,7 +229,7 @@ class HardAgent(StrategyAgent):
             quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
             if quantity == 0:
                 quantity += 1
-            return "raise", quantity, face
+            return "raise", int(quantity), int(face)
         else:
             last_quantity = game.bid_history[-1][1]
             last_face = game.bid_history[-1][2]
@@ -242,9 +242,9 @@ class HardAgent(StrategyAgent):
                 if most_face == 1:
                     return 'raise', last_quantity + 1, last_face
                 elif most_face > last_face:
-                    return 'raise', last_quantity, most_face
+                    return 'raise', int(last_quantity), int(most_face)
                 else:
-                    return "raise", last_quantity + 1, most_face
+                    return "raise", int(last_quantity + 1), int(most_face)
 
 
 class HeuristicAgent(Agent):
@@ -258,7 +258,7 @@ class HeuristicAgent(Agent):
             quantity = math.floor(num_face_in_hand + 1.0 / 3 * num_unknown)
             if quantity == 0:
                 quantity += 1
-            return "raise", quantity, face
+            return "raise", int(quantity), int(face)
         else:
             last_quantity = game.bid_history[-1][1]
             last_face = game.bid_history[-1][2]
@@ -268,4 +268,4 @@ class HeuristicAgent(Agent):
                 return "doubt",
             else:
                 quantity = last_quantity + 1
-                return "raise", quantity, last_face
+                return "raise", int(quantity), int(last_face)
