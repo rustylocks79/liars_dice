@@ -224,6 +224,7 @@ class GameScreenComponent extends React.Component {
                     </Grid>
 
                     {/* TODO: Only display when it turn*/}
+                    {this.props.index === this.props.currentPlayer &&
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
                         <Button variant="contained"
                                 color="secondary"
@@ -234,20 +235,20 @@ class GameScreenComponent extends React.Component {
                                 size="large"
                                 type={"submit"}
                                 onClick={this.onRaised}>Raise</Button>
-                    </Grid>
+                    </Grid>}
 
+                    {this.props.index === this.props.currentPlayer &&
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
 
                         <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
-                            <TextField
-                                type={"number"}
-                                name={"num"}
-                                onChange={this.changeNumOfDiceRaise}
+                        <TextField
+                            type={"number"}
+                            name={"num"}
+                            onChange={this.changeNumOfDiceRaise}
                             /> x
-                            <Select
-                                value={this.state.face}
-                                onChange={this.changeFaceValue}
-                            >
+                        <Select
+                            value={this.state.face}
+                            onChange={this.changeFaceValue}>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
                                 <MenuItem value={4}>4</MenuItem>
@@ -256,6 +257,7 @@ class GameScreenComponent extends React.Component {
                             </Select>
                         </form>
                     </Grid>
+                    }
                 </Grid>
             </div>
         );
