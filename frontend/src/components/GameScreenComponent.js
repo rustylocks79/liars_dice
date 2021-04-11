@@ -128,52 +128,20 @@ class GameScreenComponent extends React.Component {
         console.log(this.props.activeDice)
         let table = []
 
-        // Outer loop to create parent
         for (let i = 0; i < this.props.players.length; i++) {
-            let children = []
-            //Inner loop to create children
-            if (this.state.username === this.props.players[i]) {
-                children.push(<td
-                    style={this.state.playerColors[i]}>(Me) {this.props.players[i]} - {this.props.activeDice[i]}</td>)
-
-            } else {
-                children.push(<td
-                    style={this.state.playerColors[i]}>{this.props.players[i]} - {this.props.activeDice[i]} </td>)
-            }
-            //Create the parent and add the children
-            table.push(<tr>{children}</tr>)
+            table.push(<p key={i}
+                          style={this.state.playerColors[i]}
+            >{this.props.players[i]} - {this.props.activeDice[i]}</p>)
         }
 
         for (let i = 0; i < this.props.bots.length; i++) {
-            let children = []
-            //Inner loop to create children
-            children.push(
-                <td style={this.state.playerColors[i + this.props.players.length]}>{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length]} </td>)
-            //Create the parent and add the children
-            table.push(<tr>{children}</tr>)
+            table.push(<p key={i + this.props.players.length}
+                          style={this.state.playerColors[i + this.props.players.length]}
+            >{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length]}</p>)
         }
+
         return table
     }
-
-    // playersWithNumOfDice = () => {
-    //     return (
-    //         <div>
-    //             {this.props.players.map(player => (
-    //                 <div key={player}>
-    //                     <p style={{color: "black"}}>{player} - {this.props.activeDice[this.props.index]}</p>
-    //                 </div>
-    //             ))}
-    //
-    //             {this.props.bots.map(bot => (
-    //                 <div key={bot.name}>
-    //                     <p>
-    //                         {bot.name}
-    //                     </p>
-    //                 </div>
-    //             ))}
-    //         </div>
-    //     )
-    // }
 
     changeNumOfDiceRaise = (event) => {
         let name = event.target.name;
@@ -186,23 +154,13 @@ class GameScreenComponent extends React.Component {
     }
 
     displayRoundHistory = (event) => {
-        let table = []
+        let temp = []
 
         for (let i = this.props.bidHistory.length - 1; i >= 0; i--) {
-            let children = []
-            //Inner loop to create children
-            if (i === this.props.bidHistory.length - 1) {
-                children.push(<td><b>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]}</b>
-                </td>)
-
-            } else {
-                children.push(<td>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]} </td>)
-            }
-            //Create the parent and add the children
-            table.push(<tr>{children}</tr>)
+            temp.push(<p key={i}>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]} </p>)
         }
 
-        return table
+        return temp
     }
 
     onRaised = () => {
@@ -244,7 +202,7 @@ class GameScreenComponent extends React.Component {
                         </Paper>
                         <Paper className={classes.paper}>
                             <h3>Round History</h3>
-                            <table align={"center"}>{this.displayRoundHistory()}</table>
+                            <div style={{alignContent:"center"}}>{this.displayRoundHistory()}</div>
                         </Paper>
 
                     </Grid>
@@ -257,8 +215,8 @@ class GameScreenComponent extends React.Component {
                     <Grid item xs={2}>
                         <Paper className={classes.paper5}>
                             <h3>Game State</h3>
-                            <table align={"center"}>{this.displayPlayers()}</table>
-                            <br></br>
+                            <div style={{alignContent:"center"}}>{this.displayPlayers()}</div>
+                            <br/>
                             <b>{this.allDice()} Dice Total</b>
                         </Paper>
                     </Grid>
@@ -274,7 +232,7 @@ class GameScreenComponent extends React.Component {
                                 size="large"
                                 onClick={this.onDoubted}>Doubt</Button>
                         <Button variant="contained"
-                                color="Primary"
+                                color="primary"
                                 size="large"
                                 type={"submit"}
                                 onClick={this.onRaised}>Raise</Button>
@@ -288,16 +246,7 @@ class GameScreenComponent extends React.Component {
                                 name={"num"}
                                 onChange={this.changeNumOfDiceRaise}
                             /> x
-                            {/*<select>*/}
-                            {/*    <option value="2">2</option>*/}
-                            {/*    <option value="3">3</option>*/}
-                            {/*    <option value="4">4</option>*/}
-                            {/*    <option value="5">5</option>*/}
-                            {/*    <option value="6">6</option>*/}
-                            {/*</select>*/}
                             <Select
-                                // labelId="demo-simple-select-label"
-                                // id="demo-simple-select"
                                 value={this.state.face}
                                 onChange={this.changeFaceValue}
                             >
