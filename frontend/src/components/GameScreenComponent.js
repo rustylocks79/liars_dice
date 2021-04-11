@@ -115,7 +115,6 @@ class GameScreenComponent extends React.Component {
     }
 
     allDice = () => {
-        // console.log(this.props.lobbyId)
         var i;
         var sum = 0;
         for (i = 0; i < this.props.activeDice.length; i++) {
@@ -125,7 +124,6 @@ class GameScreenComponent extends React.Component {
     }
 
     displayPlayers = () => {
-        console.log(this.props.activeDice)
         let table = []
 
         for (let i = 0; i < this.props.players.length; i++) {

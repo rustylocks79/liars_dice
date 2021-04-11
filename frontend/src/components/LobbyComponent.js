@@ -1,7 +1,7 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
-import {Button, Container, FormControl, Grid, InputLabel, MenuItem, Select} from "@material-ui/core";
+import {Button, Container, FormControl, Grid, MenuItem, Select} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
 import {connect} from "react-redux";
 import AuthService from "../Services/AuthService";
@@ -37,8 +37,6 @@ class LobbyComponent extends React.Component {
         this.state.bots = this.props.botsStore
         this.state.host = this.props.hostStore
 
-        console.log(this.state.host)
-
         this.props.socket.on('joined_game', data => {
             console.log('received event joined_game from server: ' + JSON.stringify(data))
             this.setState({
@@ -60,14 +58,12 @@ class LobbyComponent extends React.Component {
                 players: data.players,
                 host: data.host
             })
-            console.log(this.state.username)
             if (data.lostPlayer === this.state.username) {
                 this.props.history.push('/welcome')
             }
         })
         this.props.socket.on('started_game', data => {
             console.log('received event started_game from server: ' + JSON.stringify(data))
-            // TODO: transfer all following variables by store.
             this.props.dispatch({
                 type: 'START_GAME',
                 payload: {
@@ -121,8 +117,6 @@ class LobbyComponent extends React.Component {
     }
 
     addBot = () => {
-        console.log(this.state.players)
-        console.log(this.state.bots)
         if ((this.state.players.length + this.state.bots.length) < 10) {
             let nameSelected = false
             while (!nameSelected) {
@@ -163,16 +157,12 @@ class LobbyComponent extends React.Component {
     }
 
     changeLevel = (event) => {
-        console.log(event.target.name)
-        console.log(event.target.value)
-
         let bots = this.state.bots
         for (let i = 0; i < bots.length; i++) {
             if (bots[i].name === event.target.name) {
                 bots[i].level = event.target.value
             }
         }
-        console.log(bots)
         this.updateGame(this.state.numDice, bots)
     }
 

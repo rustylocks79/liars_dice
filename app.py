@@ -10,7 +10,7 @@ import flask_sqlalchemy
 from flask_praetorian import PraetorianError
 from flask_praetorian.constants import AccessType
 
-from liars_dice import LiarsDice, MediumAgent
+from liars_dice import LiarsDice, MediumAgent, EasyAgent, HardAgent
 
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
@@ -272,8 +272,12 @@ def start_game(json):
     room['game'] = LiarsDice(num_players, num_dice)
     strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
     for bot in room['bots']:
-        bot['instance'] = MediumAgent(strategy)
-    # TODO: instantiate all bots.
+        if bot['level'] == 'easy':
+            bot['instance'] = EasyAgent(strategy)
+        elif bot['level'] == 'medium':
+            bot['instance'] = MediumAgent(strategy)
+        elif bot['level'] == 'hard':
+            bot['instance'] = HardAgent(strategy)
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
         flask_socketio.emit('started_game', {
@@ -324,7 +328,7 @@ def action_raise(json):
 def poll_bots(lobby_id: str):
     room = rooms[lobby_id]
     active_player = room['game'].active_player()
-    if active_player >= len(room['players']):
+    while active_player >= len(room['players']):
         bot = room['bots'][active_player - len(room['players'])]
         action = bot['instance'].get_action(room['game'])
         room['game'].perform(action)
@@ -343,6 +347,7 @@ def poll_bots(lobby_id: str):
                 }, to=sid)
         else:
             raise RuntimeError('Invalid Action: ' + action[0])
+        active_player = room['game'].active_player()
 
 
 if __name__ == "__main__":
