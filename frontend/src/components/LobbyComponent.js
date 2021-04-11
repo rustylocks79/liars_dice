@@ -1,7 +1,7 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
-import {Button, Container, Grid} from "@material-ui/core";
+import {Button, Container, FormControl, Grid, InputLabel, MenuItem, Select} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
 import {connect} from "react-redux";
 import AuthService from "../Services/AuthService";
@@ -129,7 +129,7 @@ class LobbyComponent extends React.Component {
                 let idx = Math.floor(Math.random() * this.state.botNames.length);
                 if (!this.state.usedNames.includes(this.state.botNames[idx])) {
                     let bots = this.state.bots
-                    let bot = {name: this.state.botNames[idx]}
+                    let bot = {name: this.state.botNames[idx], level: "medium"}
                     bots.push(bot)
                     this.state.usedNames.push(this.state.botNames[idx])
                     nameSelected = true;
@@ -162,6 +162,20 @@ class LobbyComponent extends React.Component {
         this.updateGame(this.state.numDice, [])
     }
 
+    changeLevel = (event) => {
+        console.log(event.target.name)
+        console.log(event.target.value)
+
+        let bots = this.state.bots
+        for (let i = 0; i < bots.length; i++) {
+            if (bots[i].name === event.target.name) {
+                bots[i].level = event.target.value
+            }
+        }
+        console.log(bots)
+        this.updateGame(this.state.numDice, bots)
+    }
+
     displayPlayers = () => {
         return (
             <div>
@@ -178,12 +192,31 @@ class LobbyComponent extends React.Component {
                 ))}
                 {this.state.bots.map(bot => (
                     <div key={bot.name}>
-                        <p>
+
                             {this.state.username === this.state.host &&
-                                <button onClick={() => this.removeBot(bot.name)}>x</button>
+                            <button onClick={() => this.removeBot(bot.name)} style={{marginRight: "10px"}}>x</button>
                             }
-                            {bot.name}
-                        </p>
+
+                            <p style={{display:"inline"}}>{bot.name}</p>
+
+                            {this.state.username === this.state.host &&
+                            <FormControl style={{marginLeft: "10px"}}>
+                                <Select style={{width:"100px"}}
+                                        value = {bot.level}
+                                        name = {bot.name}
+                                        onChange={this.changeLevel}
+                                >
+                                    <MenuItem value={"easy"}>Easy</MenuItem>
+                                    <MenuItem value={"medium"}>Medium</MenuItem>
+                                    <MenuItem value={"hard"}>Hard</MenuItem>
+                                </Select>
+                            </FormControl>
+                            }
+
+                            {this.state.username !== this.state.host &&
+                            <b style={{display:"inline",marginLeft: "10px"}}>{bot.level}</b>
+                            }
+
                     </div>
                 ))}
             </div>
