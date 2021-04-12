@@ -79,6 +79,7 @@ class GameScreenComponent extends React.Component {
                     hand: data.hand
                 }
             })
+            this.setState({errorMessage: ''})
         })
         this.props.socket.on('doubted', data => {
             console.log('received event doubted from server: ' + JSON.stringify(data))
@@ -90,12 +91,14 @@ class GameScreenComponent extends React.Component {
                     hand: data.hand
                 }
             })
-            this.setState({round: this.state.round + 1})
+            this.setState({round: this.state.round + 1, errorMessage: ''})
         })
         this.props.socket.on('error', data => {
             console.log('received event error from server: ' + JSON.stringify(data))
-            this.state.errorMessage = data['reason']
-            this.setState({})
+            this.setState({errorMessage: data['reason']})
+        })
+        this.props.socket.on('terminal', data => {
+            console.log('received event terminal from server: ' + JSON.stringify(data))
         })
         this.setPlayerColors();
     }
@@ -227,7 +230,7 @@ class GameScreenComponent extends React.Component {
 
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
                         <Button variant="contained" color="default">
-                            <Link to={'/'}>
+                            <Link to={'/welcome'}>
                                 {/*TODO: remove from game. */}
                                 Exit
                             </Link>

@@ -7,6 +7,7 @@ import flask_praetorian
 import flask_praetorian.base
 import flask_socketio
 import flask_sqlalchemy
+import numpy as np
 from flask_praetorian import PraetorianError
 from flask_praetorian.constants import AccessType
 
@@ -295,17 +296,23 @@ def action_doubt(json):
     current_user = get_current_user_from_token(jwt_token)
     print('received doubt from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
+    game = room['game']
     # TODO: check active player
     try:
-        room['game'].perform(('doubt',))
+        game.perform(('doubt',))
         for idx, user_info in enumerate(room['players']):
             username, sid = user_info
             flask_socketio.emit('doubted', {
-                'hand': room['game'].hands[idx],
-                'currentPlayer': room['game'].active_player(),
-                'activeDice': room['game'].active_dice
+                'hand': game.hands[idx],
+                'currentPlayer': game.active_player(),
+                'activeDice': game.active_dice
             }, to=sid)
-        poll_bots(lobby_id)
+        if game.is_terminal():
+            flask_socketio.emit('terminal', {
+                'winner': np.argmax([game.utility(p) for p in range(game.num_players())])
+            }, to=lobby_id)
+        else:
+            poll_bots(lobby_id)
     except RuntimeError as err:
         flask_socketio.emit('error', {'reason': str(err)})
 
@@ -317,14 +324,15 @@ def action_raise(json):
     current_user = get_current_user_from_token(jwt_token)
     print('received raise from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
+    game = room['game']
     # TODO: check active player
     quantity = int(json['quantity'])
     face = int(json['face'])
     try:
-        room['game'].perform(('raise', quantity, face))
+        game.perform(('raise', quantity, face))
         flask_socketio.emit('raised', {
-            'currentPlayer': room['game'].active_player(),
-            'bidHistory': room['game'].bid_history
+            'currentPlayer': game.active_player(),
+            'bidHistory': game.bid_history
         }, to=lobby_id)
         poll_bots(lobby_id)
     except RuntimeError as err:
@@ -334,27 +342,33 @@ def action_raise(json):
 
 def poll_bots(lobby_id: str):
     room = rooms[lobby_id]
-    active_player = room['game'].active_player()
+    game = room['game']
+    active_player = game.active_player()
     while active_player >= len(room['players']):
         bot = room['bots'][active_player - len(room['players'])]
         action = bot['instance'].get_action(room['game'])
-        room['game'].perform(action)
+        game.perform(action)
         if action[0] == 'raise':
             flask_socketio.emit('raised', {
-                'currentPlayer': room['game'].active_player(),
-                'bidHistory': room['game'].bid_history
+                'currentPlayer': game.active_player(),
+                'bidHistory': game.bid_history
             }, to=lobby_id)
         elif action[0] == 'doubt':
             for idx, user_info in enumerate(room['players']):
                 username, sid = user_info
                 flask_socketio.emit('doubted', {
-                    'hand': room['game'].hands[idx],
-                    'currentPlayer': room['game'].active_player(),
-                    'activeDice': room['game'].active_dice
+                    'hand': game.hands[idx],
+                    'currentPlayer': game.active_player(),
+                    'activeDice': game.active_dice
                 }, to=sid)
+            if game.is_terminal():
+                flask_socketio.emit('terminal', {
+                    'winner': int(np.argmax([game.utility(p) for p in range(game.num_players())]))
+                }, to=lobby_id)
+                break
         else:
             raise RuntimeError('Invalid Action: ' + action[0])
-        active_player = room['game'].active_player()
+        active_player = game.active_player()
 
 
 if __name__ == "__main__":
