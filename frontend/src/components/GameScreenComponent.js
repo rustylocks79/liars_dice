@@ -59,9 +59,10 @@ class GameScreenComponent extends React.Component {
         jwtToken: "",
         username: "",
         errorMessage: "",
-        numOfDiceRaise: 0,
+        numOfDice: 0,
         face: 2,
-        playerColors: [],
+        playerColors: ['Red', 'RebeccaPurple', 'Blue', 'DarkRed', 'DarkSeaGreen',
+            'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise'],
         round: 1
     }
 
@@ -100,7 +101,6 @@ class GameScreenComponent extends React.Component {
         this.props.socket.on('terminal', data => {
             console.log('received event terminal from server: ' + JSON.stringify(data))
         })
-        this.setPlayerColors();
     }
 
     componentDidMount() {
@@ -109,63 +109,42 @@ class GameScreenComponent extends React.Component {
         })
     }
 
-    setPlayerColors = () => {
-        this.state.playerColors.push({color: 'Red'});
-        this.state.playerColors.push({color: 'RebeccaPurple'});
-        this.state.playerColors.push({color: 'Blue'});
-        this.state.playerColors.push({color: 'DarkRed'});
-        this.state.playerColors.push({color: 'DarkSeaGreen'});
-        this.state.playerColors.push({color: 'DarkGoldenRod'});
-        this.state.playerColors.push({color: 'DarkSlateGray'});
-        this.state.playerColors.push({color: 'Tomato'});
-        this.state.playerColors.push({color: 'SaddleBrown'});
-        this.state.playerColors.push({color: 'Turquoise'});
-    }
-
     allDice = () => {
-        var i;
-        var sum = 0;
-        for (i = 0; i < this.props.activeDice.length; i++) {
+        let sum = 0;
+        for (let i = 0; i < this.props.activeDice.length; i++) {
             sum += this.props.activeDice[i];
         }
-        return sum;
+        return sum
     }
 
     displayPlayers = () => {
         let table = []
-
         for (let i = 0; i < this.props.players.length; i++) {
             table.push(<p key={i}
-                          style={this.state.playerColors[i]}
+                          style={{color: this.state.playerColors[i]}}
             >{this.props.players[i]} - {this.props.activeDice[i]}</p>)
         }
 
         for (let i = 0; i < this.props.bots.length; i++) {
             table.push(<p key={i + this.props.players.length}
-                          style={this.state.playerColors[i + this.props.players.length]}
+                          style={{color: this.state.playerColors[i + this.props.players.length]}}
             >{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length]}</p>)
         }
 
         return table
     }
 
-    changeNumOfDiceRaise = (event) => {
+    changeHandler = (event) => {
         let name = event.target.name;
         let value = event.target.value;
-        this.setState({numOfDiceRaise: value});
-    }
-    changeFaceValue = (event) => {
-        let value = event.target.value;
-        this.setState({face: value});
+        this.setState({[name]: value})
     }
 
-    displayRoundHistory = (event) => {
+    displayRoundHistory = () => {
         let temp = []
-
         for (let i = this.props.bidHistory.length - 1; i >= 0; i--) {
-            temp.push(<p key={i}>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]} </p>)
+            temp.push(<p key={i} style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]} </p>)
         }
-
         return temp
     }
 
@@ -173,7 +152,7 @@ class GameScreenComponent extends React.Component {
         this.props.socket.emit('raise', {
             'lobbyId': this.props.lobbyId,
             'jwtToken': this.state.jwtToken,
-            'quantity': this.state.numOfDiceRaise,
+            'quantity': this.state.numOfDice,
             'face': this.state.face
         })
     }
@@ -184,7 +163,6 @@ class GameScreenComponent extends React.Component {
             'jwtToken': this.state.jwtToken
         })
     }
-
 
     render() {
         const {classes} = this.props;
@@ -237,7 +215,6 @@ class GameScreenComponent extends React.Component {
                         </Button>
                     </Grid>
 
-                    {/* TODO: Only display when it turn*/}
                     {this.props.index === this.props.currentPlayer &&
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
                         <Button variant="contained"
@@ -257,12 +234,13 @@ class GameScreenComponent extends React.Component {
                         <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                         <TextField
                             type={"number"}
-                            name={"num"}
-                            onChange={this.changeNumOfDiceRaise}
+                            name={"numOfDice"}
+                            onChange={this.changeHandler}
                             /> x
                         <Select
                             value={this.state.face}
-                            onChange={this.changeFaceValue}>
+                            name={"face"}
+                            onChange={this.changeHandler}>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
                                 <MenuItem value={4}>4</MenuItem>
