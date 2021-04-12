@@ -14,7 +14,7 @@ class GameComponent extends React.Component {
         jwtToken: "",
         username: "",
         errorMessage: "",
-        playerColors: ['Red', 'RebeccaPurple', 'Blue', 'MediumAquaMarine', 'Green',
+        playerColors: ['Red', 'RebeccaPurple', 'Blue', 'DarkRed', 'DarkSeaGreen',
             'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise'],
         myColor: ""
     }
@@ -98,6 +98,14 @@ class GameComponent extends React.Component {
         }
 
         return handDisplay
+    }
+
+    displayOpponents = () => {
+        let opponents = []
+
+
+
+        return opponents
     }
 
     render() {

@@ -110,8 +110,8 @@ class GameScreenComponent extends React.Component {
         this.state.playerColors.push({color: 'Red'});
         this.state.playerColors.push({color: 'RebeccaPurple'});
         this.state.playerColors.push({color: 'Blue'});
-        this.state.playerColors.push({color: 'MediumAquaMarine'});
-        this.state.playerColors.push({color: 'Green'});
+        this.state.playerColors.push({color: 'DarkRed'});
+        this.state.playerColors.push({color: 'DarkSeaGreen'});
         this.state.playerColors.push({color: 'DarkGoldenRod'});
         this.state.playerColors.push({color: 'DarkSlateGray'});
         this.state.playerColors.push({color: 'Tomato'});
