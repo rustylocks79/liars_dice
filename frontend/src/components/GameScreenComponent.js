@@ -1,5 +1,5 @@
 import {withCookies} from "react-cookie";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import React from "react";
 import TopBarComponent from "./TopBarComponent";
 import {Button, Grid, MenuItem, Paper, Select, TextField} from "@material-ui/core";
@@ -91,6 +91,9 @@ class GameScreenComponent extends React.Component {
                 }
             })
             this.setState({round: this.state.round + 1})
+        })
+        this.props.socket.on('error', data => {
+            console.log('received event error from server: ' + JSON.stringify(data))
         })
         this.setPlayerColors();
     }
@@ -220,7 +223,12 @@ class GameScreenComponent extends React.Component {
                     </Grid>
 
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
-                        <Button variant="contained" color="default">Exit</Button>
+                        <Button variant="contained" color="default">
+                            <Link to={'/'}>
+                                {/*TODO: remove from game. */}
+                                Exit
+                            </Link>
+                        </Button>
                     </Grid>
 
                     {/* TODO: Only display when it turn*/}

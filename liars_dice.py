@@ -81,7 +81,9 @@ class LiarsDice(Game):
                 raise RuntimeError("Invalid action: quantity must be positive")
             elif not 2 <= action[2] <= 6:
                 raise RuntimeError("Invalid action: face value must be between 2 and 6")
-            self.bid_history.append(action)
+            modifiable_action = list(action)
+            modifiable_action.append(self.current_player)
+            self.bid_history.append(tuple(modifiable_action))
             self.current_player = self.get_next_active_player(self.current_player)
         else:
             bid = self.bid_history[-1]
@@ -115,7 +117,9 @@ class LiarsDice(Game):
                                                                                     new_quantity, new_face))
                 elif not 2 <= new_face <= 6:
                     raise RuntimeError("Invalid bid: face value must be between 2 and 6")
-                self.bid_history.append(action)
+                modifiable_action = list(action)
+                modifiable_action.append(self.current_player)
+                self.bid_history.append(tuple(modifiable_action))
                 self.current_player = self.get_next_active_player(self.current_player)
             else:
                 raise RuntimeError("Invalid bid: must either raise or doubt")

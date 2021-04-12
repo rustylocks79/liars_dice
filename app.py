@@ -296,15 +296,18 @@ def action_doubt(json):
     print('received doubt from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
     # TODO: check active player
-    room['game'].perform(('doubt',))
-    for idx, user_info in enumerate(room['players']):
-        username, sid = user_info
-        flask_socketio.emit('doubted', {
-            'hand': room['game'].hands[idx],
-            'currentPlayer': room['game'].active_player(),
-            'activeDice': room['game'].active_dice
-        }, to=sid)
-    poll_bots(lobby_id)
+    try:
+        room['game'].perform(('doubt',))
+        for idx, user_info in enumerate(room['players']):
+            username, sid = user_info
+            flask_socketio.emit('doubted', {
+                'hand': room['game'].hands[idx],
+                'currentPlayer': room['game'].active_player(),
+                'activeDice': room['game'].active_dice
+            }, to=sid)
+        poll_bots(lobby_id)
+    except RuntimeError as err:
+        flask_socketio.emit('error', {'reason': str(err)})
 
 
 @socketio.on('raise')
@@ -317,12 +320,16 @@ def action_raise(json):
     # TODO: check active player
     quantity = int(json['quantity'])
     face = int(json['face'])
-    room['game'].perform(('raise', quantity, face))
-    flask_socketio.emit('raised', {
-        'currentPlayer': room['game'].active_player(),
-        'bidHistory': room['game'].bid_history
-    }, to=lobby_id)
-    poll_bots(lobby_id)
+    try:
+        room['game'].perform(('raise', quantity, face))
+        flask_socketio.emit('raised', {
+            'currentPlayer': room['game'].active_player(),
+            'bidHistory': room['game'].bid_history
+        }, to=lobby_id)
+        poll_bots(lobby_id)
+    except RuntimeError as err:
+        print('error')
+        flask_socketio.emit('error', {'reason': str(err)})
 
 
 def poll_bots(lobby_id: str):
