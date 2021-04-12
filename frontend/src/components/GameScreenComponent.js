@@ -94,6 +94,8 @@ class GameScreenComponent extends React.Component {
         })
         this.props.socket.on('error', data => {
             console.log('received event error from server: ' + JSON.stringify(data))
+            this.state.errorMessage = data['reason']
+            this.setState({})
         })
         this.setPlayerColors();
     }
