@@ -6,6 +6,7 @@ import {
     GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
     GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix
 } from "react-icons/gi";
+import {FaDiceD6} from "react-icons/fa";
 import {Grid} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
 
@@ -103,9 +104,92 @@ class GameComponent extends React.Component {
     displayOpponents = () => {
         let opponents = []
 
+        for (let i = 0; i < this.props.players.length; i++) {
+            if (this.props.players[i] !== this.state.username) {
+                opponents.push(<Grid
+                    container
+                    item
+                    direction="column"
+                    justify="center"
+                    alignItems="center"
+                    xs={2}
+                    style={{marginBottom: "30px"}}
+                    key={i}
+                >
+                    {this.playerDisplay(i)}
+                </Grid>)
+            }
+        }
 
+        for (let i = 0; i < this.props.bots.length; i++) {
+            opponents.push(<Grid
+                container
+                item
+                direction="column"
+                justify="center"
+                alignItems="center"
+                xs={2}
+                style={{marginBottom: "30px"}}
+                key={i + this.props.players.length}
+            >
+                {this.botDisplay(i)}
+            </Grid>)
+        }
 
         return opponents
+    }
+
+    playerDisplay = (index) => {
+        let temp = []
+
+        if (this.props.activeDice[index] > 0) {
+
+            temp.push(
+                <Grid item style={{
+                    color: this.state.playerColors[index],
+                    marginBottom: "10px"
+                }} key={0}>
+                    {this.props.players[index]}
+                </Grid>)
+
+
+            for (let i = 0; i < this.props.activeDice[index]; i++) {
+                temp.push(<Grid item key={i + 1}><FaDiceD6 style={{
+                    height: "3vmin",
+                    width: "3vmin",
+                    verticalAlign: "middle",
+                    color: this.state.playerColors[index]
+                }}/></Grid>)
+
+            }
+        }
+
+        return temp
+    }
+
+    botDisplay = (index) => {
+        let temp = []
+        let offset = this.props.players.length
+
+        if (this.props.activeDice[index + offset] > 0) {
+            temp.push(
+                <Grid item
+                      style={{color: this.state.playerColors[index + offset], marginBottom: "10px"}}
+                      key={0}>
+                    {this.props.bots[index].name}
+                </Grid>)
+
+            for (let i = 0; i < this.props.activeDice[index + offset]; i++) {
+                temp.push(<Grid item key={i + 1}><FaDiceD6 style={{
+                    height: "3vmin",
+                    width: "3vmin",
+                    verticalAlign: "middle",
+                    color: this.state.playerColors[index + offset]
+                }}/></Grid>)
+            }
+        }
+
+        return temp
     }
 
     render() {
@@ -119,12 +203,13 @@ class GameComponent extends React.Component {
                         alignItems="flex-start"
                         spacing={1}
                     >
-                        <Grid item xs={2}>
-                            <p>Hello</p>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <p>World</p>
-                        </Grid>
+                        {/*<Grid item xs={2}>*/}
+                        {/*    <p>Hello</p>*/}
+                        {/*</Grid>*/}
+                        {/*<Grid item xs={2}>*/}
+                        {/*    <p>World</p>*/}
+                        {/*</Grid>*/}
+                        {this.displayOpponents()}
                     </Grid>
                 </div>
                 <div style={{textAlign: "center"}}>
