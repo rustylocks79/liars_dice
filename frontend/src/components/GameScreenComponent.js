@@ -10,6 +10,11 @@ import {connect} from "react-redux";
 import compose from 'recompose/compose'
 import AuthService from "../Services/AuthService";
 
+import {
+    GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
+    GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix
+} from "react-icons/gi";
+
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -102,10 +107,10 @@ class GameScreenComponent extends React.Component {
             console.log('received event terminal from server: ' + JSON.stringify(data))
             let winner = ""
 
-            if(data["winner"] < this.props.players.length) {
+            if (data["winner"] < this.props.players.length) {
                 winner = this.props.players[data["winner"]]
             } else {
-                winner = this.props.bots[data["winner"]-this.props.players.length].name
+                winner = this.props.bots[data["winner"] - this.props.players.length].name
             }
 
             alert(winner + " wins!");
@@ -152,7 +157,9 @@ class GameScreenComponent extends React.Component {
     displayRoundHistory = () => {
         let temp = []
         for (let i = this.props.bidHistory.length - 1; i >= 0; i--) {
-            temp.push(<p key={i} style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}>Quantity: {this.props.bidHistory[i][1]}, Face: {this.props.bidHistory[i][2]} </p>)
+            temp.push(<p key={i}
+                         style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}>Quantity: {this.props.bidHistory[i][1]},
+                Face: {this.props.bidHistory[i][2]} </p>)
         }
         return temp
     }
@@ -196,7 +203,7 @@ class GameScreenComponent extends React.Component {
                         </Paper>
                         <Paper className={classes.roundHistory}>
                             <h3>Round History</h3>
-                            <div style={{alignContent:"center"}}>{this.displayRoundHistory()}</div>
+                            <div style={{alignContent: "center"}}>{this.displayRoundHistory()}</div>
                         </Paper>
 
                     </Grid>
@@ -209,7 +216,7 @@ class GameScreenComponent extends React.Component {
                     <Grid item xs={2}>
                         <Paper className={classes.gameState}>
                             <h3>Game State</h3>
-                            <div style={{alignContent:"center"}}>{this.displayPlayers()}</div>
+                            <div style={{alignContent: "center"}}>{this.displayPlayers()}</div>
                             <br/>
                             <b>{this.allDice()} Dice Total</b>
                         </Paper>
@@ -241,20 +248,53 @@ class GameScreenComponent extends React.Component {
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
 
                         <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
-                        <TextField
-                            type={"number"}
-                            name={"numOfDice"}
-                            onChange={this.changeHandler}
-                            /> x
-                        <Select
-                            value={this.state.face}
-                            name={"face"}
-                            onChange={this.changeHandler}>
-                                <MenuItem value={2}>2</MenuItem>
-                                <MenuItem value={3}>3</MenuItem>
-                                <MenuItem value={4}>4</MenuItem>
-                                <MenuItem value={5}>5</MenuItem>
-                                <MenuItem value={6}>6</MenuItem>
+                            <TextField
+                                type={"number"}
+                                name={"numOfDice"}
+                                onChange={this.changeHandler}
+                                style={{marginRight:"10px"}}
+                                placeholder={"Dice Quantity"}
+                            /> X
+                            <Select
+                                value={this.state.face}
+                                name={"face"}
+                                onChange={this.changeHandler}
+                                style={{marginLeft:"10px"}}>
+                                <MenuItem value={2}>
+                                    <GiDiceSixFacesTwo style={{
+                                        height: "3vmin",
+                                        width: "3vmin",
+                                        verticalAlign: "middle",
+                                    }}/>
+                                </MenuItem>
+                                <MenuItem value={3}>
+                                    <GiDiceSixFacesThree style={{
+                                        height: "3vmin",
+                                        width: "3vmin",
+                                        verticalAlign: "middle",
+                                    }}/>
+                                </MenuItem>
+                                <MenuItem value={4}>
+                                    <GiDiceSixFacesFour style={{
+                                        height: "3vmin",
+                                        width: "3vmin",
+                                        verticalAlign: "middle",
+                                    }}/>
+                                </MenuItem>
+                                <MenuItem value={5}>
+                                    <GiDiceSixFacesFive style={{
+                                        height: "3vmin",
+                                        width: "3vmin",
+                                        verticalAlign: "middle",
+                                    }}/>
+                                </MenuItem>
+                                <MenuItem value={6}>
+                                    <GiDiceSixFacesSix style={{
+                                        height: "3vmin",
+                                        width: "3vmin",
+                                        verticalAlign: "middle",
+                                    }}/>
+                                </MenuItem>
                             </Select>
                         </form>
                     </Grid>
