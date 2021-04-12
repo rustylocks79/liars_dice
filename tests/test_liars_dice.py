@@ -25,7 +25,7 @@ class LiarsDiceTests (unittest.TestCase):
 
         # test raise w/ empty BH
         game.perform(("raise", 2, 3), False)
-        self.assertEqual([("raise", 2, 3)], game.bid_history)
+        self.assertEqual([("raise", 2, 3, 0)], game.bid_history)
         self.assertEqual(1, game.current_player)
 
         game.perform(("raise", 3, 3), False)
