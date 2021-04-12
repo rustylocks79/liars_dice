@@ -100,6 +100,15 @@ class GameScreenComponent extends React.Component {
         })
         this.props.socket.on('terminal', data => {
             console.log('received event terminal from server: ' + JSON.stringify(data))
+            let winner = ""
+
+            if(data["winner"] < this.props.players.length) {
+                winner = this.props.players[data["winner"]]
+            } else {
+                winner = this.props.bots[data["winner"]-this.props.players.length].name
+            }
+
+            alert(winner + " wins!");
         })
     }
 
