@@ -14,22 +14,22 @@ const styles = theme => ({
     root: {
         flexGrow: 1,
     },
-    paper: {
+    roundHistory: {
         padding: theme.spacing(2),
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '300px',
+        height: '50vh',
         maxHeight: '1000px',
         overflow: 'auto'
 
     },
-    paper1: {
+    roundNum: {
         padding: theme.spacing(2),
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '100px'
+        height: '10vh'
     },
     paper2: {
         padding: theme.spacing(2),
@@ -44,12 +44,12 @@ const styles = theme => ({
         bgcolor: theme.palette.text.secondary,
         height: '200px'
     },
-    paper5: {
+    gameState: {
         padding: theme.spacing(2),
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '400px'
+        height: '60vh'
     },
 });
 
@@ -200,11 +200,11 @@ class GameScreenComponent extends React.Component {
                     spacing={1}
                 >
                     <Grid item xs={2}>
-                        <Paper className={classes.paper1}>
+                        <Paper className={classes.roundNum}>
                             <h3>Round</h3>
                             {this.state.round}
                         </Paper>
-                        <Paper className={classes.paper}>
+                        <Paper className={classes.roundHistory}>
                             <h3>Round History</h3>
                             <div style={{alignContent:"center"}}>{this.displayRoundHistory()}</div>
                         </Paper>
@@ -217,7 +217,7 @@ class GameScreenComponent extends React.Component {
                     </Grid>
 
                     <Grid item xs={2}>
-                        <Paper className={classes.paper5}>
+                        <Paper className={classes.gameState}>
                             <h3>Game State</h3>
                             <div style={{alignContent:"center"}}>{this.displayPlayers()}</div>
                             <br/>

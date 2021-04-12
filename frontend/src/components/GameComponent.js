@@ -43,7 +43,7 @@ class GameComponent extends React.Component {
                                                     height: "6vmin",
                                                     width: "6vmin",
                                                     verticalAlign: "middle",
-                                                    color: "Turquoise"
+                                                    color: colorTemp
                                                 }}/>)
         }
         for (let i = 0; i < this.props.hand[1]; i++) {
@@ -102,7 +102,7 @@ class GameComponent extends React.Component {
 
     render() {
         return (
-            <div style={{height: '500px'}}>
+            <div style={{height: '75vh'}}>
                 <div style={{height: '70%'}}>
                     <Grid
                         container
