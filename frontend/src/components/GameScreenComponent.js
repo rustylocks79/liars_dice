@@ -188,6 +188,7 @@ class GameScreenComponent extends React.Component {
                 <TopBarComponent/>
 
                 <br/>
+                {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
 
                 <Grid
                     container
