@@ -107,14 +107,14 @@ class GameScreenComponent extends React.Component {
     setPlayerColors = () => {
         this.state.playerColors.push({color: 'Red'});
         this.state.playerColors.push({color: 'RebeccaPurple'});
-        this.state.playerColors.push({color: 'LightSalmon'});
-        this.state.playerColors.push({color: 'DarkCyan'});
+        this.state.playerColors.push({color: 'Blue'});
+        this.state.playerColors.push({color: 'MediumAquaMarine'});
         this.state.playerColors.push({color: 'Green'});
         this.state.playerColors.push({color: 'DarkGoldenRod'});
-        this.state.playerColors.push({color: 'YellowGreen'});
+        this.state.playerColors.push({color: 'DarkSlateGray'});
         this.state.playerColors.push({color: 'Tomato'});
-        this.state.playerColors.push({color: 'Silver'});
-        this.state.playerColors.push({color: 'SkyBlue'});
+        this.state.playerColors.push({color: 'SaddleBrown'});
+        this.state.playerColors.push({color: 'Turquoise'});
     }
 
     allDice = () => {
