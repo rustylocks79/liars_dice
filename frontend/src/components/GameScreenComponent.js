@@ -252,14 +252,16 @@ class GameScreenComponent extends React.Component {
                                 type={"number"}
                                 name={"numOfDice"}
                                 onChange={this.changeHandler}
-                                style={{marginRight:"10px"}}
+                                style={{marginRight:"10px",verticalAlign:"middle"}}
                                 placeholder={"Dice Quantity"}
+                                InputProps={{ inputProps: { min: 1 } }}
+                                variant={"outlined"}
                             /> X
                             <Select
                                 value={this.state.face}
                                 name={"face"}
                                 onChange={this.changeHandler}
-                                style={{marginLeft:"10px"}}>
+                                style={{marginLeft:"10px",verticalAlign:"middle"}}>
                                 <MenuItem value={2}>
                                     <GiDiceSixFacesTwo style={{
                                         height: "3vmin",
