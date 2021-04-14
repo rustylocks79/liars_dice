@@ -14,7 +14,7 @@ from flask_praetorian.constants import AccessType
 
 from liars_dice import LiarsDice, MediumAgent, EasyAgent, HardAgent
 
-MAX_PLAYERS = 9
+MAX_PLAYERS = 8
 TIME_DELAY = 2
 
 db = flask_sqlalchemy.SQLAlchemy()
@@ -293,6 +293,35 @@ def start_game(json):
         }, to=sid)
 
 
+def test_terminal(room, lobby_id) -> bool:
+    game = room['game']
+    if game.is_terminal():
+        winner = int(np.argmax([game.utility(p) for p in range(game.num_players())]))
+        for idx, player in enumerate(room['players']):
+            username = player[0]
+            user_account = db.session.query(User).filter(User.username == username).first()
+            if idx == winner:
+                user_account.games_won += 1
+            user_account.games_played += 1
+            db.session.commit()
+        flask_socketio.emit('terminal', {
+            'winner': int(np.argmax([game.utility(p) for p in range(game.num_players())]))
+        }, to=lobby_id)
+        return True
+    else:
+        return False
+
+
+def update_after_doubt(room) -> None:
+    game = room['game']
+    for idx, user_info in enumerate(room['players']):
+        username, sid = user_info
+        flask_socketio.emit('doubted', {
+            'hand': game.hands[idx],
+            'currentPlayer': game.active_player(),
+            'activeDice': game.active_dice
+        }, to=sid)
+
 @socketio.on('doubt')
 def action_doubt(json):
     lobby_id = json['lobbyId']
@@ -304,18 +333,9 @@ def action_doubt(json):
     # TODO: check active player
     try:
         game.perform(('doubt',))
-        for idx, user_info in enumerate(room['players']):
-            username, sid = user_info
-            flask_socketio.emit('doubted', {
-                'hand': game.hands[idx],
-                'currentPlayer': game.active_player(),
-                'activeDice': game.active_dice
-            }, to=sid)
-        if game.is_terminal():
-            flask_socketio.emit('terminal', {
-                'winner': int(np.argmax([game.utility(p) for p in range(game.num_players())]))
-            }, to=lobby_id)
-        else:
+        update_after_doubt(room)
+        terminal = test_terminal(room, lobby_id)
+        if not terminal:
             poll_bots(lobby_id)
     except RuntimeError as err:
         flask_socketio.emit('error', {'reason': str(err)})
@@ -359,17 +379,9 @@ def poll_bots(lobby_id: str):
                 'bidHistory': game.bid_history
             }, to=lobby_id)
         elif action[0] == 'doubt':
-            for idx, user_info in enumerate(room['players']):
-                username, sid = user_info
-                flask_socketio.emit('doubted', {
-                    'hand': game.hands[idx],
-                    'currentPlayer': game.active_player(),
-                    'activeDice': game.active_dice
-                }, to=sid)
-            if game.is_terminal():
-                flask_socketio.emit('terminal', {
-                    'winner': int(np.argmax([game.utility(p) for p in range(game.num_players())]))
-                }, to=lobby_id)
+            update_after_doubt(room)
+            terminal = test_terminal(room, lobby_id)
+            if terminal:
                 break
         else:
             raise RuntimeError('Invalid Action: ' + action[0])

@@ -2,7 +2,7 @@ import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
 import AuthService from "../Services/AuthService";
-import {Button, Container, Grid, TextField, Typography} from "@material-ui/core";
+import {Container, Grid} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
 
 
@@ -62,7 +62,8 @@ class ProfileComponent extends React.Component {
                             <h3 align={"left"}>Win Percentage</h3>
                         </Grid>
                         <Grid item xs={6}>
-                            <h3 align={"right"}>{this.state.gamesWon/this.state.gamesPlayed}</h3>
+                            {this.state.gamesPlayed === 0 && <h3 align={"right"}>---</h3>}
+                            {this.state.gamesPlayed !== 0 && <h3 align={"right"}>{(this.state.gamesWon/this.state.gamesPlayed) * 100}%</h3>}
                         </Grid>
 
                         <Grid item xs={6}>
