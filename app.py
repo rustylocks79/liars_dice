@@ -13,6 +13,8 @@ from flask_praetorian.constants import AccessType
 
 from liars_dice import LiarsDice, MediumAgent, EasyAgent, HardAgent
 
+MAX_PLAYERS = 9
+
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
 cors = flask_cors.CORS()
@@ -205,9 +207,9 @@ def join_game(json):
         print(current_user)
         flask_socketio.join_room(lobby_id)
         room = rooms[lobby_id]
-        if len(room['players']) >= 10:
+        if len(room['players']) >= MAX_PLAYERS:
             flask_socketio.emit('error', {'reason', 'The lobby is full. '})
-        if len(room['players']) + len(room['bots']) >= 10:
+        if len(room['players']) + len(room['bots']) >= MAX_PLAYERS:
             room['bots'].pop()
         room['players'].append((current_user.username, flask.request.sid))
         flask_socketio.emit('joined_game', {
