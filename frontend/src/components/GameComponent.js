@@ -148,8 +148,6 @@ class GameComponent extends React.Component {
         let temp = []
         let key = 0
 
-        console.log("Index: " + index + ", Current: " + current)
-
         if (this.props.activeDice[index] > 0) {
 
             temp.push(
@@ -192,18 +190,15 @@ class GameComponent extends React.Component {
                 <Grid item
                       style={{color: this.state.playerColors[index + offset], marginBottom: "10px"}}
                       key={key}>
+                    {current && <AiFillStar style={{
+                        color: "gold",
+                        height: "4vmin",
+                        width: "4vmin",
+                        verticalAlign: "middle"
+                    }}/>}
                     {this.props.bots[index].name}
                 </Grid>)
             key++
-
-            if (current) {
-                temp.push(<Grid item style={{
-                    color: "gold",
-                    marginBottom: "10px"
-                }} key={key}>
-                </Grid>)
-                key++
-            }
 
             for (let i = 0; i < this.props.activeDice[index + offset]; i++) {
                 temp.push(<Grid item key={key}><FaDiceD6 style={{
