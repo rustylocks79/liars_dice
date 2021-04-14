@@ -24,9 +24,9 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '50vh',
-        maxHeight: '1000px',
-        overflow: 'auto'
+        height: '60vh',
+        // maxHeight: '1000px',
+        // overflow: 'auto'
 
     },
     roundNum: {
@@ -35,19 +35,6 @@ const styles = theme => ({
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
         height: '10vh'
-    },
-    paper2: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.primary,
-        bgcolor: theme.palette.text.primary
-    },
-    paper4: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.primary,
-        bgcolor: theme.palette.text.secondary,
-        height: '200px'
     },
     gameState: {
         padding: theme.spacing(2),
@@ -68,7 +55,10 @@ class GameScreenComponent extends React.Component {
         face: 2,
         playerColors: ['Red', 'RebeccaPurple', 'Blue', 'DarkRed', 'DarkSeaGreen',
             'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise'],
-        round: 1
+        round: 1,
+        winnerIndex: 0,
+        gameOver: false
+
     }
 
     constructor(props, context) {
@@ -105,15 +95,17 @@ class GameScreenComponent extends React.Component {
         })
         this.props.socket.on('terminal', data => {
             console.log('received event terminal from server: ' + JSON.stringify(data))
-            let winner = ""
-
-            if (data["winner"] < this.props.players.length) {
-                winner = this.props.players[data["winner"]]
-            } else {
-                winner = this.props.bots[data["winner"] - this.props.players.length].name
-            }
-
-            alert(winner + " wins!");
+            // let winner = ""
+            //
+            // if (data["winner"] < this.props.players.length) {
+            //     winner = this.props.players[data["winner"]]
+            // } else {
+            //     winner = this.props.bots[data["winner"] - this.props.players.length].name
+            // }
+            //
+            // alert(winner + " wins!");
+            this.setState({winnerIndex: data["winner"]})
+            this.setState({gameOver: true})
         })
     }
 
@@ -170,6 +162,7 @@ class GameScreenComponent extends React.Component {
                     Face: {this.props.bidHistory[i][2]} </p>)
             }
         }
+
         return temp
     }
 
@@ -189,6 +182,10 @@ class GameScreenComponent extends React.Component {
         })
     }
 
+    leaveGame = () => {
+        this.props.history.push('/welcome')
+    }
+
     render() {
         const {classes} = this.props;
         return (
@@ -206,11 +203,13 @@ class GameScreenComponent extends React.Component {
                     spacing={1}
                 >
                     <Grid item xs={2}>
-                        <Paper className={classes.roundNum}>
+                        {/*<Paper className={classes.roundNum}>*/}
+                        {/*    <h3>Round</h3>*/}
+                        {/*    {this.state.round}*/}
+                        {/*</Paper>*/}
+                        <Paper className={classes.roundHistory}>
                             <h3>Round</h3>
                             {this.state.round}
-                        </Paper>
-                        <Paper className={classes.roundHistory}>
                             <h3>Round History</h3>
                             <div style={{alignContent: "center"}}>{this.displayRoundHistory()}</div>
                         </Paper>
@@ -219,7 +218,23 @@ class GameScreenComponent extends React.Component {
 
                     <Grid item xs={7}>
                         {/*<Paper className={classes.paper1}>xs</Paper>*/}
-                        <GameComponent/>
+                        {!this.state.gameOver && <GameComponent/>}
+                        {this.state.gameOver &&
+                        <div style={{
+                            height: '60vh',
+                            justifyContent: "center",
+                            verticalAlign: "middle",
+                            display: "flex",
+                            alignItems: "center"
+                        }}>
+                            <p style={{textAlign:"center"}}>Game Over! Winner: {this.state.winnerIndex}
+                                <br/> <br/>
+                                <Button variant="contained" color="default" onClick={this.leaveGame}>
+                                    Leave Game
+                                </Button>
+                            </p>
+                        </div>
+                        }
                     </Grid>
 
                     <Grid item xs={2}>
@@ -232,11 +247,8 @@ class GameScreenComponent extends React.Component {
                     </Grid>
 
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
-                        <Button variant="contained" color="default">
-                            <Link to={'/welcome'}>
-                                {/*TODO: remove from game. */}
-                                Exit
-                            </Link>
+                        <Button variant="contained" color="default" onClick={this.leaveGame}>
+                            Exit
                         </Button>
                     </Grid>
 
