@@ -117,7 +117,7 @@ class LobbyComponent extends React.Component {
     }
 
     addBot = () => {
-        if ((this.state.players.length + this.state.bots.length) < 8) {
+        if ((this.state.players.length + this.state.bots.length) < 12) {
             let nameSelected = false
             while (!nameSelected) {
                 let idx = Math.floor(Math.random() * this.state.botNames.length);

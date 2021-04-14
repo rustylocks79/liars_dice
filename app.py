@@ -14,7 +14,7 @@ from flask_praetorian.constants import AccessType
 
 from liars_dice import LiarsDice, MediumAgent, EasyAgent, HardAgent
 
-MAX_PLAYERS = 8
+MAX_PLAYERS = 12
 TIME_DELAY = 2
 
 db = flask_sqlalchemy.SQLAlchemy()
