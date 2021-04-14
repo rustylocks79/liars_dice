@@ -3,8 +3,12 @@ import {withRouter} from "react-router-dom";
 import React from "react";
 import {connect} from "react-redux";
 import {
-    GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
-    GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix
+    GiDiceSixFacesFive,
+    GiDiceSixFacesFour,
+    GiDiceSixFacesOne,
+    GiDiceSixFacesSix,
+    GiDiceSixFacesThree,
+    GiDiceSixFacesTwo
 } from "react-icons/gi";
 import {FaDiceD6} from "react-icons/fa";
 import {AiFillStar} from "react-icons/ai";
@@ -18,6 +22,8 @@ class GameComponent extends React.Component {
         errorMessage: "",
         playerColors: ['Red', 'RebeccaPurple', 'Blue', 'DarkRed', 'DarkSeaGreen',
             'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise'],
+        dice: [GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
+            GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix],
         myColor: ""
     }
 
@@ -37,68 +43,19 @@ class GameComponent extends React.Component {
         let diceNum = 0;
         let handDisplay = []
         let colorTemp = this.state.playerColors[this.props.index]
-
-        for (let i = 0; i < this.props.hand[0]; i++) {
+        for(let i = 0; i < this.state.dice.length; i++) {
+            for (let j = 0; j < this.props.hand[i]; j++) {
             diceNum++
-            handDisplay.push(<GiDiceSixFacesOne key={diceNum}
-                                                style={{
+            handDisplay.push(React.createElement(this.state.dice[i], {
+                                                key: diceNum,
+                                                style: {
                                                     height: "6vmin",
                                                     width: "6vmin",
                                                     verticalAlign: "middle",
                                                     color: colorTemp
-                                                }}/>)
+                                                }}))
+            }
         }
-        for (let i = 0; i < this.props.hand[1]; i++) {
-            diceNum++
-            handDisplay.push(<GiDiceSixFacesTwo key={diceNum}
-                                                style={{
-                                                    height: "6vmin",
-                                                    width: "6vmin",
-                                                    verticalAlign: "middle",
-                                                    color: colorTemp
-                                                }}/>)
-        }
-        for (let i = 0; i < this.props.hand[2]; i++) {
-            diceNum++
-            handDisplay.push(<GiDiceSixFacesThree key={diceNum}
-                                                  style={{
-                                                      height: "6vmin",
-                                                      width: "6vmin",
-                                                      verticalAlign: "middle",
-                                                      color: colorTemp
-                                                  }}/>)
-        }
-        for (let i = 0; i < this.props.hand[3]; i++) {
-            diceNum++
-            handDisplay.push(<GiDiceSixFacesFour key={diceNum}
-                                                 style={{
-                                                     height: "6vmin",
-                                                     width: "6vmin",
-                                                     verticalAlign: "middle",
-                                                     color: colorTemp
-                                                 }}/>)
-        }
-        for (let i = 0; i < this.props.hand[4]; i++) {
-            diceNum++
-            handDisplay.push(<GiDiceSixFacesFive key={diceNum}
-                                                 style={{
-                                                     height: "6vmin",
-                                                     width: "6vmin",
-                                                     verticalAlign: "middle",
-                                                     color: colorTemp
-                                                 }}/>)
-        }
-        for (let i = 0; i < this.props.hand[5]; i++) {
-            diceNum++
-            handDisplay.push(<GiDiceSixFacesSix key={diceNum}
-                                                style={{
-                                                    height: "6vmin",
-                                                    width: "6vmin",
-                                                    verticalAlign: "middle",
-                                                    color: colorTemp
-                                                }}/>)
-        }
-
         return handDisplay
     }
 
