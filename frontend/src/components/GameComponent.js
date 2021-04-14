@@ -65,7 +65,7 @@ class GameComponent extends React.Component {
         for (let i = 0; i < this.props.players.length; i++) {
             let tempBool = i === this.props.currentPlayer
 
-            if (this.props.players[i] !== this.state.username) {
+           // if (this.props.players[i] !== this.state.username) {
                 opponents.push(<Grid
                     container
                     item
@@ -78,7 +78,7 @@ class GameComponent extends React.Component {
                 >
                     {this.playerDisplay(i, tempBool)}
                 </Grid>)
-            }
+           // }
         }
 
         for (let i = 0; i < this.props.bots.length; i++) {
