@@ -173,7 +173,6 @@ class LobbyComponent extends React.Component {
     displayPlayers = () => {
         return (
             <div>
-                {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
                 {this.state.players.map(player => (
                     <div key={player}>
                         {player === this.state.host &&
@@ -221,6 +220,7 @@ class LobbyComponent extends React.Component {
     render() {
         return (
             <div>
+                {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
                 <TopBarComponent/>
                 <h3 align={"center"} style={{color: 'blue'}}>Lobby #{this.props.lobbyId}</h3>
 
