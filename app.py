@@ -1,4 +1,5 @@
 import pickle
+import time
 import uuid
 
 import flask
@@ -14,6 +15,7 @@ from flask_praetorian.constants import AccessType
 from liars_dice import LiarsDice, MediumAgent, EasyAgent, HardAgent
 
 MAX_PLAYERS = 9
+TIME_DELAY = 2
 
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
@@ -347,6 +349,7 @@ def poll_bots(lobby_id: str):
     game = room['game']
     active_player = game.active_player()
     while active_player >= len(room['players']):
+        time.sleep(TIME_DELAY)
         bot = room['bots'][active_player - len(room['players'])]
         action = bot['instance'].get_action(room['game'])
         game.perform(action)
