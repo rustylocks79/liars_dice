@@ -157,9 +157,18 @@ class GameScreenComponent extends React.Component {
     displayRoundHistory = () => {
         let temp = []
         for (let i = this.props.bidHistory.length - 1; i >= 0; i--) {
-            temp.push(<p key={i}
-                         style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}>Quantity: {this.props.bidHistory[i][1]},
-                Face: {this.props.bidHistory[i][2]} </p>)
+            if (i === this.props.bidHistory.length - 1) {
+                temp.push(<b key={i}
+                             style={{
+                                 color: this.state.playerColors[this.props.bidHistory[i][3]],
+                                 fontSize: "large"
+                             }}>Quantity: {this.props.bidHistory[i][1]},
+                    Face: {this.props.bidHistory[i][2]} </b>)
+            } else {
+                temp.push(<p key={i}
+                             style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}>Quantity: {this.props.bidHistory[i][1]},
+                    Face: {this.props.bidHistory[i][2]} </p>)
+            }
         }
         return temp
     }
@@ -252,16 +261,16 @@ class GameScreenComponent extends React.Component {
                                 type={"number"}
                                 name={"numOfDice"}
                                 onChange={this.changeHandler}
-                                style={{marginRight:"10px",verticalAlign:"middle"}}
+                                style={{marginRight: "10px", verticalAlign: "middle"}}
                                 placeholder={"Dice Quantity"}
-                                InputProps={{ inputProps: { min: 1 } }}
+                                InputProps={{inputProps: {min: 1}}}
                                 variant={"outlined"}
                             /> X
                             <Select
                                 value={this.state.face}
                                 name={"face"}
                                 onChange={this.changeHandler}
-                                style={{marginLeft:"10px",verticalAlign:"middle"}}>
+                                style={{marginLeft: "10px", verticalAlign: "middle"}}>
                                 <MenuItem value={2}>
                                     <GiDiceSixFacesTwo style={{
                                         height: "3vmin",

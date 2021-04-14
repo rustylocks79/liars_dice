@@ -12,7 +12,7 @@ const initialState = {
     activeDice: [],
     currentBid: "",
     bidOwner: "",
-    currentPlayer: "",
+    currentPlayer: 0,
     bidHistory: [],
 
     index: 0

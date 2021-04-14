@@ -7,6 +7,7 @@ import {
     GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix
 } from "react-icons/gi";
 import {FaDiceD6} from "react-icons/fa";
+import {AiFillStar} from "react-icons/ai";
 import {Grid} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
 
@@ -105,6 +106,8 @@ class GameComponent extends React.Component {
         let opponents = []
 
         for (let i = 0; i < this.props.players.length; i++) {
+            let tempBool = i === this.props.currentPlayer
+
             if (this.props.players[i] !== this.state.username) {
                 opponents.push(<Grid
                     container
@@ -112,35 +115,40 @@ class GameComponent extends React.Component {
                     direction="column"
                     justify="center"
                     alignItems="center"
-                    xs={2}
+                    xs={3}
                     style={{marginBottom: "30px"}}
                     key={i}
                 >
-                    {this.playerDisplay(i)}
+                    {this.playerDisplay(i, tempBool)}
                 </Grid>)
             }
         }
 
         for (let i = 0; i < this.props.bots.length; i++) {
+            let tempBool = i + this.props.players.length === this.props.currentPlayer
+
             opponents.push(<Grid
                 container
                 item
                 direction="column"
                 justify="center"
                 alignItems="center"
-                xs={2}
+                xs={3}
                 style={{marginBottom: "30px"}}
                 key={i + this.props.players.length}
             >
-                {this.botDisplay(i)}
+                {this.botDisplay(i, tempBool)}
             </Grid>)
         }
 
         return opponents
     }
 
-    playerDisplay = (index) => {
+    playerDisplay = (index, current) => {
         let temp = []
+        let key = 0
+
+        console.log("Index: " + index + ", Current: " + current)
 
         if (this.props.activeDice[index] > 0) {
 
@@ -148,44 +156,63 @@ class GameComponent extends React.Component {
                 <Grid item style={{
                     color: this.state.playerColors[index],
                     marginBottom: "10px"
-                }} key={0}>
+                }} key={key}>
+                    {current && <AiFillStar style={{
+                        color: "gold",
+                        height: "4vmin",
+                        width: "4vmin",
+                        verticalAlign: "middle"
+                    }}/>}
                     {this.props.players[index]}
                 </Grid>)
+            key++
 
 
             for (let i = 0; i < this.props.activeDice[index]; i++) {
-                temp.push(<Grid item key={i + 1}><FaDiceD6 style={{
+                temp.push(<Grid item key={key}><FaDiceD6 style={{
                     height: "3vmin",
                     width: "3vmin",
                     verticalAlign: "middle",
                     color: this.state.playerColors[index]
                 }}/></Grid>)
-
+                key++
             }
         }
 
         return temp
     }
 
-    botDisplay = (index) => {
+    botDisplay = (index, current) => {
         let temp = []
         let offset = this.props.players.length
+        let key = 0
 
         if (this.props.activeDice[index + offset] > 0) {
             temp.push(
                 <Grid item
                       style={{color: this.state.playerColors[index + offset], marginBottom: "10px"}}
-                      key={0}>
+                      key={key}>
                     {this.props.bots[index].name}
                 </Grid>)
+            key++
+
+            if (current) {
+                temp.push(<Grid item style={{
+                    color: "gold",
+                    marginBottom: "10px"
+                }} key={key}>
+                </Grid>)
+                key++
+            }
 
             for (let i = 0; i < this.props.activeDice[index + offset]; i++) {
-                temp.push(<Grid item key={i + 1}><FaDiceD6 style={{
+                temp.push(<Grid item key={key}><FaDiceD6 style={{
                     height: "3vmin",
                     width: "3vmin",
                     verticalAlign: "middle",
                     color: this.state.playerColors[index + offset]
                 }}/></Grid>)
+                key++
             }
         }
 
@@ -203,12 +230,6 @@ class GameComponent extends React.Component {
                         alignItems="flex-start"
                         spacing={1}
                     >
-                        {/*<Grid item xs={2}>*/}
-                        {/*    <p>Hello</p>*/}
-                        {/*</Grid>*/}
-                        {/*<Grid item xs={2}>*/}
-                        {/*    <p>World</p>*/}
-                        {/*</Grid>*/}
                         {this.displayOpponents()}
                     </Grid>
                 </div>
@@ -231,7 +252,8 @@ const mapStateToProps = state => {
         players: state.players,
         bots: state.bots,
         activeDice: state.activeDice,
-        index: state.index
+        index: state.index,
+        currentPlayer: state.currentPlayer
     }
 }
 
