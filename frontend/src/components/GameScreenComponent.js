@@ -178,6 +178,10 @@ class GameScreenComponent extends React.Component {
     }
 
     leaveGame = () => {
+        this.props.socket.emit('exit', {
+            'lobbyId': this.props.lobbyId,
+            'jwtToken': this.state.jwtToken
+        })
         this.props.history.push('/welcome')
     }
 

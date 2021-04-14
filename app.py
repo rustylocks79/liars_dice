@@ -432,5 +432,18 @@ def poll_bots(lobby_id: str):
         active_player = game.active_player()
 
 
+@socketio.on('exit')
+def exit_game(json):
+    lobby_id = json['lobbyId']
+    jwt_token = json['jwtToken']
+    current_user = get_current_user_from_token(jwt_token)
+    print('received exit from {}: {}'.format(current_user.username, json))
+    room = rooms[lobby_id]
+    room['players'] = [x for x in room['players'] if x[0] != current_user.username]
+    if len(room['players']) == 0:
+        del rooms[lobby_id]
+    print(rooms)
+
+
 if __name__ == "__main__":
     socketio.run(app)
