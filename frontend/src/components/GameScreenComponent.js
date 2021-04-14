@@ -232,7 +232,7 @@ class GameScreenComponent extends React.Component {
                             display: "flex",
                             alignItems: "center"
                         }}>
-                            <p style={{textAlign:"center"}}>Game Over! Winner: {this.state.winnerIndex}
+                            <p style={{textAlign: "center"}}>Game Over! Winner: {this.state.winnerIndex}
                                 <br/> <br/>
                                 <Button variant="contained" color="default" onClick={this.leaveGame}>
                                     Leave Game
@@ -252,28 +252,35 @@ class GameScreenComponent extends React.Component {
                     </Grid>
 
                     {!this.state.gameOver &&
-                    <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
+                    <Grid item xs={4} style={{alignContent:"left",textAlign:"left"}}>
                         <Button variant="contained" color="default" onClick={this.leaveGame}>
                             Exit
                         </Button>
                     </Grid>}
 
-                    {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
-                    <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
-                        <Button variant="contained"
-                                color="secondary"
-                                size="large"
-                                onClick={this.onDoubted}>Doubt</Button>
-                        <Button variant="contained"
-                                color="primary"
-                                size="large"
-                                type={"submit"}
-                                onClick={this.onRaised}>Raise</Button>
-                    </Grid>}
 
-                    {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
+                    <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
+                        <Grid item>
+                            {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
+                            <Button variant="contained"
+                                    color="secondary"
+                                    size="large"
+                                    onClick={this.onDoubted}>Doubt</Button>}
+                        </Grid>
+                        <Grid item>
+                            {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
+                            <Button variant="contained"
+                                    color="primary"
+                                    size="large"
+                                    type={"submit"}
+                                    onClick={this.onRaised}>Raise</Button>}
+                        </Grid>
+                    </Grid>
+
+
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
 
+                        {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
                         <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                             <TextField
                                 type={"number"}
@@ -325,9 +332,8 @@ class GameScreenComponent extends React.Component {
                                     }}/>
                                 </MenuItem>
                             </Select>
-                        </form>
+                        </form>}
                     </Grid>
-                    }
                 </Grid>
             </div>
         );
