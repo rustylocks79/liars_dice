@@ -15,9 +15,8 @@ class LiarsDice(Game):
         self.active_dice = [num_dice for _ in range(num_players)]
         self.num_dice = num_dice
         self.create_hands()
-
-        self.sampling = sampling
         self.last_loser = -1
+        self.sampling = sampling
 
     def create_hands(self):
         self.hands = [[0 for _ in range(6)] for _ in range(self.total_players)]
