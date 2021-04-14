@@ -1,3 +1,4 @@
+import copy
 import pickle
 import time
 import uuid
@@ -317,11 +318,13 @@ def test_terminal(room, lobby_id) -> bool:
         return False
 
 
-def update_after_doubt(room) -> None:
+def update_after_doubt(room, hands, quantity_on_board) -> None:
     game = room['game']
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
         flask_socketio.emit('doubted', {
+            'oldHands': hands,
+            'quantityOnBoard': quantity_on_board,
             'hand': game.hands[idx],
             'currentPlayer': game.active_player(),
             'activeDice': game.active_dice
@@ -344,7 +347,8 @@ def action_doubt(json):
     try:
         active_player = game.active_player()
         last_player = game.get_last_player()
-        game.perform(('doubt',))
+        hands = copy.deepcopy(game.hands)
+        quantity_on_board = game.perform(('doubt',))
         if active_player == game.last_loser:
             current_user.incorrect_doubts += 1
             if is_human_player(last_player, room):
@@ -358,7 +362,7 @@ def action_doubt(json):
                 user_account = db.session.query(User).filter(User.username == username).first()
                 user_account.caught_raises += 1
         db.session.commit()
-        update_after_doubt(room)
+        update_after_doubt(room, hands, quantity_on_board)
         terminal = test_terminal(room, lobby_id)
         if not terminal:
             poll_bots(lobby_id)
@@ -397,15 +401,17 @@ def poll_bots(lobby_id: str):
         time.sleep(TIME_DELAY)
         bot = room['bots'][active_player - len(room['players'])]
         action = bot['instance'].get_action(room['game'])
-        active_player = game.active_player()
-        last_player = game.get_last_player()
-        game.perform(action)
         if action[0] == 'raise':
+            game.perform(action)
             flask_socketio.emit('raised', {
                 'currentPlayer': game.active_player(),
                 'bidHistory': game.bid_history
             }, to=lobby_id)
         elif action[0] == 'doubt':
+            active_player = game.active_player()
+            last_player = game.get_last_player()
+            hands = copy.deepcopy(game.hands)
+            quantity_on_board = game.perform(action)
             if active_player == game.last_loser:
                 if is_human_player(last_player, room):
                     username = room['players'][last_player][0]
@@ -417,7 +423,7 @@ def poll_bots(lobby_id: str):
                     user_account = db.session.query(User).filter(User.username == username).first()
                     user_account.caught_raises += 1
             db.session.commit()
-            update_after_doubt(room)
+            update_after_doubt(room, hands, quantity_on_board)
             terminal = test_terminal(room, lobby_id)
             if terminal:
                 break

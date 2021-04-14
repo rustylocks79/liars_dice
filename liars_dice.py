@@ -70,7 +70,7 @@ class LiarsDice(Game):
             actions.append(("raise", last_quantity + 2, face))
         return actions
 
-    def perform(self, action, verbose: bool = False) -> None:
+    def perform(self, action, verbose: bool = False):
         if verbose:
             print("Player {}: {}".format(self.current_player, action))
         if not self.bid_history:
@@ -107,6 +107,7 @@ class LiarsDice(Game):
                 self.bid_history = []
                 if verbose:
                     print('Player {} lost a die'.format(self.last_loser))
+                return quantity_on_board
             elif action[0] == "raise":
                 new_quantity = action[1]
                 new_face = action[2]

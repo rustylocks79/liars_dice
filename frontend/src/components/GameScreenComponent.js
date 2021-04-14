@@ -1,5 +1,5 @@
 import {withCookies} from "react-cookie";
-import {Link, withRouter} from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import React from "react";
 import TopBarComponent from "./TopBarComponent";
 import {Button, Grid, MenuItem, Paper, Select, TextField} from "@material-ui/core";
@@ -11,8 +11,11 @@ import compose from 'recompose/compose'
 import AuthService from "../Services/AuthService";
 
 import {
-    GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
-    GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix
+    GiDiceSixFacesFive,
+    GiDiceSixFacesFour,
+    GiDiceSixFacesSix,
+    GiDiceSixFacesThree,
+    GiDiceSixFacesTwo
 } from "react-icons/gi";
 
 const styles = theme => ({
@@ -79,6 +82,8 @@ class GameScreenComponent extends React.Component {
         })
         this.props.socket.on('doubted', data => {
             console.log('received event doubted from server: ' + JSON.stringify(data))
+            console.log(data['oldHands']) //TODO: ben display this
+            console.log(data['quantityOnBoard']) //TODO: ben display this
             this.props.dispatch({
                 type: 'DOUBT',
                 payload: {
