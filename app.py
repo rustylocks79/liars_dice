@@ -276,21 +276,26 @@ def start_game(json):
     num_players = len(room['players']) + len(room['bots'])
     room['game'] = LiarsDice(num_players, num_dice)
     strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
-    for bot in room['bots']:
-        if bot['level'] == 'easy':
-            bot['instance'] = EasyAgent(strategy)
-        elif bot['level'] == 'medium':
-            bot['instance'] = MediumAgent(strategy)
-        elif bot['level'] == 'hard':
-            bot['instance'] = HardAgent(strategy)
-    for idx, user_info in enumerate(room['players']):
-        username, sid = user_info
-        flask_socketio.emit('started_game', {
-            'index': idx,
-            'hand': room['game'].hands[idx],
-            'currentPlayer': room['game'].active_player(),
-            'activeDice': room['game'].active_dice
-        }, to=sid)
+    if len(room['players']) + len(room['bots']) < 2:
+        flask_socketio.emit('error', {
+            'reason': 'Can not start a game with just yourself'
+        })
+    else:
+        for bot in room['bots']:
+            if bot['level'] == 'easy':
+                bot['instance'] = EasyAgent(strategy)
+            elif bot['level'] == 'medium':
+                bot['instance'] = MediumAgent(strategy)
+            elif bot['level'] == 'hard':
+                bot['instance'] = HardAgent(strategy)
+        for idx, user_info in enumerate(room['players']):
+            username, sid = user_info
+            flask_socketio.emit('started_game', {
+                'index': idx,
+                'hand': room['game'].hands[idx],
+                'currentPlayer': room['game'].active_player(),
+                'activeDice': room['game'].active_dice
+            }, to=sid)
 
 
 def test_terminal(room, lobby_id) -> bool:

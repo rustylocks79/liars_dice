@@ -77,6 +77,10 @@ class LobbyComponent extends React.Component {
             })
             this.props.history.push('/game')
         })
+        this.props.socket.on('error', data => {
+            console.log('received event error from server ' + JSON.stringify(data))
+            this.setState({errorMessage: data['reason']})
+        })
     }
 
     componentDidMount() {
@@ -169,6 +173,7 @@ class LobbyComponent extends React.Component {
     displayPlayers = () => {
         return (
             <div>
+                {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
                 {this.state.players.map(player => (
                     <div key={player}>
                         {player === this.state.host &&
