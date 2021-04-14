@@ -313,7 +313,7 @@ def action_doubt(json):
             }, to=sid)
         if game.is_terminal():
             flask_socketio.emit('terminal', {
-                'winner': np.argmax([game.utility(p) for p in range(game.num_players())])
+                'winner': int(np.argmax([game.utility(p) for p in range(game.num_players())]))
             }, to=lobby_id)
         else:
             poll_bots(lobby_id)
