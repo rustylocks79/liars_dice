@@ -69,13 +69,12 @@ class GameComponent extends React.Component {
                 width: "4vmin",
                 verticalAlign: "middle",
                 color: colorTemp
-            }}
-                                       key={i + 1}/>)
+            }}key={i + 1}/>)
         }
         return handDisplay
     }
 
-    revealHand = () => {
+    revealHand = (index) => {
         let diceNum = 1;
         let handDisplay = []
         let colorTemp = this.state.playerColors[this.props.index]
@@ -105,8 +104,6 @@ class GameComponent extends React.Component {
             if (tempBool) {
                 opponents.push(<Grid
                     item
-                    justify="center"
-                    alignItems="center"
                     xs={4}
                     style={{marginBottom: "30px", border: "2px solid black", textAlign: "center"}}
                     key={i}
@@ -116,8 +113,6 @@ class GameComponent extends React.Component {
             } else {
                 opponents.push(<Grid
                     item
-                    justify="center"
-                    alignItems="center"
                     xs={4}
                     style={{marginBottom: "30px", textAlign: "center"}}
                     key={i}
@@ -133,8 +128,6 @@ class GameComponent extends React.Component {
             if (tempBool) {
                 opponents.push(<Grid
                     item
-                    justify="center"
-                    alignItems="center"
                     xs={4}
                     style={{marginBottom: "30px", border: "2px solid black", textAlign: "center"}}
                     key={i + this.props.players.length}
@@ -144,8 +137,6 @@ class GameComponent extends React.Component {
             } else {
                 opponents.push(<Grid
                     item
-                    justify="center"
-                    alignItems="center"
                     xs={4}
                     style={{marginBottom: "30px", textAlign: "center"}}
                     key={i + this.props.players.length}
@@ -181,10 +172,11 @@ class GameComponent extends React.Component {
             key++
 
             if (!this.state.gameOver) {
-                temp.push(<div>{this.hiddenHand(index, this.props.activeDice[index])}</div>)
+                temp.push(<div key={key}>{this.hiddenHand(index, this.props.activeDice[index])}</div>)
             } else {
-                temp.push(<div>{this.revealHand()}</div>)
+                temp.push(<div key={key}>{this.revealHand()}</div>)
             }
+            key++
         }
 
         return temp
@@ -211,8 +203,10 @@ class GameComponent extends React.Component {
             key++
 
             if (!this.state.gameOver) {
-                temp.push(<div>{this.hiddenHand(index + offset, this.props.activeDice[index + offset])}</div>)
+                temp.push(<div key={key}>{this.hiddenHand(index + offset, this.props.activeDice[index + offset])}</div>)
             }
+
+            key++
         }
 
         return temp

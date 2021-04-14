@@ -246,13 +246,14 @@ class GameScreenComponent extends React.Component {
                         </Paper>
                     </Grid>
 
+                    {!this.state.gameOver &&
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
                         <Button variant="contained" color="default" onClick={this.leaveGame}>
                             Exit
                         </Button>
-                    </Grid>
+                    </Grid>}
 
-                    {this.props.index === this.props.currentPlayer &&
+                    {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
                         <Button variant="contained"
                                 color="secondary"
@@ -265,7 +266,7 @@ class GameScreenComponent extends React.Component {
                                 onClick={this.onRaised}>Raise</Button>
                     </Grid>}
 
-                    {this.props.index === this.props.currentPlayer &&
+                    {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
 
                         <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
