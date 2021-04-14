@@ -22,7 +22,7 @@ class LobbyComponent extends React.Component {
         players: [], // player = {name: string}
         bots: [],
         botNames: ["BOT_Aaron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
-            "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara"],
+            "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara", "BOT_Jeremy"],
         usedNames: []
     }
 

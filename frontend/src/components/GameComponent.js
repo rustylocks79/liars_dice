@@ -21,7 +21,7 @@ class GameComponent extends React.Component {
         username: "",
         errorMessage: "",
         playerColors: ['Red', 'RebeccaPurple', 'Blue', 'DarkRed', 'DarkSeaGreen',
-            'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise'],
+            'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise', 'Green', 'DimGray'],
         dice: [GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
             GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix],
         myColor: ""
@@ -43,17 +43,54 @@ class GameComponent extends React.Component {
         let diceNum = 0;
         let handDisplay = []
         let colorTemp = this.state.playerColors[this.props.index]
-        for(let i = 0; i < this.state.dice.length; i++) {
+        for (let i = 0; i < this.state.dice.length; i++) {
             for (let j = 0; j < this.props.hand[i]; j++) {
-            diceNum++
-            handDisplay.push(React.createElement(this.state.dice[i], {
-                                                key: diceNum,
-                                                style: {
-                                                    height: "6vmin",
-                                                    width: "6vmin",
-                                                    verticalAlign: "middle",
-                                                    color: colorTemp
-                                                }}))
+                diceNum++
+                handDisplay.push(React.createElement(this.state.dice[i], {
+                    key: diceNum,
+                    style: {
+                        height: "6vmin",
+                        width: "6vmin",
+                        verticalAlign: "middle",
+                        color: colorTemp
+                    }
+                }))
+            }
+        }
+        return handDisplay
+    }
+
+    hiddenHand = (colorIndex, diceNum) => {
+        let handDisplay = []
+        let colorTemp = this.state.playerColors[colorIndex]
+        for (let i = 0; i < diceNum; i++) {
+            handDisplay.push(<FaDiceD6 style={{
+                height: "4vmin",
+                width: "4vmin",
+                verticalAlign: "middle",
+                color: colorTemp
+            }}
+                                       key={i + 1}/>)
+        }
+        return handDisplay
+    }
+
+    revealHand = () => {
+        let diceNum = 1;
+        let handDisplay = []
+        let colorTemp = this.state.playerColors[this.props.index]
+        for (let i = 0; i < this.state.dice.length; i++) {
+            for (let j = 0; j < this.props.hand[i]; j++) {
+                diceNum++
+                handDisplay.push(React.createElement(this.state.dice[i], {
+                    key: diceNum,
+                    style: {
+                        height: "4vmin",
+                        width: "4vmin",
+                        verticalAlign: "middle",
+                        color: colorTemp
+                    }
+                }))
             }
         }
         return handDisplay
@@ -65,37 +102,57 @@ class GameComponent extends React.Component {
         for (let i = 0; i < this.props.players.length; i++) {
             let tempBool = i === this.props.currentPlayer
 
-           // if (this.props.players[i] !== this.state.username) {
+            if (tempBool) {
                 opponents.push(<Grid
-                    container
                     item
-                    direction="column"
                     justify="center"
                     alignItems="center"
-                    xs={3}
-                    style={{marginBottom: "30px"}}
+                    xs={4}
+                    style={{marginBottom: "30px", border: "2px solid black", textAlign: "center"}}
                     key={i}
                 >
                     {this.playerDisplay(i, tempBool)}
                 </Grid>)
-           // }
+            } else {
+                opponents.push(<Grid
+                    item
+                    justify="center"
+                    alignItems="center"
+                    xs={4}
+                    style={{marginBottom: "30px", textAlign: "center"}}
+                    key={i}
+                >
+                    {this.playerDisplay(i, tempBool)}
+                </Grid>)
+            }
         }
 
         for (let i = 0; i < this.props.bots.length; i++) {
             let tempBool = i + this.props.players.length === this.props.currentPlayer
 
-            opponents.push(<Grid
-                container
-                item
-                direction="column"
-                justify="center"
-                alignItems="center"
-                xs={3}
-                style={{marginBottom: "30px"}}
-                key={i + this.props.players.length}
-            >
-                {this.botDisplay(i, tempBool)}
-            </Grid>)
+            if (tempBool) {
+                opponents.push(<Grid
+                    item
+                    justify="center"
+                    alignItems="center"
+                    xs={4}
+                    style={{marginBottom: "30px", border: "2px solid black", textAlign: "center"}}
+                    key={i + this.props.players.length}
+                >
+                    {this.botDisplay(i, tempBool)}
+                </Grid>)
+            } else {
+                opponents.push(<Grid
+                    item
+                    justify="center"
+                    alignItems="center"
+                    xs={4}
+                    style={{marginBottom: "30px", textAlign: "center"}}
+                    key={i + this.props.players.length}
+                >
+                    {this.botDisplay(i, tempBool)}
+                </Grid>)
+            }
         }
 
         return opponents
@@ -108,29 +165,25 @@ class GameComponent extends React.Component {
         if (this.props.activeDice[index] > 0) {
 
             temp.push(
-                <Grid item style={{
+                <div style={{
                     color: this.state.playerColors[index],
-                    marginBottom: "10px"
+                    marginBottom: "10px",
+                    height: "3vmin"
                 }} key={key}>
                     {current && <AiFillStar style={{
                         color: "gold",
-                        height: "4vmin",
-                        width: "4vmin",
-                        verticalAlign: "middle"
+                        height: "3vmin",
+                        width: "3vmin",
+                        verticalAlign: "middle",
                     }}/>}
                     {this.props.players[index]}
-                </Grid>)
+                </div>)
             key++
 
-
-            for (let i = 0; i < this.props.activeDice[index]; i++) {
-                temp.push(<Grid item key={key}><FaDiceD6 style={{
-                    height: "3vmin",
-                    width: "3vmin",
-                    verticalAlign: "middle",
-                    color: this.state.playerColors[index]
-                }}/></Grid>)
-                key++
+            if (!this.state.gameOver) {
+                temp.push(<div>{this.hiddenHand(index, this.props.activeDice[index])}</div>)
+            } else {
+                temp.push(<div>{this.revealHand()}</div>)
             }
         }
 
@@ -145,26 +198,20 @@ class GameComponent extends React.Component {
         if (this.props.activeDice[index + offset] > 0) {
             temp.push(
                 <Grid item
-                      style={{color: this.state.playerColors[index + offset], marginBottom: "10px"}}
+                      style={{color: this.state.playerColors[index + offset], marginBottom: "10px", height: "3vmin"}}
                       key={key}>
                     {current && <AiFillStar style={{
                         color: "gold",
-                        height: "4vmin",
-                        width: "4vmin",
+                        height: "3vmin",
+                        width: "3vmin",
                         verticalAlign: "middle"
                     }}/>}
                     {this.props.bots[index].name}
                 </Grid>)
             key++
 
-            for (let i = 0; i < this.props.activeDice[index + offset]; i++) {
-                temp.push(<Grid item key={key}><FaDiceD6 style={{
-                    height: "3vmin",
-                    width: "3vmin",
-                    verticalAlign: "middle",
-                    color: this.state.playerColors[index + offset]
-                }}/></Grid>)
-                key++
+            if (!this.state.gameOver) {
+                temp.push(<div>{this.hiddenHand(index + offset, this.props.activeDice[index + offset])}</div>)
             }
         }
 

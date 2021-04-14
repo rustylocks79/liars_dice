@@ -54,7 +54,7 @@ class GameScreenComponent extends React.Component {
         numOfDice: 0,
         face: 2,
         playerColors: ['Red', 'RebeccaPurple', 'Blue', 'DarkRed', 'DarkSeaGreen',
-            'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise'],
+            'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise', 'Green', 'DimGray'],
         round: 1,
         winnerIndex: 0,
         gameOver: false
