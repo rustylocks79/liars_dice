@@ -61,7 +61,6 @@ class GameScreenComponent extends React.Component {
         round: 1,
         winnerIndex: 0,
         gameOver: false
-
     }
 
     constructor(props, context) {
@@ -100,15 +99,6 @@ class GameScreenComponent extends React.Component {
         })
         this.props.socket.on('terminal', data => {
             console.log('received event terminal from server: ' + JSON.stringify(data))
-            // let winner = ""
-            //
-            // if (data["winner"] < this.props.players.length) {
-            //     winner = this.props.players[data["winner"]]
-            // } else {
-            //     winner = this.props.bots[data["winner"] - this.props.players.length].name
-            // }
-            //
-            // alert(winner + " wins!");
             this.setState({winnerIndex: data["winner"]})
             this.setState({gameOver: true})
         })
@@ -252,7 +242,7 @@ class GameScreenComponent extends React.Component {
                     </Grid>
 
                     {!this.state.gameOver &&
-                    <Grid item xs={4} style={{alignContent:"left",textAlign:"left"}}>
+                    <Grid item xs={4} style={{alignContent: "left", textAlign: "left"}}>
                         <Button variant="contained" color="default" onClick={this.leaveGame}>
                             Exit
                         </Button>
@@ -261,28 +251,30 @@ class GameScreenComponent extends React.Component {
 
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
                         <Grid item>
-                            {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
                             <Button variant="contained"
                                     color="secondary"
                                     size="large"
-                                    onClick={this.onDoubted}>Doubt</Button>}
+                                    onClick={this.onDoubted}
+                                    disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver) || this.props.bidHistory.length === 0}>
+                                Doubt</Button>
                         </Grid>
                         <Grid item>
-                            {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
                             <Button variant="contained"
                                     color="primary"
                                     size="large"
-                                    type={"submit"}
-                                    onClick={this.onRaised}>Raise</Button>}
+                                    onClick={this.onRaised}
+                                    style={{marginLeft: "20px"}}
+                                    disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver)}>
+                                Raise</Button>
                         </Grid>
                     </Grid>
 
 
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
 
-                        {this.props.index === this.props.currentPlayer && !this.state.gameOver &&
                         <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                             <TextField
+                                disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver)}
                                 type={"number"}
                                 name={"numOfDice"}
                                 onChange={this.changeHandler}
@@ -292,6 +284,7 @@ class GameScreenComponent extends React.Component {
                                 variant={"outlined"}
                             /> X
                             <Select
+                                disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver)}
                                 value={this.state.face}
                                 name={"face"}
                                 onChange={this.changeHandler}
@@ -332,7 +325,7 @@ class GameScreenComponent extends React.Component {
                                     }}/>
                                 </MenuItem>
                             </Select>
-                        </form>}
+                        </form>
                     </Grid>
                 </Grid>
             </div>
