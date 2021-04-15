@@ -1,6 +1,9 @@
 import eventlet
+from eventlet import wsgi
+
 eventlet.monkey_patch()
 
+import argparse
 import copy
 import pickle
 import time
@@ -449,4 +452,10 @@ def exit_game(json):
 
 
 if __name__ == "__main__":
-    socketio.run(app, port=5000)
+    parser = argparse.ArgumentParser(description='Run the liars dice web app')
+    parser.add_argument('-p', '--production', help='production mode')
+    args = parser.parse_args()
+    if args.production is not None:
+        wsgi.server(eventlet.listen(('', 5000)), app)
+    else:
+        socketio.run(app, port=5000)
