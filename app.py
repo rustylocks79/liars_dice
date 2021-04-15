@@ -449,4 +449,4 @@ def exit_game(json):
 
 
 if __name__ == "__main__":
-    socketio.run(app, port=5000, debug=False)
+    socketio.run(app, port=5000)
