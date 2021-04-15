@@ -27,7 +27,7 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '60vh',
+        height: '70vh',
         // maxHeight: '1000px',
         // overflow: 'auto'
 
@@ -44,7 +44,7 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
-        height: '60vh'
+        height: '70vh'
     },
 });
 
@@ -151,15 +151,20 @@ class GameScreenComponent extends React.Component {
 
     displayRoundHistory = () => {
         let temp = []
-        for (let i = this.props.bidHistory.length - 1; i >= 0; i--) {
-            if (i === this.props.bidHistory.length - 1) {
-                temp.push(<b key={i}
-                             style={{
-                                 color: this.state.playerColors[this.props.bidHistory[i][3]],
-                                 fontSize: "large"
-                             }}>Quantity: {this.props.bidHistory[i][1]},
-                    Face: {this.props.bidHistory[i][2]} </b>)
-            } else {
+
+        temp.push(<h3 key={this.props.bidHistory.length}>Current Bid</h3>)
+        if (this.props.bidHistory.length > 0) {
+            temp.push(<b key={this.props.bidHistory.length - 1}
+                         style={{
+                             color: this.state.playerColors[this.props.bidHistory[this.props.bidHistory.length - 1][3]],
+                             fontSize: "large"
+                         }}>Quantity: {this.props.bidHistory[this.props.bidHistory.length - 1][1]},
+                Face: {this.props.bidHistory[this.props.bidHistory.length - 1][2]} </b>)
+        }
+
+        temp.push(<h4 key={this.props.bidHistory.length + 1}>Round History</h4>)
+        for (let i = this.props.bidHistory.length - 2; i >= this.props.bidHistory.length - 6; i--) {
+            if (i >= 0) {
                 temp.push(<p key={i}
                              style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}>Quantity: {this.props.bidHistory[i][1]},
                     Face: {this.props.bidHistory[i][2]} </p>)
@@ -217,7 +222,7 @@ class GameScreenComponent extends React.Component {
                         <Paper className={classes.roundHistory}>
                             <h3>Round</h3>
                             {this.state.round}
-                            <h3>Round History</h3>
+                            {/*<h3>Round History</h3>*/}
                             <div style={{alignContent: "center"}}>{this.displayRoundHistory()}</div>
                         </Paper>
 
