@@ -20,10 +20,14 @@ class WelcomeComponent extends React.Component {
     constructor(props) {
         super(props);
         const {cookies} = props;
-        if (process.env.NODE_ENV !== 'production') {
-             this.socket = socketIOClient("http://127.0.0.1:5000")
-        } else {
-            this.socket = socketIOClient("http://146.186.64.130:5000")
+        try {
+            if (process.env.NODE_ENV !== 'production') {
+                this.state.socket = socketIOClient("http://127.0.0.1:5000")
+            } else {
+                this.state.socket = socketIOClient("http://146.186.64.130:5000")
+            }
+        } catch (e) {
+            console.log(e)
         }
         this.state.jwtToken = cookies.get('JWT-TOKEN')
         this.state.socket.on("created_game", data => {
