@@ -12,6 +12,7 @@ import flask_sqlalchemy
 import numpy as np
 from flask_praetorian import PraetorianError
 from flask_praetorian.constants import AccessType
+from waitress import serve
 
 from liars_dice import LiarsDice, MediumAgent, EasyAgent, HardAgent
 
@@ -446,4 +447,10 @@ def exit_game(json):
 
 
 if __name__ == "__main__":
-    socketio.run(app)
+    parser = argparse.ArgumentParser(description='Run the liars dice web app')
+    parser.add_argument('--p', help='production mode')
+    args = parser.parse_args()
+    if args.p is not None:
+        serve(app, host='0.0.0.0', port=5000)
+    else:
+        socketio.run(app)

@@ -4,3 +4,4 @@ flask-praetorian~=1.1.0
 flask-socketio==5.0.1
 numpy~=1.20.1
 Flask-Cors~=3.0.10
+waitress~=2.0.0
