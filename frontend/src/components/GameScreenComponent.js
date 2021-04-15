@@ -254,31 +254,31 @@ class GameScreenComponent extends React.Component {
 
 
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
-                        <Grid item>
+                        {!this.state.gameOver && <Grid item>
                             <Button variant="contained"
                                     color="secondary"
                                     size="large"
                                     onClick={this.onDoubted}
-                                    disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver) || this.props.bidHistory.length === 0}>
+                                    disabled={!(this.props.index === this.props.currentPlayer) || this.props.bidHistory.length === 0}>
                                 Doubt</Button>
-                        </Grid>
-                        <Grid item>
+                        </Grid> }
+                        {!this.state.gameOver && <Grid item>
                             <Button variant="contained"
                                     color="primary"
                                     size="large"
                                     onClick={this.onRaised}
                                     style={{marginLeft: "20px"}}
-                                    disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver)}>
+                                    disabled={!(this.props.index === this.props.currentPlayer)}>
                                 Raise</Button>
-                        </Grid>
+                        </Grid>}
                     </Grid>
 
 
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
 
-                        <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
+                        {!this.state.gameOver && <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
                             <TextField
-                                disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver)}
+                                disabled={!(this.props.index === this.props.currentPlayer)}
                                 type={"number"}
                                 name={"numOfDice"}
                                 onChange={this.changeHandler}
@@ -288,7 +288,7 @@ class GameScreenComponent extends React.Component {
                                 variant={"outlined"}
                             /> X
                             <Select
-                                disabled={!(this.props.index === this.props.currentPlayer && !this.state.gameOver)}
+                                disabled={!(this.props.index === this.props.currentPlayer)}
                                 value={this.state.face}
                                 name={"face"}
                                 onChange={this.changeHandler}
@@ -329,7 +329,7 @@ class GameScreenComponent extends React.Component {
                                     }}/>
                                 </MenuItem>
                             </Select>
-                        </form>
+                        </form> }
                     </Grid>
                 </Grid>
             </div>
