@@ -12,7 +12,7 @@ class WelcomeComponent extends React.Component {
         jwtToken: "",
         username: "",
         errorMessage: "",
-        socket: socketIOClient("http://127.0.0.1:5000"), //storing the connection
+        socket: undefined, //storing the connection
         value: 'Welcome Component',
         postId: 2
     }
@@ -20,6 +20,11 @@ class WelcomeComponent extends React.Component {
     constructor(props) {
         super(props);
         const {cookies} = props;
+        if (process.env.NODE_ENV !== 'production') {
+             this.socket = socketIOClient("http://127.0.0.1:5000")
+        } else {
+            this.socket = socketIOClient("http://146.186.64.130:5000")
+        }
         this.state.jwtToken = cookies.get('JWT-TOKEN')
         this.state.socket.on("created_game", data => {
             console.log('Received created_game from server: ' + JSON.stringify(data))
