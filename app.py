@@ -1,10 +1,8 @@
-import argparse
 import copy
 import pickle
 import time
 import uuid
 
-import eventlet
 import flask
 import flask_cors
 import flask_praetorian
@@ -12,7 +10,6 @@ import flask_praetorian.base
 import flask_socketio
 import flask_sqlalchemy
 import numpy as np
-from eventlet import wsgi
 from flask_praetorian import PraetorianError
 from flask_praetorian.constants import AccessType
 
@@ -449,10 +446,4 @@ def exit_game(json):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Run the liars dice web app')
-    parser.add_argument('--p', help='production mode')
-    args = parser.parse_args()
-    if args.p is not None:
-        wsgi.server(eventlet.listen(('', 5000)), app)
-    else:
-        socketio.run(app)
+    socketio.run(app, port=5000)
