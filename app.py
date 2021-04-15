@@ -1,6 +1,9 @@
 import eventlet
+from eventlet import wsgi
+
 eventlet.monkey_patch()
 
+import argparse
 import copy
 import pickle
 import time
@@ -321,13 +324,15 @@ def test_terminal(room, lobby_id) -> bool:
         return False
 
 
-def update_after_doubt(room, hands, quantity_on_board) -> None:
+def update_after_doubt(room, hands, quantity_on_board, doubter, loser) -> None:
     game = room['game']
     for idx, user_info in enumerate(room['players']):
         username, sid = user_info
         flask_socketio.emit('doubted', {
             'oldHands': hands,
             'quantityOnBoard': quantity_on_board,
+            'doubter': doubter,
+            'loser': loser,
             'hand': game.hands[idx],
             'currentPlayer': game.active_player(),
             'activeDice': game.active_dice
@@ -365,7 +370,7 @@ def action_doubt(json):
                 user_account = db.session.query(User).filter(User.username == username).first()
                 user_account.caught_raises += 1
         db.session.commit()
-        update_after_doubt(room, hands, quantity_on_board)
+        update_after_doubt(room, hands, quantity_on_board, active_player, game.last_loser)
         terminal = test_terminal(room, lobby_id)
         if not terminal:
             poll_bots(lobby_id)
@@ -426,7 +431,7 @@ def poll_bots(lobby_id: str):
                     user_account = db.session.query(User).filter(User.username == username).first()
                     user_account.caught_raises += 1
             db.session.commit()
-            update_after_doubt(room, hands, quantity_on_board)
+            update_after_doubt(room, hands, quantity_on_board, active_player, game.last_loser)
             terminal = test_terminal(room, lobby_id)
             if terminal:
                 break
@@ -449,4 +454,10 @@ def exit_game(json):
 
 
 if __name__ == "__main__":
-    socketio.run(app, port=5000)
+    parser = argparse.ArgumentParser(description='Run the liars dice web app')
+    parser.add_argument('-p', '--production', help='production mode')
+    args = parser.parse_args()
+    if args.production is not None:
+        wsgi.server(eventlet.listen(('', 5000)), app)
+    else:
+        socketio.run(app, port=5000)
