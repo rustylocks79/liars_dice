@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 import copy
 import pickle
 import time
@@ -446,4 +449,4 @@ def exit_game(json):
 
 
 if __name__ == "__main__":
-    socketio.run(app, port=5000)
+    socketio.run(app, port=5000, debug=False)
