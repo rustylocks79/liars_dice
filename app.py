@@ -29,6 +29,18 @@ guard = flask_praetorian.Praetorian()
 cors = flask_cors.CORS()
 socketio = flask_socketio.SocketIO(cors_allowed_origins='*')
 rooms = {}
+strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
+ghost_agent = MediumAgent(strategy)
+
+
+class GameUser:
+    def __init__(self, username, sid, ghost):
+        self.username = username
+        self.sid = sid
+        self.ghost = ghost
+
+    def __str__(self) -> str:
+        return '[' + self.username + ', ' + self.sid + ', ' + self.ghost + ']'
 
 
 class User(db.Model):
@@ -202,7 +214,7 @@ def create_game(json):
     print('Received create_game from {}: {}'.format(current_user.username, json))
     lobby_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(lobby_id)
-    rooms[lobby_id] = {'players': [(current_user.username, flask.request.sid)], 'bots': [], 'num_dice': 5, 'host': current_user.username, 'game': None}
+    rooms[lobby_id] = {'players': [GameUser(current_user.username, flask.request.sid, False)], 'bots': [], 'num_dice': 5, 'host': current_user.username, 'game': None}
     flask_socketio.emit('created_game', {'lobbyId': lobby_id, 'players': [current_user.username], 'host': current_user.username})
 
 
@@ -220,11 +232,11 @@ def join_game(json):
             flask_socketio.emit('error', {'reason', 'The lobby is full. '})
         if len(room['players']) + len(room['bots']) >= MAX_PLAYERS:
             room['bots'].pop()
-        room['players'].append((current_user.username, flask.request.sid))
+        room['players'].append(GameUser(current_user.username, flask.request.sid, False))
         flask_socketio.emit('joined_game', {
             'lobbyId': lobby_id,
             'host': room['host'],
-            'players': [username for username, _ in room['players']],
+            'players': [game_user.username for game_user in room['players']],
             'bots': room['bots'],
             'numDice': room['num_dice']}, room=lobby_id)
     else:
@@ -266,7 +278,7 @@ def leave_game(json):
         room['host'] = room['players'][0][0]
     flask_socketio.emit('left_game', {
         'lobbyId': lobby_id,
-        'players': [username for username, _ in room['players']],
+        'players': [game_user.username for game_user in room['players']],
         'host': room['host'],
         'lostPlayer': current_user.username
     }, room=lobby_id)
@@ -282,7 +294,6 @@ def start_game(json):
     num_dice = room['num_dice']
     num_players = len(room['players']) + len(room['bots'])
     room['game'] = LiarsDice(num_players, num_dice)
-    strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
     if len(room['players']) + len(room['bots']) < 2:
         flask_socketio.emit('error', {
             'reason': 'Can not start a game with just yourself'
@@ -295,23 +306,21 @@ def start_game(json):
                 bot['instance'] = MediumAgent(strategy)
             elif bot['level'] == 'hard':
                 bot['instance'] = HardAgent(strategy)
-        for idx, user_info in enumerate(room['players']):
-            username, sid = user_info
+        for idx, game_user in enumerate(room['players']):
             flask_socketio.emit('started_game', {
                 'index': idx,
                 'hand': room['game'].hands[idx],
                 'currentPlayer': room['game'].active_player(),
                 'activeDice': room['game'].active_dice
-            }, to=sid)
+            }, to=game_user.sid)
 
 
 def test_terminal(room, lobby_id) -> bool:
     game = room['game']
     if game.is_terminal():
         winner = int(np.argmax([game.utility(p) for p in range(game.num_players())]))
-        for idx, player in enumerate(room['players']):
-            username = player[0]
-            user_account = db.session.query(User).filter(User.username == username).first()
+        for idx, game_user in enumerate(room['players']):
+            user_account = db.session.query(User).filter(User.username == game_user.username).first()
             if idx == winner:
                 user_account.games_won += 1
             user_account.games_played += 1
@@ -326,8 +335,7 @@ def test_terminal(room, lobby_id) -> bool:
 
 def update_after_doubt(room, hands, quantity_on_board, doubter, loser) -> None:
     game = room['game']
-    for idx, user_info in enumerate(room['players']):
-        username, sid = user_info
+    for idx, game_user in enumerate(room['players']):
         flask_socketio.emit('doubted', {
             'oldHands': hands,
             'quantityOnBoard': quantity_on_board,
@@ -336,7 +344,7 @@ def update_after_doubt(room, hands, quantity_on_board, doubter, loser) -> None:
             'hand': game.hands[idx],
             'currentPlayer': game.active_player(),
             'activeDice': game.active_dice
-        }, to=sid)
+        }, to=game_user.sid)
 
 
 def is_human_player(idx, room):
@@ -360,14 +368,12 @@ def action_doubt(json):
         if active_player == game.last_loser:
             current_user.incorrect_doubts += 1
             if is_human_player(last_player, room):
-                username = room['players'][last_player][0]
-                user_account = db.session.query(User).filter(User.username == username).first()
+                user_account = db.session.query(User).filter(User.username == room['players'][last_player].username).first()
                 user_account.successful_raises += 1
         else:
             current_user.correct_doubts += 1
             if is_human_player(last_player, room):
-                username = room['players'][last_player][0]
-                user_account = db.session.query(User).filter(User.username == username).first()
+                user_account = db.session.query(User).filter(User.username == room['players'][last_player].username).first()
                 user_account.caught_raises += 1
         db.session.commit()
         update_after_doubt(room, hands, quantity_on_board, active_player, game.last_loser)
@@ -405,10 +411,13 @@ def poll_bots(lobby_id: str):
     room = rooms[lobby_id]
     game = room['game']
     active_player = game.active_player()
-    while active_player >= len(room['players']):
+    while active_player >= len(room['players']) or room['players'][active_player].ghost:
         time.sleep(TIME_DELAY)
-        bot = room['bots'][active_player - len(room['players'])]
-        action = bot['instance'].get_action(room['game'])
+        if active_player >= len(room['players']):
+            bot = room['bots'][active_player - len(room['players'])]['instance']
+        else:
+            bot = ghost_agent
+        action = bot.get_action(room['game'])
         if action[0] == 'raise':
             game.perform(action)
             flask_socketio.emit('raised', {
@@ -447,10 +456,19 @@ def exit_game(json):
     current_user = get_current_user_from_token(jwt_token)
     print('received exit from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
-    room['players'] = [x for x in room['players'] if x[0] != current_user.username]
     if len(room['players']) == 0:
         del rooms[lobby_id]
-    print(rooms)
+    else:
+        all_ghosts = True
+        for i in range(len(room['players'])):
+            if room['players'][i].username == current_user.username:
+                room['players'][i].ghost = True
+            elif not room['players'][i].ghost:
+                all_ghosts = False
+        if all_ghosts:
+            del rooms[lobby_id]
+        else:
+            poll_bots(lobby_id)
 
 
 if __name__ == "__main__":
