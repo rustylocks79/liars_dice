@@ -4,6 +4,7 @@ import pickle
 import time
 import uuid
 
+import eventlet
 import flask
 import flask_cors
 import flask_praetorian
@@ -11,9 +12,9 @@ import flask_praetorian.base
 import flask_socketio
 import flask_sqlalchemy
 import numpy as np
+from eventlet import wsgi
 from flask_praetorian import PraetorianError
 from flask_praetorian.constants import AccessType
-from waitress import serve
 
 from liars_dice import LiarsDice, MediumAgent, EasyAgent, HardAgent
 
@@ -452,6 +453,6 @@ if __name__ == "__main__":
     parser.add_argument('--p', help='production mode')
     args = parser.parse_args()
     if args.p is not None:
-        serve(app, host='0.0.0.0', port=5000)
+        wsgi.server(eventlet.listen(('', 5000)), app)
     else:
         socketio.run(app)
