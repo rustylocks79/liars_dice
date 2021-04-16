@@ -65,6 +65,12 @@ class GameScreenComponent extends React.Component {
         gameOver: false,
         dice: [GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
             GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix],
+        doubtDisplay: false,
+        doubter: 0,
+        loser: 0,
+        doubtQuantity: 0,
+        lastBidQ: 0,
+        lastBidF: 0
     }
 
     constructor(props, context) {
@@ -82,6 +88,11 @@ class GameScreenComponent extends React.Component {
                 }
             })
             this.setState({errorMessage: ''})
+
+            this.setState({
+                lastBidQ: data.bidHistory[data.bidHistory.length-1][1],
+                lastBidF: data.bidHistory[data.bidHistory.length-1][2]
+            })
         })
         this.props.socket.on('doubted', data => {
             console.log('received event doubted from server: ' + JSON.stringify(data))
@@ -96,6 +107,17 @@ class GameScreenComponent extends React.Component {
                 }
             })
             this.setState({round: this.state.round + 1, errorMessage: ''})
+
+
+            this.setState({
+                doubtDisplay: true,
+                doubter: data.doubter,
+                loser: data.loser,
+                doubtQuantity: data.quantityOnBoard
+            })
+            setTimeout(() => {
+                this.setState({doubtDisplay: false})
+            }, 6000)
         })
         this.props.socket.on('error', data => {
             console.log('received event error from server: ' + JSON.stringify(data))
@@ -110,8 +132,7 @@ class GameScreenComponent extends React.Component {
                 this.setState({winnerName: this.props.bots[data["winner"] - this.props.players.length].name})
             }
 
-            this.setState({gameOver: true})
-            this.setState({winnerIndex: data["winner"]})
+            this.setState({gameOver: true, winnerIndex: data["winner"]})
         })
     }
 
@@ -249,6 +270,34 @@ class GameScreenComponent extends React.Component {
         this.props.history.push('/welcome')
     }
 
+    displayDoubtInfo = () => {
+        // let bidQuantity = this.props.bidHistory[this.props.bidHistory.length - 1][1]
+        // let bidFace = this.props.bidHistory[this.props.bidHistory.length - 1][2]
+        let bidQuantity = this.state.lastBidQ
+        let bidFace = this.state.lastBidF
+        let doubterColor = this.state.playerColors[this.state.doubter]
+        let loserColor = this.state.playerColors[this.state.loser]
+        let doubterName, loserName = ""
+
+        if (this.state.doubter < this.props.players.length) {
+            doubterName = this.props.players[this.state.doubter]
+        } else {
+            doubterName = this.props.bots[this.state.doubter - this.props.players.length].name
+        }
+
+        if (this.state.loser < this.props.players.length) {
+            loserName = this.props.players[this.state.loser]
+        } else {
+            loserName = this.props.bots[this.state.loser - this.props.players.length].name
+        }
+
+
+        return (<h1 style={{textAlign: "center"}}>
+            <b style={{color:doubterColor}}>{doubterName}</b> doubted {bidQuantity} X {this.displayDie(bidFace, true)}.
+            The board had {this.state.doubtQuantity}. <b style={{color:loserColor}}>{loserName}</b> lost a die.
+                </h1>)
+    }
+
     render() {
         const {classes} = this.props;
         return (
@@ -315,14 +364,14 @@ class GameScreenComponent extends React.Component {
                         </Paper>
                     </Grid>
 
-                    {!this.state.gameOver &&
+                    {!this.state.gameOver && !this.state.doubtDisplay &&
                     <Grid item xs={4} style={{alignContent: "left", textAlign: "left"}}>
                         <Button variant="contained" color="default" onClick={this.leaveGame}>
                             Exit
                         </Button>
                     </Grid>}
 
-
+                    {!this.state.doubtDisplay &&
                     <Grid container item xs={3} alignItems={'flex-start'} justify={'center'}>
                         {!this.state.gameOver && <Grid item>
                             <Button variant="contained"
@@ -341,9 +390,9 @@ class GameScreenComponent extends React.Component {
                                     disabled={!(this.props.index === this.props.currentPlayer)}>
                                 Raise</Button>
                         </Grid>}
-                    </Grid>
+                    </Grid>}
 
-
+                    {!this.state.doubtDisplay &&
                     <Grid container item xs={4} alignItems={'flex-start'} justify={'flex-start'}>
 
                         {!this.state.gameOver && <form noValidate autoComplete="off" onSubmit={this.submitHandler}>
@@ -400,7 +449,13 @@ class GameScreenComponent extends React.Component {
                                 </MenuItem>
                             </Select>
                         </form>}
-                    </Grid>
+                    </Grid>}
+
+                    {this.state.doubtDisplay &&
+                    <Grid item xs={12}>
+                        {this.displayDoubtInfo()}
+                    </Grid>}
+
                 </Grid>
             </div>
         );
