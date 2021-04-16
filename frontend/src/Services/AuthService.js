@@ -6,9 +6,9 @@ class AuthService {
     user(token) {
         let url = ''
         if (process.env.NODE_ENV !== 'production') {
-             url = 'http://localhost:5000'
+             url = 'http://localhost:8080'
         } else {
-            url = 'http://146.186.64.130:5000'
+            url = 'http://146.186.64.130:8080'
         }
         return axios.get(url + "/user", {
             headers: {
