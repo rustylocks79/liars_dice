@@ -431,12 +431,12 @@ def poll_bots(lobby_id: str):
             quantity_on_board = game.perform(action)
             if active_player == game.last_loser:
                 if is_human_player(last_player, room):
-                    username = room['players'][last_player][0]
+                    username = room['players'][last_player].username
                     user_account = db.session.query(User).filter(User.username == username).first()
                     user_account.successful_raises += 1
             else:
                 if is_human_player(last_player, room):
-                    username = room['players'][last_player][0]
+                    username = room['players'][last_player].username
                     user_account = db.session.query(User).filter(User.username == username).first()
                     user_account.caught_raises += 1
             db.session.commit()

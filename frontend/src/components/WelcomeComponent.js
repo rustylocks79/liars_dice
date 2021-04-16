@@ -22,7 +22,7 @@ class WelcomeComponent extends React.Component {
         const {cookies} = props;
         try {
             if (process.env.NODE_ENV !== 'production') {
-                this.state.socket = socketIOClient("http://127.0.0.1:8080")
+                this.state.socket = socketIOClient("http://127.0.0.1:5000")
             } else {
                 this.state.socket = socketIOClient("http://146.186.64.130:8080")
             }
