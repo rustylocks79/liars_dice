@@ -476,6 +476,6 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--production', help='production mode')
     args = parser.parse_args()
     if args.production is not None:
-        wsgi.server(eventlet.listen(('', 5000)), app)
+        wsgi.server(eventlet.listen(('', 8080)), app)
     else:
-        socketio.run(app, port=5000)
+        socketio.run(app, port=8080)
