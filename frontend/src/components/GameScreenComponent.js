@@ -13,6 +13,7 @@ import AuthService from "../Services/AuthService";
 import {
     GiDiceSixFacesFive,
     GiDiceSixFacesFour,
+    GiDiceSixFacesOne,
     GiDiceSixFacesSix,
     GiDiceSixFacesThree,
     GiDiceSixFacesTwo
@@ -61,7 +62,9 @@ class GameScreenComponent extends React.Component {
         round: 1,
         winnerName: "",
         winnerIndex: 0,
-        gameOver: false
+        gameOver: false,
+        dice: [GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
+            GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix],
     }
 
     constructor(props, context) {
@@ -154,24 +157,72 @@ class GameScreenComponent extends React.Component {
 
         temp.push(<h3 key={this.props.bidHistory.length}>Current Bid</h3>)
         if (this.props.bidHistory.length > 0) {
+            let name1 = ""
+            if (this.props.bidHistory[this.props.bidHistory.length - 1][3] < this.props.players.length) {
+                name1 = this.props.players[this.props.bidHistory[this.props.bidHistory.length - 1][3]]
+            } else {
+                name1 = this.props.bots[this.props.bidHistory[this.props.bidHistory.length - 1][3] - this.props.players.length].name
+            }
+
             temp.push(<b key={this.props.bidHistory.length - 1}
                          style={{
                              color: this.state.playerColors[this.props.bidHistory[this.props.bidHistory.length - 1][3]],
-                             fontSize: "large"
-                         }}>Quantity: {this.props.bidHistory[this.props.bidHistory.length - 1][1]},
-                Face: {this.props.bidHistory[this.props.bidHistory.length - 1][2]} </b>)
+                             fontSize: "large",
+                             verticalAlign: "middle"
+                         }}>
+                {/*Quantity: {this.props.bidHistory[this.props.bidHistory.length - 1][1]},*/}
+                {/*Face: {this.props.bidHistory[this.props.bidHistory.length - 1][2]} */}
+                {name1} <br/>
+                {this.props.bidHistory[this.props.bidHistory.length - 1][1]} X {this.displayDie(this.props.bidHistory[this.props.bidHistory.length - 1][2], true)}
+            </b>)
         }
 
         temp.push(<h4 key={this.props.bidHistory.length + 1}>Round History</h4>)
-        for (let i = this.props.bidHistory.length - 2; i >= this.props.bidHistory.length - 6; i--) {
+        for (let i = this.props.bidHistory.length - 2; i >= this.props.bidHistory.length - 5; i--) {
             if (i >= 0) {
+                let name2 = ""
+                if (this.props.bidHistory[i][3] < this.props.players.length) {
+                    name2 = this.props.players[this.props.bidHistory[i][3]]
+                } else {
+                    name2 = this.props.bots[this.props.bidHistory[i][3] - this.props.players.length].name
+                }
+
                 temp.push(<p key={i}
-                             style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}>Quantity: {this.props.bidHistory[i][1]},
-                    Face: {this.props.bidHistory[i][2]} </p>)
+                             style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}
+                >
+                    {/*Quantity: {this.props.bidHistory[i][1]},*/}
+                    {/*Face: {this.props.bidHistory[i][2]} */}
+                    {name2} <br/>
+                    {this.props.bidHistory[i][1]} X {this.displayDie(this.props.bidHistory[i][2], false)}
+                </p>)
             }
         }
 
         return temp
+    }
+
+    displayDie = (face, recent) => {
+        if (!recent) {
+            return (React.createElement(this.state.dice[face - 1], {
+                key: 0,
+                style: {
+                    height: "4vmin",
+                    width: "4vmin",
+                    verticalAlign: "middle",
+                    color: "black",
+                }
+            }))
+        } else {
+            return (React.createElement(this.state.dice[face - 1], {
+                key: 0,
+                style: {
+                    height: "5vmin",
+                    width: "5vmin",
+                    verticalAlign: "middle",
+                    color: "black"
+                }
+            }))
+        }
     }
 
     onRaised = () => {

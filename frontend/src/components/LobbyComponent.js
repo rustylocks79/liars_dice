@@ -242,7 +242,7 @@ class LobbyComponent extends React.Component {
                                 <Button onClick={this.clearBots} variant="contained" color="default" size="small">
                                     CLear Bots
                                 </Button>
-                                <Button onClick={this.addBot} variant="contained" color="secondary" size="small">
+                                <Button onClick={this.addBot} variant="contained" color="secondary" size="small" style={{marginLeft:"10px"}}>
                                     Add Bot
                                 </Button>
                             </div>
@@ -283,7 +283,7 @@ class LobbyComponent extends React.Component {
                         Leave Lobby
                     </Button>
                     {this.state.username === this.state.host &&
-                    <Button variant="contained" color="primary" onClick={this.onStartGame}>
+                    <Button variant="contained" color="primary" onClick={this.onStartGame} style={{marginLeft:"10px"}}>
                         Start Game
                     </Button>
                     }
