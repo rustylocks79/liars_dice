@@ -271,11 +271,11 @@ def leave_game(json):
     current_user = get_current_user_from_token(jwt_token)
     print('received leave_game from {}: {}'.format(current_user.username, json))
     room = rooms[lobby_id]
-    room['players'].remove((current_user.username, flask.request.sid))
+    room['players'] = [x for x in room['players'] if x.username != current_user.username]
     if len(room['players']) == 0:
         del rooms[lobby_id]
     elif room['host'] == current_user.username:
-        room['host'] = room['players'][0][0]
+        room['host'] = room['players'][0].username
     flask_socketio.emit('left_game', {
         'lobbyId': lobby_id,
         'players': [game_user.username for game_user in room['players']],
