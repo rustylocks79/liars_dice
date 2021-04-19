@@ -1,9 +1,13 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
+import PromotionalTopBarComponent from "./PromotionalTopBarComponent";
 
 function PromotionalDocumentationComponent() {
     return (
-        <h1>PromotionalDocumentationComponent</h1>
+        <div>
+            <PromotionalTopBarComponent/>
+            <h1>PromotionalDocumentationComponent</h1>
+        </div>
     )
 }
 
