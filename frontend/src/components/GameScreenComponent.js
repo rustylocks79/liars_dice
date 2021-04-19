@@ -88,11 +88,6 @@ class GameScreenComponent extends React.Component {
                 }
             })
             this.setState({errorMessage: ''})
-
-            this.setState({
-                lastBidQ: data.bidHistory[data.bidHistory.length-1][1],
-                lastBidF: data.bidHistory[data.bidHistory.length-1][2]
-            })
         })
         this.props.socket.on('doubted', data => {
             console.log('received event doubted from server: ' + JSON.stringify(data))
@@ -113,7 +108,9 @@ class GameScreenComponent extends React.Component {
                 doubtDisplay: true,
                 doubter: data.doubter,
                 loser: data.loser,
-                doubtQuantity: data.quantityOnBoard
+                doubtQuantity: data.quantityOnBoard,
+                lastBidQ: data.lastQuantity,
+                lastBidF: data.lastFace
             })
             setTimeout(() => {
                 this.setState({doubtDisplay: false})
