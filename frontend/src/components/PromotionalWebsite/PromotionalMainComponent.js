@@ -1,20 +1,18 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
+import YouTubePlayer from "react-player/youtube";
 
-// class PromotionalMainComponent extends React.Component {
-//
-//     render() {
-//         return(
-//             <h1>PromotionalMainComponent</h1>
-//         )
-//     }
-//
-// }
-//
-// export default withRouter(PromotionalMainComponent)
-
-export default withRouter(function (PromotionalMainComponent) {
+function PromotionalMainComponent() {
     return (
-        <h1>PromotionalMainComponent</h1>
+        <div>
+            <h1>PromotionalMainComponent</h1> <br/>
+            <YouTubePlayer
+                url={'https://www.youtube.com/watch?v=dQw4w9WgXcQ'}
+                controls={true}
+            />
+        </div>
+
     )
-})
+}
+
+export default withRouter(PromotionalMainComponent)
