@@ -29,8 +29,8 @@ const styles = theme => ({
         color: theme.palette.text.primary,
         bgcolor: theme.palette.text.secondary,
         height: '70vh',
-        // maxHeight: '1000px',
-        // overflow: 'auto'
+        maxHeight: '1000px',
+        overflow: 'auto'
 
     },
     roundNum: {
