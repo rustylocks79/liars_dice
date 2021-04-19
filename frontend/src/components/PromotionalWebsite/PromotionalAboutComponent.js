@@ -7,8 +7,7 @@ function PromotionalAboutComponent() {
     return (
         <div>
             <PromotionalTopBarComponent/>
-            <div style={{textAlign: "left", width: "80%", margin: "auto"}}>
-                <h1>About Us</h1>
+            <div style={{textAlign: "left", width: "80%", margin: "auto", paddingTop: "50px", paddingBottom: "50px"}}>
                 <Card variant={'outlined'}>
                     <CardContent>
                         <h2>Jeremy Dellock</h2>
