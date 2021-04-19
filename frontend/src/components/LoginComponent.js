@@ -103,6 +103,15 @@ class LoginComponent extends React.Component {
                                 </Button>
                             </div>
                         </Grid>
+                        <Grid item xs={12} style={{textAlign:"center"}}>
+                            <br/><br/>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                href={"/"}
+                            >
+                                Return to Promotional Website
+                            </Button></Grid>
                     </Grid>
                 </Container>
             </div>
