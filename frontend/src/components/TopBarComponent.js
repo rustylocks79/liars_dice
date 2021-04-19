@@ -44,7 +44,7 @@ class TopBarComponent extends React.Component {
     logout = (event) => {
         const {cookies} = this.props;
         cookies.remove('JWT-TOKEN');
-        this.props.history.push('/')
+        this.props.history.push('/game/login')
     }
 
     render() {
@@ -57,7 +57,7 @@ class TopBarComponent extends React.Component {
                         <IconButton edge="start" className={classes.button} color="inherit" aria-label="logo">
                             <CasinoOutlinedIcon style={{fontSize: 40}}/>
                         </IconButton>
-                        <Link href={"/welcome"} color="inherit" variant="h6" className={classes.title}>
+                        <Link href={"/game/welcome"} color="inherit" variant="h6" className={classes.title}>
                             Deceiver's Dice
                         </Link>
                         <p color="inherit" className={classes.other}>

@@ -31,7 +31,7 @@ class JoinGameComponent extends React.Component {
                     host: data.host
                 }
             })
-            this.props.history.push('/lobby');
+            this.props.history.push('/game/lobby');
         });
         this.props.socket.on('error', data => {
             console.log('Received error from server: ' + JSON.stringify(data))
@@ -69,7 +69,7 @@ class JoinGameComponent extends React.Component {
                     {/*    <TextField id="lobbyField" label="Lobby ID"/>*/}
                     {/*</form>*/}
                     <TextField id="lobbyField" label="Lobby ID" onChange={this.handleInput}/> <br/>
-                    <Button variant="contained" color="default" href="/welcome">
+                    <Button variant="contained" color="default" href="/game/welcome">
                         Cancel
                     </Button>
                     <Button variant="contained" color="secondary" onClick={this.onJoinGame}>

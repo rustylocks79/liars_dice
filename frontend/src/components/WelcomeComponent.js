@@ -43,7 +43,7 @@ class WelcomeComponent extends React.Component {
                     host: data.host
                 }
             })
-            this.props.history.push('/lobby');
+            this.props.history.push('/game/lobby');
         });
     }
 
@@ -62,7 +62,7 @@ class WelcomeComponent extends React.Component {
             type: 'JOIN_LOBBY_SOCKET',
             payload: {socket: this.state.socket}
         })
-        this.props.history.push('/joingame')
+        this.props.history.push('/game/join')
     }
 
     render() {
@@ -117,7 +117,7 @@ class WelcomeComponent extends React.Component {
                                 Join Game
                             </Button>
                             <br/><br/>
-                            <Button variant="contained" color="default" href={"/profile"}>
+                            <Button variant="contained" color="default" href={"/game/profile"}>
                                 View Statistics
                             </Button>
                         </Grid>

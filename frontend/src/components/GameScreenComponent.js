@@ -267,7 +267,7 @@ class GameScreenComponent extends React.Component {
             'lobbyId': this.props.lobbyId,
             'jwtToken': this.state.jwtToken
         })
-        this.props.history.push('/welcome')
+        this.props.history.push('/game/welcome')
     }
 
     displayDoubtInfo = () => {

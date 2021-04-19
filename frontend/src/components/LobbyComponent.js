@@ -59,7 +59,7 @@ class LobbyComponent extends React.Component {
                 host: data.host
             })
             if (data.lostPlayer === this.state.username) {
-                this.props.history.push('/welcome')
+                this.props.history.push('/game/welcome')
             }
         })
         this.props.socket.on('started_game', data => {
@@ -75,7 +75,7 @@ class LobbyComponent extends React.Component {
                     hand: data.hand
                 }
             })
-            this.props.history.push('/game')
+            this.props.history.push('/game/play')
         })
         this.props.socket.on('error', data => {
             console.log('received event error from server ' + JSON.stringify(data))

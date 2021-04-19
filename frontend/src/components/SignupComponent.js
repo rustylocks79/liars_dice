@@ -25,13 +25,10 @@ class SignupComponent extends React.Component {
         if (this.state.password === this.state.checkPassword) {
 
             AuthService.signup(this.state.username, this.state.password).then(res => {
-                //this.props.history.push('/login')
-                this.props.history.push('/')
+                this.props.history.push('/game/login')
             }).catch(res => {
                 if (res.response) {
-                    //console.log(res.response)
                     if (res.response.status === 400) {
-                        //this.setState({errorMessage: 'Invalid Username or Password'});
                         this.setState({errorMessage: res.response.data.error})
                     } else {
                         this.setState({errorMessage: "unknown error"})
