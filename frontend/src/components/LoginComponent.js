@@ -23,7 +23,7 @@ class LoginComponent extends React.Component {
         AuthService.login(this.state.username, this.state.password).then(res => {
             cookies.set('JWT-TOKEN', res.data.accessToken)
             AuthService.user(res.data.accessToken).then(() => {
-                this.props.history.push('/welcome')
+                this.props.history.push('/game/welcome')
             })
         }).catch(res => {
             if (res.response) {
@@ -97,7 +97,7 @@ class LoginComponent extends React.Component {
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    href={"/signup"}
+                                    href={"/game/signup"}
                                 >
                                     Sign Up
                                 </Button>
