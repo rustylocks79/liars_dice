@@ -71,100 +71,75 @@ class WelcomeComponent extends React.Component {
                 <TopBarComponent/>
 
                 <Container fixed>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <h4 align={"center"}>Tutorial</h4>
+                    <Grid container spacing={2} style={{paddingTop: "5vh"}}>
+                        <Grid item xs={6} style={{fontSize: "large"}}>
+                            <h3 align={"center"}>Tutorial</h3>
+                            <ul>
+                                <li style={{marginBottom: "10px"}}>At the start of a game of Deceiver’s Dice, each
+                                    player receives a number of between
+                                    1 and 5
+                                </li>
+                                <li style={{marginBottom: "10px"}}>When a round begins, each player rolls their dice,
+                                    resulting in a set of face values
+                                    to be concealed from the other players
+                                </li>
+                                <li style={{marginBottom: "10px"}}>The player who goes first sets an initial bid: a
+                                    guess consisting of a face value
+                                    (between 2 and 6) and the quantity of that face value (greater than or equal to 1)
+                                    that they think is present among all players’ hands
+                                </li>
+                                <li style={{marginBottom: "10px"}}>
+                                    Turns proceed in a clockwise direction. On a player’s turn, they can either “raise”
+                                    or “doubt” the bid
+                                </li>
+                                <li style={{marginBottom: "10px"}}>If the player chooses to raise the bid, they can
+                                    either increase the quantity and
+                                    set any face value or keep the same quantity and set a greater face value
+                                </li>
+                                <li style={{marginBottom: "10px"}}>If the player doubts the bid, all players reveal
+                                    their dice; the number of dice that
+                                    share the bid’s face value is counted. Any dice with a face value of 1 are also
+                                    included in the count - 1s are wild. If this total equals or exceeds the bid’s
+                                    quantity, the doubt is incorrect; the doubter loses a die. Otherwise, the doubt is
+                                    correct; the player who set the bid loses a die. A player is eliminated if they lose
+                                    their last die
+                                </li>
+                                <li style={{marginBottom: "10px"}}>Following a doubt, each player rolls again, obtaining
+                                    a new set of face values and a
+                                    new round begins, starting with the player who lost a die. If the player who lost
+                                    the die was eliminated, then the next player starts the bidding
+                                </li>
+                                <li>The game continues until one player remains</li>
+                            </ul>
                         </Grid>
-                        <Grid item xs={6}/>
-                        <Grid item xs={6}>
-                            <Typography paragraph={true} align={"justify"}>
-                                At the start of a game of Liar’s Dice, each player is given between 1 and 5
-                                dice.<br/><br/>
-                                Now each game of Liar’s Dice consists of multiple rounds.<br/><br/>
-                                A round starts with each player rolling their dice and concealing them from the other
-                                players. One of the
-                                players is chosen at random to start the first round.<br/><br/>
-                                The player who goes first must set an initial bid. The bid must consist of a face
-                                value (between 2 and 6) and a
-                                quantity (greater than or equal to 1).<br/><br/>
-                                The game proceeds in a clockwise direction.<br/><br/>
-                                During a player’s turn they can either raise the previous bid or doubt the previous
-                                bid. If the player chooses to raise the previous bid by choosing a face value and
-                                quantity.<br/><br/>
-                                For a raise to be valid the face value must be greater than the previous
-                                bid’s face value and with equal quantity or a greater quantity.<br/><br/>
-                                If the player doubts
-                                the previous then all players reveal their dice. The number of dice with the face
-                                value equal to the previous bid are added up. <br/><br/>
-                                Additionally, any dice that rolls a 1 are included since 1 are wild. If there are
-                                more than or exactly the number of dice
-                                in play as the quantity then the player who doubted the bid losses a die.<br/><br/>
-                                If there are less dice in play than the quantity of the previous bid then the player
-                                who made the
-                                previous bid loses a die.<br/><br/>
-                                previous bid loses a die.<br/><br/>
-                                The next round starts with the player who lost the die. If
-                                the player who lost the die was eliminated then the next player starts the
-                                bidding.
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button onClick={this.onCreateGame} variant="contained" color="primary">
-                                Create Game
-                            </Button>
-                            <br/><br/>
-                            <Button onClick={this.onJoinGame} variant="contained" color="secondary">
-                                Join Game
-                            </Button>
-                            <br/><br/>
-                            <Button variant="contained" color="default" href={"/game/profile"}>
-                                View Statistics
-                            </Button>
+                        <Grid container item xs={6}
+                              direction="column"
+                              justify="center"
+                              alignItems="center"
+                              spacing={10}>
+                            <Grid item>
+                                <Button onClick={this.onCreateGame} variant="contained" color="primary" size={"large"}
+                                        style={{height: "10vh", width: "20vw"}}>
+                                    Create Game
+                                </Button>
+                            </Grid>
+
+                            <Grid item>
+                                <Button onClick={this.onJoinGame} variant="contained" color="secondary" size={"large"}
+                                        style={{height: "10vh", width: "20vw"}}>
+                                    Join Game
+                                </Button>
+                            </Grid>
+
+                            <Grid item>
+                                <Button variant="contained" color="default" href={"/game/profile"} size={"large"}
+                                        style={{height: "10vh", width: "20vw"}}>
+                                    View Statistics
+                                </Button>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Container>
-
-                {/*<Container fixed>*/}
-                {/*    <Grid container spacing={2}>*/}
-                {/*        <Grid item xs={12}>*/}
-                {/*            <h4 align={"center"}>Tutorial</h4>*/}
-                {/*        </Grid>*/}
-                {/*        <Grid item xs={6}>*/}
-                {/*            <Typography paragraph={true} align={"center"}>*/}
-                {/*                At the start of a game of Liar’s Dice, each player is given between 1 and 5 dice.*/}
-                {/*                Now each game of Liar’s Dice consists of multiple rounds. A round starts with each*/}
-                {/*                player rolling their dice and concealing them from the other players. One of the*/}
-                {/*                players is chosen at random to start the first round. The player who goes first must*/}
-                {/*                set an initial bid. The bid must consist of a face value (between 2 and 6) and a*/}
-                {/*                quantity (greater than or equal to 1). The game proceeds in a clockwise direction.*/}
-                {/*                During a player’s turn they can either raise the previous bid or doubt the previous*/}
-                {/*                bid. If the player chooses to raise the previous bid by choosing a face value and*/}
-                {/*                quantity. For a raise to be valid the face value must be greater than the previous*/}
-                {/*                bid’s face value and with equal quantity or a greater quantity. If the player doubts*/}
-                {/*                the previous then all players reveal their dice. The number of dice with the face*/}
-                {/*                value equal to the previous bid are added up. Additionally, any dice that rolls a 1*/}
-                {/*                are included since 1 are wild. If there are more than or exactly the number of dice*/}
-                {/*                in play as the quantity then the player who doubted the bid losses a die. If there are*/}
-                {/*                less dice in play than the quantity of the previous bid then the player who made the*/}
-                {/*                previous bid loses a die. The next round starts with the player who lost the die. If*/}
-                {/*                the player who lost the die was eliminated then the next player starts the bidding.*/}
-                {/*            </Typography>*/}
-                {/*        </Grid>*/}
-                {/*        <Grid item xs={6}>*/}
-                {/*            <Container maxWidth={"xs"}>*/}
-                {/*                    <button>Create Lobby</button> <br/>*/}
-                {/*                    <button>Join Lobby</button> <br/>*/}
-                {/*                    <button>View Statistics</button>*/}
-                {/*            </Container>*/}
-                {/*        </Grid>*/}
-                {/*    </Grid>*/}
-                {/*</Container>*/}
-
-                {/*<ul>*/}
-                {/*    {this.props.testStrings.map(post => (*/}
-                {/*        <li key={post.id}>{post.title}</li>*/}
-                {/*    ))}*/}
-                {/*</ul>*/}
             </div>
         );
     }
