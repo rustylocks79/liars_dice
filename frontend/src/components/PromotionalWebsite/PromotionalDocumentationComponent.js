@@ -7,7 +7,7 @@ function PromotionalDocumentationComponent() {
     return (
         <div>
             <PromotionalTopBarComponent/>
-            <div style={{textAlign: "left", width: "80%", margin: "auto", paddingTop: "20px", paddingBottom: "20px"}}>
+            <div style={{textAlign: "left", width: "80%", margin: "auto", paddingTop: "50px", paddingBottom: "50px"}}>
                 <Card variant={'outlined'}>
                     <CardContent>
                         <h2>Domain Model</h2>
