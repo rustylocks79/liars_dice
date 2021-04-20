@@ -1,3 +1,4 @@
+import copy
 import math
 import random as rand
 
@@ -84,14 +85,20 @@ class LiarsDice(Game):
             modifiable_action.append(self.current_player)
             self.bid_history.append(tuple(modifiable_action))
             self.current_player = self.get_next_active_player(self.current_player)
+            return {
+                'currentPlayer': self.current_player,
+                'bidHistory': self.bid_history
+            }
         else:
+            old_hands = copy.deepcopy(self.hands)
+            doubter = self.active_player()
             bid = self.bid_history[-1]
             last_quantity = bid[1]
             last_face = bid[2]
             if action[0] == "doubt":
                 quantity_on_board = sum(hand[0] + hand[last_face - 1] for hand in self.hands)
+                last_player = self.get_last_player()
                 if last_quantity > quantity_on_board:
-                    last_player = self.get_last_player()
                     self.last_loser = last_player
                     self.active_dice[last_player] -= 1
                     if self.active_dice[last_player] != 0:
@@ -107,7 +114,18 @@ class LiarsDice(Game):
                 self.bid_history = []
                 if verbose:
                     print('Player {} lost a die'.format(self.last_loser))
-                return quantity_on_board
+                return {
+                    'oldHands': old_hands,
+                    'quantityOnBoard': quantity_on_board,
+                    'doubter': doubter,
+                    'doubted': last_player,
+                    'loser': self.last_loser,
+                    'hand': [],
+                    'lastQuantity': last_quantity,
+                    'lastFace': last_face,
+                    'currentPlayer': self.current_player,
+                    'activeDice': self.active_dice,
+                }
             elif action[0] == "raise":
                 new_quantity = action[1]
                 new_face = action[2]
@@ -121,6 +139,10 @@ class LiarsDice(Game):
                 modifiable_action.append(self.current_player)
                 self.bid_history.append(tuple(modifiable_action))
                 self.current_player = self.get_next_active_player(self.current_player)
+                return {
+                    'currentPlayer': self.current_player,
+                    'bidHistory': self.bid_history
+                }
             else:
                 raise RuntimeError("Invalid bid: must either raise or doubt")
 

@@ -6,7 +6,6 @@ from room import RoomUser, Room
 eventlet.monkey_patch()
 
 import argparse
-import copy
 import pickle
 import time
 import uuid
@@ -336,20 +335,10 @@ def test_terminal(room, lobby_id) -> bool:
         return False
 
 
-def update_after_doubt(room, hands, quantity_on_board, doubter, loser, last_quantity, last_face) -> None:
-    game = room.game
+def update_after_doubt(room, response) -> None:
     for idx, game_user in enumerate(room.players):
-        flask_socketio.emit('doubted', {
-            'oldHands': hands,
-            'quantityOnBoard': quantity_on_board,
-            'doubter': doubter,
-            'loser': loser,
-            'hand': game.hands[idx],
-            'lastQuantity': last_quantity,
-            'lastFace': last_face,
-            'currentPlayer': game.active_player(),
-            'activeDice': game.active_dice,
-        }, to=game_user.sid)
+        response['hand'] = room.game.hands[idx]
+        flask_socketio.emit('doubted', response, to=game_user.sid)
 
 
 def is_human_player(idx, room):
@@ -366,24 +355,19 @@ def action_doubt(json):
     game = room.game
     # TODO: check active player
     try:
-        active_player = game.active_player()
-        last_player = game.get_last_player()
-        hands = copy.deepcopy(game.hands)
-        last_quantity = game.bid_history[-1][1]
-        last_face = game.bid_history[-1][2]
-        quantity_on_board = game.perform(('doubt',))
-        if active_player == game.last_loser:
+        response = game.perform(('doubt',))
+        if response['doubter'] == response['loser']:
             current_user.incorrect_doubts += 1
-            if is_human_player(last_player, room):
-                user_account = db.session.query(User).filter(User.username == room.players[last_player].username).first()
+            if is_human_player(response['doubted'], room):
+                user_account = db.session.query(User).filter(User.username == room.players[response['doubted']].username).first()
                 user_account.successful_raises += 1
         else:
             current_user.correct_doubts += 1
-            if is_human_player(last_player, room):
-                user_account = db.session.query(User).filter(User.username == room.players[last_player].username).first()
+            if is_human_player(response['doubted'], room):
+                user_account = db.session.query(User).filter(User.username == room.players[response['doubted']].username).first()
                 user_account.caught_raises += 1
         db.session.commit()
-        update_after_doubt(room, hands, quantity_on_board, active_player, game.last_loser, last_quantity, last_face)
+        update_after_doubt(room, response)
         terminal = test_terminal(room, room_id)
         if not terminal:
             time.sleep(5)
@@ -427,30 +411,22 @@ def poll_bots(lobby_id: str):
             bot = ghost_agent
         action = bot.get_action(room.game)
         if action[0] == 'raise':
-            game.perform(action)
-            flask_socketio.emit('raised', {
-                'currentPlayer': game.active_player(),
-                'bidHistory': game.bid_history
-            }, to=lobby_id)
+            response = game.perform(action)
+            flask_socketio.emit('raised', response, to=lobby_id)
         elif action[0] == 'doubt':
-            active_player = game.active_player()
-            last_player = game.get_last_player()
-            hands = copy.deepcopy(game.hands)
-            last_quantity = game.bid_history[-1][1]
-            last_face = game.bid_history[-1][2]
-            quantity_on_board = game.perform(action)
-            if active_player == game.last_loser:
-                if is_human_player(last_player, room):
-                    username = room.players[last_player].username
-                    user_account = db.session.query(User).filter(User.username == username).first()
+            response = game.perform(action)
+            if response['doubter'] == response['loser']:
+                if is_human_player(response['doubted'], room):
+                    user_account = db.session.query(User).filter(
+                        User.username == room.players[response['doubted']].username).first()
                     user_account.successful_raises += 1
             else:
-                if is_human_player(last_player, room):
-                    username = room.players[last_player].username
-                    user_account = db.session.query(User).filter(User.username == username).first()
+                if is_human_player(response['doubted'], room):
+                    user_account = db.session.query(User).filter(
+                        User.username == room.players[response['doubted']].username).first()
                     user_account.caught_raises += 1
             db.session.commit()
-            update_after_doubt(room, hands, quantity_on_board, active_player, game.last_loser, last_quantity, last_face)
+            update_after_doubt(room, response)
             terminal = test_terminal(room, lobby_id)
             if terminal:
                 break
