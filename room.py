@@ -27,6 +27,9 @@ class RoomUser:
                 'bot': self.bot,
             }
 
+    def __str__(self) -> str:
+        return '[username={}, color={}, bot={}]'.format(self.username, self.color, self.bot)
+
 
 class Room:
     def __init__(self, room_id, host: RoomUser):

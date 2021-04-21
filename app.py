@@ -332,12 +332,11 @@ def leave_game(json):
             if not player.bot:
                 host_name = player.username
                 all_bots = False
+                room.host.username = host_name
                 room.players.insert(0, room.players.pop(idx))
                 break
         if all_bots:
             del rooms[room_id]
-        else:
-            room.host.username = host_name
     flask_socketio.emit('left_game', {
         'lobbyId': room_id,
         'players': [game_user.to_dict() for game_user in room.players],
@@ -504,9 +503,11 @@ def exit_game(json):
             player.instance = MediumAgent(strategy)
         elif not player.bot:
             all_bots = False
-            break
     if all_bots:
         del rooms[room_id]
+    else:
+        print(str(room.players[1]))
+        poll_bots(room_id)
 
 
 if __name__ == "__main__":
