@@ -26,7 +26,6 @@ class JoinGameComponent extends React.Component {
                 payload: {
                     lobbyId: data.lobbyId,
                     players: data.players,
-                    bots: data.bots,
                     numDice: data.numDice,
                     host: data.host
                 }

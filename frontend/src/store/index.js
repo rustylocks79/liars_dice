@@ -4,11 +4,11 @@ const initialState = {
     lobbyId: "",
     socket: null,
     players: [],
-    bots: [],
     numDice: 0,
     host: "",
 
     hand: [],
+    oldHands: [],
     activeDice: [],
     currentBid: "",
     bidOwner: "",
@@ -24,7 +24,6 @@ const reducer = (state = initialState, action) => {
             lobbyId: action.payload.lobbyId,
             socket: action.payload.socket,
             players: action.payload.players,
-            bots: action.payload.bots,
             numDice: action.payload.numDice,
             host: action.payload.host
         })
@@ -34,7 +33,6 @@ const reducer = (state = initialState, action) => {
         return Object.assign({}, state, {
             lobbyId: action.payload.lobbyId,
             players: action.payload.players,
-            bots: action.payload.bots,
             numDice: action.payload.numDice,
             host: action.payload.host
         })
@@ -52,7 +50,6 @@ const reducer = (state = initialState, action) => {
             activeDice: action.payload.activeDice,
             currentPlayer: action.payload.currentPlayer,
             players: action.payload.players,
-            bots: action.payload.bots,
             bidHistory: [],
             hand: action.payload.hand
         })
@@ -70,7 +67,8 @@ const reducer = (state = initialState, action) => {
             bidHistory: [],
             currentPlayer: action.payload.currentPlayer,
             activeDice: action.payload.activeDice,
-            hand: action.payload.hand
+            hand: action.payload.hand,
+            oldHands: action.payload.oldHands
         })
     }
     return state

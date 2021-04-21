@@ -31,7 +31,6 @@ const styles = theme => ({
         height: '70vh',
         maxHeight: '1000px',
         overflow: 'auto'
-
     },
     roundNum: {
         padding: theme.spacing(2),
@@ -57,12 +56,10 @@ class GameScreenComponent extends React.Component {
         errorMessage: "",
         numOfDice: 0,
         face: 2,
-        playerColors: ['Red', 'RebeccaPurple', 'Blue', 'DarkRed', 'DarkSeaGreen',
-            'DarkGoldenRod', 'DarkSlateGray', 'Tomato', 'SaddleBrown', 'Turquoise', 'Green', 'DimGray'],
         round: 1,
+        gameOver: false,
         winnerName: "",
         winnerIndex: 0,
-        gameOver: false,
         dice: [GiDiceSixFacesOne, GiDiceSixFacesTwo, GiDiceSixFacesThree,
             GiDiceSixFacesFour, GiDiceSixFacesFive, GiDiceSixFacesSix],
         doubtDisplay: false,
@@ -91,20 +88,18 @@ class GameScreenComponent extends React.Component {
         })
         this.props.socket.on('doubted', data => {
             console.log('received event doubted from server: ' + JSON.stringify(data))
-            console.log(data['oldHands']) //TODO: ben display this
-            console.log(data['quantityOnBoard']) //TODO: ben display this
             this.props.dispatch({
                 type: 'DOUBT',
                 payload: {
                     currentPlayer: data.currentPlayer,
                     activeDice: data.activeDice,
-                    hand: data.hand
+                    hand: data.hand,
+                    oldHands: data.oldHands
                 }
             })
-            this.setState({round: this.state.round + 1, errorMessage: ''})
-
-
             this.setState({
+                round: this.state.round + 1,
+                errorMessage: '',
                 doubtDisplay: true,
                 doubter: data.doubter,
                 loser: data.loser,
@@ -122,14 +117,10 @@ class GameScreenComponent extends React.Component {
         })
         this.props.socket.on('terminal', data => {
             console.log('received event terminal from server: ' + JSON.stringify(data))
-
-            if (data["winner"] < this.props.players.length) {
-                this.setState({winnerName: this.props.players[data["winner"]]})
-            } else {
-                this.setState({winnerName: this.props.bots[data["winner"] - this.props.players.length].name})
-            }
-
-            this.setState({gameOver: true, winnerIndex: data["winner"]})
+            this.setState({
+                winnerName: this.props.players[data["winner"]].username,
+                gameOver: true,
+                winnerIndex: data["winner"]})
         })
     }
 
@@ -139,6 +130,9 @@ class GameScreenComponent extends React.Component {
         })
     }
 
+    /**
+     * @returns the total number of dice in the game.
+     */
     allDice = () => {
         let sum = 0;
         for (let i = 0; i < this.props.activeDice.length; i++) {
@@ -147,100 +141,73 @@ class GameScreenComponent extends React.Component {
         return sum
     }
 
+    /**
+     * Displays a list of players with the number of dice they have.
+     * @returns {*[]}
+     */
     displayPlayers = () => {
         let table = []
         for (let i = 0; i < this.props.players.length; i++) {
-            table.push(<p key={i}
-                          style={{color: this.state.playerColors[i]}}
-            >{this.props.players[i]} - {this.props.activeDice[i]}</p>)
+            let player = this.props.players[i]
+            table.push(<p key={i} style={{color: player.color}} >{player.username} - {this.props.activeDice[i]}</p>)
         }
-
-        for (let i = 0; i < this.props.bots.length; i++) {
-            table.push(<p key={i + this.props.players.length}
-                          style={{color: this.state.playerColors[i + this.props.players.length]}}
-            >{this.props.bots[i].name} - {this.props.activeDice[i + this.props.players.length]}</p>)
-        }
-
         return table
+    }
+
+    /**
+     * Displays the round history.
+     * @returns {*[]}
+     */
+    displayRoundHistory = () => {
+        let table = []
+        table.push(<h3>Current Bid</h3>)
+        if (this.props.bidHistory.length > 0) {
+            let bid = this.props.bidHistory[this.props.bidHistory.length - 1]
+            let player = this.props.players[bid[3]]
+            table.push(<b key={this.props.bidHistory.length - 1}
+                         style={{
+                             color: player.color,
+                             fontSize: "large",
+                             verticalAlign: "middle"
+                         }}>
+                {player.username} <br/>
+                {bid[1]} X {this.displayDie(bid[2], 5)}
+            </b>)
+        }
+        table.push(<h4>Round History</h4>)
+        for (let i = this.props.bidHistory.length - 2; i >= Math.max(this.props.bidHistory.length - 5, 0); i--) {
+            let bid = this.props.bidHistory[i]
+            let player = this.props.players[bid[3]]
+            table.push(<p key={i} style={{color: player.color}}>{player.username}<br/>
+                {bid[1]} X {this.displayDie(bid[2], 4)}
+            </p>)
+
+        }
+        return table
+    }
+
+    /**
+     * Returns a React component for a dice.
+     * @param face the type of dice to display
+     * @param size the width and height of the dice to display
+     * @returns {React.FunctionComponentElement<IconBaseProps>}
+     */
+    displayDie = (face, size) => {
+        return (React.createElement(this.state.dice[face - 1], {
+                key: 0,
+                style: {
+                    height: size + "vmin",
+                    width: size + "vmin",
+                    verticalAlign: "middle",
+                    color: "black",
+                }
+            }))
     }
 
     changeHandler = (event) => {
         let name = event.target.name;
         let value = event.target.value;
         this.setState({[name]: value})
-    }
-
-    displayRoundHistory = () => {
-        let temp = []
-
-        temp.push(<h3 key={this.props.bidHistory.length}>Current Bid</h3>)
-        if (this.props.bidHistory.length > 0) {
-            let name1 = ""
-            if (this.props.bidHistory[this.props.bidHistory.length - 1][3] < this.props.players.length) {
-                name1 = this.props.players[this.props.bidHistory[this.props.bidHistory.length - 1][3]]
-            } else {
-                name1 = this.props.bots[this.props.bidHistory[this.props.bidHistory.length - 1][3] - this.props.players.length].name
-            }
-
-            temp.push(<b key={this.props.bidHistory.length - 1}
-                         style={{
-                             color: this.state.playerColors[this.props.bidHistory[this.props.bidHistory.length - 1][3]],
-                             fontSize: "large",
-                             verticalAlign: "middle"
-                         }}>
-                {/*Quantity: {this.props.bidHistory[this.props.bidHistory.length - 1][1]},*/}
-                {/*Face: {this.props.bidHistory[this.props.bidHistory.length - 1][2]} */}
-                {name1} <br/>
-                {this.props.bidHistory[this.props.bidHistory.length - 1][1]} X {this.displayDie(this.props.bidHistory[this.props.bidHistory.length - 1][2], true)}
-            </b>)
-        }
-
-        temp.push(<h4 key={this.props.bidHistory.length + 1}>Round History</h4>)
-        for (let i = this.props.bidHistory.length - 2; i >= this.props.bidHistory.length - 5; i--) {
-            if (i >= 0) {
-                let name2 = ""
-                if (this.props.bidHistory[i][3] < this.props.players.length) {
-                    name2 = this.props.players[this.props.bidHistory[i][3]]
-                } else {
-                    name2 = this.props.bots[this.props.bidHistory[i][3] - this.props.players.length].name
-                }
-
-                temp.push(<p key={i}
-                             style={{color: this.state.playerColors[this.props.bidHistory[i][3]]}}
-                >
-                    {/*Quantity: {this.props.bidHistory[i][1]},*/}
-                    {/*Face: {this.props.bidHistory[i][2]} */}
-                    {name2} <br/>
-                    {this.props.bidHistory[i][1]} X {this.displayDie(this.props.bidHistory[i][2], false)}
-                </p>)
-            }
-        }
-
-        return temp
-    }
-
-    displayDie = (face, recent) => {
-        if (!recent) {
-            return (React.createElement(this.state.dice[face - 1], {
-                key: 0,
-                style: {
-                    height: "4vmin",
-                    width: "4vmin",
-                    verticalAlign: "middle",
-                    color: "black",
-                }
-            }))
-        } else {
-            return (React.createElement(this.state.dice[face - 1], {
-                key: 0,
-                style: {
-                    height: "5vmin",
-                    width: "5vmin",
-                    verticalAlign: "middle",
-                    color: "black"
-                }
-            }))
-        }
     }
 
     onRaised = () => {
@@ -268,30 +235,13 @@ class GameScreenComponent extends React.Component {
     }
 
     displayDoubtInfo = () => {
-        // let bidQuantity = this.props.bidHistory[this.props.bidHistory.length - 1][1]
-        // let bidFace = this.props.bidHistory[this.props.bidHistory.length - 1][2]
         let bidQuantity = this.state.lastBidQ
         let bidFace = this.state.lastBidF
-        let doubterColor = this.state.playerColors[this.state.doubter]
-        let loserColor = this.state.playerColors[this.state.loser]
-        let doubterName, loserName = ""
-
-        if (this.state.doubter < this.props.players.length) {
-            doubterName = this.props.players[this.state.doubter]
-        } else {
-            doubterName = this.props.bots[this.state.doubter - this.props.players.length].name
-        }
-
-        if (this.state.loser < this.props.players.length) {
-            loserName = this.props.players[this.state.loser]
-        } else {
-            loserName = this.props.bots[this.state.loser - this.props.players.length].name
-        }
-
-
+        let doubter = this.props.players[this.state.doubter]
+        let loser = this.props.players[this.state.loser]
         return (<h1 style={{textAlign: "center"}}>
-            <b style={{color:doubterColor}}>{doubterName}</b> doubted {bidQuantity} X {this.displayDie(bidFace, true)}.
-            The board had {this.state.doubtQuantity}. <b style={{color:loserColor}}>{loserName}</b> lost a die.
+            <b style={{color: doubter.color}}>{doubter.username}</b> doubted {bidQuantity} X {this.displayDie(bidFace, true)}.
+            The board had {this.state.doubtQuantity}. <b style={{color: loser.color}}>{loser.username}</b> lost a die.
                 </h1>)
     }
 
@@ -341,7 +291,7 @@ class GameScreenComponent extends React.Component {
                                 <b style={{
                                     textAlign: "center",
                                     fontSize: "xxx-large",
-                                    color: this.state.playerColors[this.state.winnerIndex]
+                                    color: this.props.players[this.state.winnerIndex].color
                                 }}>{this.state.winnerName}</b> Wins!
                                 <br/> <br/>
                                 <Button variant="contained" color="default" onClick={this.leaveGame}>
@@ -471,7 +421,6 @@ const mapStateToProps = state => {
         activeDice: state.activeDice,
         currentPlayer: state.currentPlayer,
         players: state.players,
-        bots: state.bots,
         bidHistory: state.bidHistory,
         hand: state.hand
     }

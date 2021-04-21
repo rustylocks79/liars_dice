@@ -1,7 +1,7 @@
 import {withCookies} from "react-cookie";
 import {withRouter} from "react-router-dom";
 import React from "react";
-import {Button, Container, Grid, Typography} from "@material-ui/core";
+import {Button, Container, Grid} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
 import TopBarComponent from "./TopBarComponent";
 import socketIOClient from "socket.io-client";
@@ -38,7 +38,6 @@ class WelcomeComponent extends React.Component {
                     lobbyId: data.lobbyId,
                     socket: this.state.socket,
                     players: data.players,
-                    bots: [],
                     numDice: 5,
                     host: data.host
                 }

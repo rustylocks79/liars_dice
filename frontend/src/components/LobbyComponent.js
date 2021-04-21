@@ -19,11 +19,7 @@ class LobbyComponent extends React.Component {
         errorMessage: "",
         numDice: 0,
         host: '',
-        players: [], // player = {name: string}
-        bots: [],
-        botNames: ["BOT_Aaron", "BOT_Ace", "BOT_Bailee", "BOT_Buddy", "BOT_Chad", "BOT_Charles",
-            "BOT_James", "BOT_Robert", "BOT_Patricia", "BOT_Barbara", "BOT_Jeremy"],
-        usedNames: []
+        players: [],
     }
 
     constructor(props) {
@@ -34,22 +30,25 @@ class LobbyComponent extends React.Component {
         //redux stuff
         this.state.players = this.props.playersStore
         this.state.numDice = this.props.numDiceStore
-        this.state.bots = this.props.botsStore
         this.state.host = this.props.hostStore
 
         this.props.socket.on('joined_game', data => {
             console.log('received event joined_game from server: ' + JSON.stringify(data))
             this.setState({
                 players: data.players,
-                bots: data.bots,
                 numDice: data.numDice
             })
         })
         this.props.socket.on('updated_game', data => {
             console.log('received event updated_game from server: ' + JSON.stringify(data))
             this.setState({
-                bots: data.bots,
                 numDice: data.numDice
+            })
+        })
+        this.props.socket.on('updated_bots', data => {
+            console.log('received event updated_game from server: ' + JSON.stringify(data))
+            this.setState({
+                players: data.players,
             })
         })
         this.props.socket.on('left_game', data => {
@@ -70,8 +69,7 @@ class LobbyComponent extends React.Component {
                     index: data.index,
                     activeDice: data.activeDice,
                     currentPlayer: data.currentPlayer,
-                    players: this.state.players,
-                    bots: this.state.bots,
+                    players: data.players,
                     hand: data.hand
                 }
             })
@@ -103,11 +101,10 @@ class LobbyComponent extends React.Component {
         })
     }
 
-    updateGame = (numDice, bots) => {
+    updateGame = (numDice) => {
         this.props.socket.emit('update_game', {
             lobbyId: this.props.lobbyId,
             jwtToken: this.state.jwtToken,
-            bots: bots,
             numDice: numDice
         })
     }
@@ -121,96 +118,63 @@ class LobbyComponent extends React.Component {
     }
 
     addBot = () => {
-        if ((this.state.players.length + this.state.bots.length) < 12) {
-            let nameSelected = false
-            while (!nameSelected) {
-                let idx = Math.floor(Math.random() * this.state.botNames.length);
-                if (!this.state.usedNames.includes(this.state.botNames[idx])) {
-                    let bots = this.state.bots
-                    let bot = {name: this.state.botNames[idx], level: "medium"}
-                    bots.push(bot)
-                    this.state.usedNames.push(this.state.botNames[idx])
-                    nameSelected = true;
-                    this.updateGame(this.state.numDice, bots)
-                }
-            }
-        }
+        this.props.socket.emit('add_bot', {
+            lobbyId: this.props.lobbyId,
+            jwtToken: this.state.jwtToken
+        })
     }
 
     removeBot = (name) => {
-        let bots = this.state.bots
-        // remove bot
-        for (let i = 0; i < bots.length; i++) {
-            if (bots[i].name === name) {
-                bots.splice(i, 1)
-            }
-        }
-
-        //remove name from used list
-        for (let i = 0; i < this.state.usedNames.length; i++) {
-            if (this.state.usedNames[i] === name) {
-                this.state.usedNames.splice(i, 1)
-            }
-        }
-        this.updateGame(this.state.numDice, bots)
+        this.props.socket.emit('delete_bot', {
+            lobbyId: this.props.lobbyId,
+            jwtToken: this.state.jwtToken,
+            username: name
+        })
     }
 
     clearBots = () => {
-        this.setState({usedNames: []})
-        this.updateGame(this.state.numDice, [])
+        this.props.socket.emit('clear_bots', {
+            lobbyId: this.props.lobbyId,
+            jwtToken: this.state.jwtToken
+        })
     }
 
     changeLevel = (event) => {
-        let bots = this.state.bots
-        for (let i = 0; i < bots.length; i++) {
-            if (bots[i].name === event.target.name) {
-                bots[i].level = event.target.value
-            }
-        }
-        this.updateGame(this.state.numDice, bots)
+        this.props.socket.emit('update_level', {
+            lobbyId: this.props.lobbyId,
+            jwtToken: this.state.jwtToken,
+            username: event.target.name,
+            level: event.target.value
+        })
     }
 
     displayPlayers = () => {
         return (
             <div>
                 {this.state.players.map(player => (
-                    <div key={player}>
-                        {player === this.state.host &&
-                        <p style={{color: "maroon", fontWeight: "bold"}}>{player} (host)</p>
+                    <div key={player.username}>
+                        {player.username === this.state.host && <p style={{color: player.color, fontWeight: "bold"}}>{player.username} (host)</p>}
+                        {player.username !== this.state.host && <p style={{color: player.color}}>{player.username}</p>}
+
+                        {(player.bot && this.state.username === this.state.host) &&
+                            <div style={{display:"inline",marginLeft: "10px"}}>
+                                <button onClick={() => this.removeBot(player.username)} style={{marginRight: "10px"}}>x</button>
+                                <FormControl style={{marginLeft: "10px"}}>
+                                    <Select style={{width:"100px"}}
+                                            value = {player.level}
+                                            name = {player.username}
+                                            onChange={this.changeLevel}
+                                    >
+                                        <MenuItem value={"easy"}>Easy</MenuItem>
+                                        <MenuItem value={"medium"}>Medium</MenuItem>
+                                        <MenuItem value={"hard"}>Hard</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </div>
                         }
-
-                        {player !== this.state.host &&
-                        <p style={{color: "black"}}>{player}</p>
+                        {(player.bot && this.state.username !== this.state.host) &&
+                            <b style={{display:"inline",marginLeft: "10px"}}>{player.level}</b>
                         }
-                    </div>
-                ))}
-                {this.state.bots.map(bot => (
-                    <div key={bot.name}>
-
-                            {this.state.username === this.state.host &&
-                            <button onClick={() => this.removeBot(bot.name)} style={{marginRight: "10px"}}>x</button>
-                            }
-
-                            <p style={{display:"inline"}}>{bot.name}</p>
-
-                            {this.state.username === this.state.host &&
-                            <FormControl style={{marginLeft: "10px"}}>
-                                <Select style={{width:"100px"}}
-                                        value = {bot.level}
-                                        name = {bot.name}
-                                        onChange={this.changeLevel}
-                                >
-                                    <MenuItem value={"easy"}>Easy</MenuItem>
-                                    <MenuItem value={"medium"}>Medium</MenuItem>
-                                    <MenuItem value={"hard"}>Hard</MenuItem>
-                                </Select>
-                            </FormControl>
-                            }
-
-                            {this.state.username !== this.state.host &&
-                            <b style={{display:"inline",marginLeft: "10px"}}>{bot.level}</b>
-                            }
-
                     </div>
                 ))}
             </div>
@@ -240,7 +204,7 @@ class LobbyComponent extends React.Component {
                             <div>
                                 <br/>
                                 <Button onClick={this.clearBots} variant="contained" color="default" size="small">
-                                    CLear Bots
+                                    Clear Bots
                                 </Button>
                                 <Button onClick={this.addBot} variant="contained" color="secondary" size="small" style={{marginLeft:"10px"}}>
                                     Add Bot
@@ -298,7 +262,6 @@ const mapStateToProps = state => {
         lobbyId: state.lobbyId,
         socket: state.socket,
         playersStore: state.players,
-        botsStore: state.bots,
         numDiceStore: state.numDice,
         hostStore: state.host
     }
