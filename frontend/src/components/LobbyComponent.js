@@ -36,19 +36,22 @@ class LobbyComponent extends React.Component {
             console.log('received event joined_game from server: ' + JSON.stringify(data))
             this.setState({
                 players: data.players,
-                numDice: data.numDice
+                numDice: data.numDice,
+                errorMessage: ""
             })
         })
         this.props.socket.on('updated_game', data => {
             console.log('received event updated_game from server: ' + JSON.stringify(data))
             this.setState({
-                numDice: data.numDice
+                numDice: data.numDice,
+                errorMessage: ""
             })
         })
         this.props.socket.on('updated_bots', data => {
             console.log('received event updated_game from server: ' + JSON.stringify(data))
             this.setState({
                 players: data.players,
+                errorMessage: ""
             })
         })
         this.props.socket.on('left_game', data => {
@@ -60,6 +63,7 @@ class LobbyComponent extends React.Component {
             if (data.lostPlayer === this.state.username) {
                 this.props.history.push('/game/welcome')
             }
+            this.setState({errorMessage: ""})
         })
         this.props.socket.on('started_game', data => {
             console.log('received event started_game from server: ' + JSON.stringify(data))
@@ -73,6 +77,7 @@ class LobbyComponent extends React.Component {
                     hand: data.hand
                 }
             })
+            this.setState({errorMessage: ""})
             this.props.history.push('/game/play')
         })
         this.props.socket.on('error', data => {
@@ -150,16 +155,13 @@ class LobbyComponent extends React.Component {
 
     displayPlayers = () => {
         return (
-            <div>
+            <div style={{textAlign:"left"}}>
                 {this.state.players.map(player => (
-                    <div key={player.username}>
-                        {player.username === this.state.host && <p style={{color: player.color, fontWeight: "bold"}}>{player.username} (host)</p>}
-                        {player.username !== this.state.host && <p style={{color: player.color}}>{player.username}</p>}
-
+                    <div key={player.username} style={{marginBottom:"10px"}}>
                         {(player.bot && this.state.username === this.state.host) &&
                             <div style={{display:"inline",marginLeft: "10px"}}>
-                                <button onClick={() => this.removeBot(player.username)} style={{marginRight: "10px"}}>x</button>
-                                <FormControl style={{marginLeft: "10px"}}>
+                                <button onClick={() => this.removeBot(player.username)} style={{marginRight: "10px",verticalAlign:"middle"}}>X</button>
+                                <FormControl style={{marginLeft: "10px", marginRight:"10px",verticalAlign:"middle"}}>
                                     <Select style={{width:"100px"}}
                                             value = {player.level}
                                             name = {player.username}
@@ -172,9 +174,14 @@ class LobbyComponent extends React.Component {
                                 </FormControl>
                             </div>
                         }
+
                         {(player.bot && this.state.username !== this.state.host) &&
-                            <b style={{display:"inline",marginLeft: "10px"}}>{player.level}</b>
+                            <p style={{display:"inline",marginRight: "10px", verticalAlign:"middle"}}>[{player.level}]</p>
                         }
+
+                        {player.username === this.state.host && <div style={{textAlign:"center"}}><p style={{color: player.color, fontWeight: "bold", display:"inline"}}>{player.username} (host)</p></div>}
+                        {player.username !== this.state.host && !player.bot && <div style={{textAlign:"center"}}><p style={{color: player.color, display:"inline", verticalAlign:"middle"}}>{player.username}</p></div>}
+                        {player.username !== this.state.host && player.bot && <p style={{color: player.color, display:"inline", verticalAlign:"middle"}}>{player.username}</p>}
                     </div>
                 ))}
             </div>
