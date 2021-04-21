@@ -38,17 +38,17 @@ class Room:
         self.game = None
         self.num_dice = 5
         self.host = host
-        self.bot_names = ["BOT_Aaron",
-                          "BOT_Ace",
-                          "BOT_Bailee",
-                          "BOT_Buddy",
-                          "BOT_Chad",
-                          "BOT_Charles",
-                          "BOT_James",
-                          "BOT_Robert",
-                          "BOT_Patricia",
-                          "BOT_Barbara",
-                          "BOT_Jeremy"]
+        self.bot_names = ["Aaron",
+                          "Ace",
+                          "Bailee",
+                          "Buddy",
+                          "Chad",
+                          "Charles",
+                          "James",
+                          "Robert",
+                          "Patricia",
+                          "Barbara",
+                          "Jimmy"]
         random.shuffle(self.bot_names)
         self.colors = [
             'Red',

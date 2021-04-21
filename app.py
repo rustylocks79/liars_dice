@@ -136,6 +136,16 @@ def login():
 
 @app.route("/signup", methods=["POST"])
 def signup():
+    bot_names = ["Aaron", "Ace",
+                    "Bailee",
+                      "Buddy",
+                      "Chad",
+                      "Charles",
+                      "James",
+                      "Robert",
+                      "Patricia",
+                      "Barbara",
+                      "Jimmy"]
     request = flask.request.get_json(force=True)
     username = request.get("username", None)
     if username is None:
@@ -146,6 +156,8 @@ def signup():
         return flask.jsonify({'error': 'Username cannot contain more than 32 characters. '}), 400
     elif ' ' in username:
         return flask.jsonify({'error': 'Username cannot contain spaces. '}), 400
+    elif username in bot_names:
+        return flask.jsonify({'error': 'User already exists with username: {}. '.format(username)}), 400
     if db.session.query(User).filter(User.username == username).first() is not None:
         return flask.jsonify({'error': 'User already exists with username: {}. '.format(username)}), 400
     password = request.get("password", None)
@@ -271,7 +283,7 @@ def update_level(json):
         return
     username = json['username']
     level = json['level']
-    if level != 'easy' or level != 'medium' or level != 'hard':
+    if level != 'Easy' or level != 'Medium' or level != 'Hard':
         flask_socketio.emit('error', {
             'reason': 'Invalid level: ' + str(level)
         })
@@ -363,11 +375,11 @@ def start_game(json):
     room.game = LiarsDice(num_players, num_dice)
     for player in room.players:
         if player.bot:
-            if player.level == 'easy':
+            if player.level == 'Easy':
                 player.instance = EasyAgent(strategy)
-            elif player.level == 'medium':
+            elif player.level == 'Medium':
                 player.instance = MediumAgent(strategy)
-            elif player.level == 'hard':
+            elif player.level == 'Hard':
                 player.instance = HardAgent(strategy)
     for idx, player in enumerate(room.players):
         if not player.bot:
