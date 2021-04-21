@@ -177,19 +177,13 @@ class LobbyComponent extends React.Component {
                         </div>
                         }
 
-                        {(player.bot && this.state.username !== this.state.host) &&
-                        <p style={{
-                            display: "inline",
-                            marginRight: "10px",
-                            verticalAlign: "middle"
-                        }}>[{player.level} Bot]</p>
-                        }
+
 
                         {player.username === this.state.host && <div style={{textAlign: "center"}}><p style={{
                             color: player.color,
                             fontWeight: "bold",
                             display: "inline"
-                        }}>{player.username} (host)</p></div>}
+                        }}>{player.username} <p style={{color:"black",marginLeft:"10px",display:"inline"}}>[host]</p></p></div>}
 
                         {player.username !== this.state.host && !player.bot && <div style={{textAlign: "center"}}><p
                             style={{
@@ -202,6 +196,14 @@ class LobbyComponent extends React.Component {
                             display: "inline",
                             verticalAlign: "middle"
                         }}>{player.username}</p>}
+
+                        {(player.bot && this.state.username !== this.state.host) &&
+                        <p style={{
+                            display: "inline",
+                            marginLeft: "10px",
+                            verticalAlign: "middle"
+                        }}>[{player.level} Bot]</p>
+                        }
                     </div>
                 ))}
             </div>
