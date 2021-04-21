@@ -193,7 +193,7 @@ class LobbyComponent extends React.Component {
             <div>
                 {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
                 <TopBarComponent/>
-                <h3 align={"center"} style={{color: 'blue'}}>Lobby #{this.props.lobbyId}</h3>
+                <h2 align={"center"}>Lobby #{this.props.lobbyId}</h2>
 
                 <Container>
                     <Grid container>
