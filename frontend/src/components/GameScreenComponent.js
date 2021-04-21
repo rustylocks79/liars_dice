@@ -277,7 +277,7 @@ class GameScreenComponent extends React.Component {
 
                     <Grid item xs={7}>
                         {/*<Paper className={classes.paper1}>xs</Paper>*/}
-                        {!this.state.gameOver && <GameComponent/>}
+                        {!this.state.gameOver && <GameComponent doubtDisplay={this.state.doubtDisplay}/>}
                         {this.state.gameOver &&
                         <div style={{
                             height: '60vh',

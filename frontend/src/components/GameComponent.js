@@ -62,9 +62,9 @@ class GameComponent extends React.Component {
         return handDisplay
     }
 
-    hiddenHand = (colorIndex, diceNum) => {
+    hiddenHand = (index, diceNum) => {
         let handDisplay = []
-        let colorTemp = this.props.players[colorIndex].color
+        let colorTemp = this.props.players[index].color
         for (let i = 0; i < diceNum; i++) {
             handDisplay.push(<FaDiceD6 style={{
                 height: "4vmin",
@@ -79,10 +79,9 @@ class GameComponent extends React.Component {
     revealHand = (index) => {
         let diceNum = 1;
         let handDisplay = []
-        let colorTemp = this.props.players[this.props.index].color
-        for (let i = 0; i < this.state.dice.length; i++) {
-            for (let j = 0; j < this.props.hand[i]; j++) {
-                diceNum++
+        let colorTemp = this.props.players[index].color
+        for (let i = 0; i < this.props.oldHands[index].length; i++) {
+            for (let j = 0; j < this.props.oldHands[index][i]; j++) {
                 handDisplay.push(React.createElement(this.state.dice[i], {
                     key: diceNum,
                     style: {
@@ -92,6 +91,7 @@ class GameComponent extends React.Component {
                         color: colorTemp
                     }
                 }))
+                diceNum++
             }
         }
         return handDisplay
@@ -145,10 +145,10 @@ class GameComponent extends React.Component {
                 </div>)
             key++
 
-            if (!this.state.gameOver) {
+            if (!this.props.doubtDisplay) {
                 temp.push(<div key={key}>{this.hiddenHand(index, this.props.activeDice[index])}</div>)
             } else {
-                temp.push(<div key={key}>{this.revealHand()}</div>)
+                temp.push(<div key={key}>{this.revealHand(index)}</div>)
             }
             key++
         }
@@ -188,7 +188,8 @@ const mapStateToProps = state => {
         players: state.players,
         activeDice: state.activeDice,
         index: state.index,
-        currentPlayer: state.currentPlayer
+        currentPlayer: state.currentPlayer,
+        oldHands: state.oldHands
     }
 }
 
