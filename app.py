@@ -199,7 +199,7 @@ def create_game(json):
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
     if current_user is None:
-        flask_socketio.emit('error', {'invalid user. '})
+        flask_socketio.emit('error', {'reason': 'invalid user. '})
     print('Received create_game from {}: {}'.format(current_user.username, json))
     room_id = str(uuid.uuid1().hex)[:8]
     flask_socketio.join_room(room_id)
@@ -215,7 +215,7 @@ def validate_request(json, msg, host=False):
     jwt_token = json['jwtToken']
     current_user = get_current_user_from_token(jwt_token)
     if current_user is None:
-        flask_socketio.emit('error', {'invalid user. '})
+        flask_socketio.emit('error', {'reason': 'invalid user. '})
         return None, None, None
     print('received {} from {}: {}'.format(msg, current_user.username, json))
     if room_id not in rooms:
@@ -223,7 +223,7 @@ def validate_request(json, msg, host=False):
         return None, None, None
     room = rooms[room_id]
     if host and current_user.username != room.host.username:
-        flask_socketio.emit('error', {'reason', 'invalid permissions. '})
+        flask_socketio.emit('error', {'reason': 'invalid permissions. '})
         return None, None, None
     return room_id, room, current_user
 
@@ -232,6 +232,9 @@ def validate_request(json, msg, host=False):
 def join_game(json):
     room_id, room, current_user = validate_request(json, 'join_game')
     if room_id is None:
+        return
+    if room.game is not None:
+        flask_socketio.emit('error', {'reason': 'Game has already begun. '})
         return
     was_added = room.try_add_human(current_user.username, flask.request.sid)
     if was_added:
@@ -242,7 +245,7 @@ def join_game(json):
             'players': [player.to_dict() for player in room.players],
             'numDice': room.num_dice}, room=room_id)
     else:
-        flask_socketio.emit('error', {'reason', 'The lobby is full. '})
+        flask_socketio.emit('error', {'reason': 'The lobby is full. '})
 
 
 @socketio.on('add_bot')
@@ -332,12 +335,11 @@ def leave_game(json):
             if not player.bot:
                 host_name = player.username
                 all_bots = False
+                room.host.username = host_name
                 room.players.insert(0, room.players.pop(idx))
                 break
         if all_bots:
             del rooms[room_id]
-        else:
-            room.host.username = host_name
     flask_socketio.emit('left_game', {
         'lobbyId': room_id,
         'players': [game_user.to_dict() for game_user in room.players],
@@ -504,9 +506,11 @@ def exit_game(json):
             player.instance = MediumAgent(strategy)
         elif not player.bot:
             all_bots = False
-            break
     if all_bots:
         del rooms[room_id]
+    else:
+        print(str(room.players[1]))
+        poll_bots(room_id)
 
 
 if __name__ == "__main__":
