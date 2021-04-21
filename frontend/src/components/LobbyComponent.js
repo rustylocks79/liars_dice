@@ -155,33 +155,53 @@ class LobbyComponent extends React.Component {
 
     displayPlayers = () => {
         return (
-            <div style={{textAlign:"left"}}>
+            <div style={{textAlign: "left"}}>
                 {this.state.players.map(player => (
-                    <div key={player.username} style={{marginBottom:"10px"}}>
+                    <div key={player.username} style={{marginBottom: "10px"}}>
                         {(player.bot && this.state.username === this.state.host) &&
-                            <div style={{display:"inline",marginLeft: "10px"}}>
-                                <button onClick={() => this.removeBot(player.username)} style={{marginRight: "10px",verticalAlign:"middle"}}>X</button>
-                                <FormControl style={{marginLeft: "10px", marginRight:"10px",verticalAlign:"middle"}}>
-                                    <Select style={{width:"100px"}}
-                                            value = {player.level}
-                                            name = {player.username}
-                                            onChange={this.changeLevel}
-                                    >
-                                        <MenuItem value={"easy"}>Easy</MenuItem>
-                                        <MenuItem value={"medium"}>Medium</MenuItem>
-                                        <MenuItem value={"hard"}>Hard</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </div>
+                        <div style={{display: "inline", marginLeft: "10px"}}>
+                            <button onClick={() => this.removeBot(player.username)}
+                                    style={{marginRight: "10px", verticalAlign: "middle"}}>X
+                            </button>
+                            <FormControl style={{marginLeft: "10px", marginRight: "10px", verticalAlign: "middle"}}>
+                                <Select style={{width: "100px"}}
+                                        value={player.level}
+                                        name={player.username}
+                                        onChange={this.changeLevel}
+                                >
+                                    <MenuItem value={"Easy"}>Easy</MenuItem>
+                                    <MenuItem value={"Medium"}>Medium</MenuItem>
+                                    <MenuItem value={"Hard"}>Hard</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </div>
                         }
 
                         {(player.bot && this.state.username !== this.state.host) &&
-                            <p style={{display:"inline",marginRight: "10px", verticalAlign:"middle"}}>[{player.level}]</p>
+                        <p style={{
+                            display: "inline",
+                            marginRight: "10px",
+                            verticalAlign: "middle"
+                        }}>[{player.level} Bot]</p>
                         }
 
-                        {player.username === this.state.host && <div style={{textAlign:"center"}}><p style={{color: player.color, fontWeight: "bold", display:"inline"}}>{player.username} (host)</p></div>}
-                        {player.username !== this.state.host && !player.bot && <div style={{textAlign:"center"}}><p style={{color: player.color, display:"inline", verticalAlign:"middle"}}>{player.username}</p></div>}
-                        {player.username !== this.state.host && player.bot && <p style={{color: player.color, display:"inline", verticalAlign:"middle"}}>{player.username}</p>}
+                        {player.username === this.state.host && <div style={{textAlign: "center"}}><p style={{
+                            color: player.color,
+                            fontWeight: "bold",
+                            display: "inline"
+                        }}>{player.username} (host)</p></div>}
+
+                        {player.username !== this.state.host && !player.bot && <div style={{textAlign: "center"}}><p
+                            style={{
+                                color: player.color,
+                                display: "inline",
+                                verticalAlign: "middle"
+                            }}>{player.username}</p></div>}
+                        {player.username !== this.state.host && player.bot && <p style={{
+                            color: player.color,
+                            display: "inline",
+                            verticalAlign: "middle"
+                        }}>{player.username}</p>}
                     </div>
                 ))}
             </div>
@@ -213,7 +233,8 @@ class LobbyComponent extends React.Component {
                                 <Button onClick={this.clearBots} variant="contained" color="default" size="small">
                                     Clear Bots
                                 </Button>
-                                <Button onClick={this.addBot} variant="contained" color="secondary" size="small" style={{marginLeft:"10px"}}>
+                                <Button onClick={this.addBot} variant="contained" color="secondary" size="small"
+                                        style={{marginLeft: "10px"}}>
                                     Add Bot
                                 </Button>
                             </div>
@@ -254,7 +275,7 @@ class LobbyComponent extends React.Component {
                         Leave Lobby
                     </Button>
                     {this.state.username === this.state.host &&
-                    <Button variant="contained" color="primary" onClick={this.onStartGame} style={{marginLeft:"10px"}}>
+                    <Button variant="contained" color="primary" onClick={this.onStartGame} style={{marginLeft: "10px"}}>
                         Start Game
                     </Button>
                     }
