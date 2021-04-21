@@ -15,7 +15,7 @@ const initialState = {
     currentPlayer: 0,
     bidHistory: [],
 
-    index: 0
+    index: 0,
 }
 
 const reducer = (state = initialState, action) => {

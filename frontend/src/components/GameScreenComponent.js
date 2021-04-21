@@ -174,7 +174,7 @@ class GameScreenComponent extends React.Component {
                 {bid[1]} X {this.displayDie(bid[2], 5)}
             </b>)
         }
-        table.push(<h4>Round History</h4>)
+        table.push(<h4>Recent Bids</h4>)
         for (let i = this.props.bidHistory.length - 2; i >= Math.max(this.props.bidHistory.length - 5, 0); i--) {
             let bid = this.props.bidHistory[i]
             let player = this.props.players[bid[3]]
@@ -268,7 +268,7 @@ class GameScreenComponent extends React.Component {
                         {/*</Paper>*/}
                         <Paper className={classes.roundHistory}>
                             <h3>Round</h3>
-                            {this.state.round}
+                            <b style={{fontSize:"x-large"}}>{this.state.round}</b>
                             {/*<h3>Round History</h3>*/}
                             <div style={{alignContent: "center"}}>{this.displayRoundHistory()}</div>
                         </Paper>
