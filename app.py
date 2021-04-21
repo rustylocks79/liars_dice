@@ -274,7 +274,7 @@ def update_level(json):
         return
     username = json['username']
     level = json['level']
-    if level != 'Easy' or level != 'Medium' or level != 'Hard':
+    if level != 'Easy' and level != 'Medium' and level != 'Hard':
         flask_socketio.emit('error', {
             'reason': 'Invalid level: ' + str(level)
         })
