@@ -62,16 +62,16 @@ class JoinGameComponent extends React.Component {
 
                 {this.state.errorMessage && <h1>{this.state.errorMessage}</h1>}
 
-                <h3 align={"center"} style={{color: 'red'}}>Join a game!</h3>
+                <h2 align={"center"}>Join a game!</h2>
                 <div align={"center"}>
                     {/*<form noValidate autoComplete="off" onChange={this.handleInput} onSubmit={this.onJoinGame}>*/}
                     {/*    <TextField id="lobbyField" label="Lobby ID"/>*/}
                     {/*</form>*/}
-                    <TextField id="lobbyField" label="Lobby ID" onChange={this.handleInput}/> <br/>
-                    <Button variant="contained" color="default" href="/game/welcome">
+                    <TextField id="lobbyField" label="Lobby ID" onChange={this.handleInput} style={{marginBottom:"10px"}}/> <br/>
+                    <Button variant="contained" color="default" href="/game/welcome" style={{marginRight:"5px"}}>
                         Cancel
                     </Button>
-                    <Button variant="contained" color="secondary" onClick={this.onJoinGame}>
+                    <Button variant="contained" color="secondary" onClick={this.onJoinGame} style={{marginLeft:"5px"}}>
                         Join Game
                     </Button>
                 </div>
