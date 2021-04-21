@@ -4,7 +4,7 @@ MAX_PLAYERS = 12
 
 
 class RoomUser:
-    def __init__(self, username: str, color: str, sid=None, bot=True, level='medium'):
+    def __init__(self, username: str, color: str, sid=None, bot=True, level='Medium'):
         self.username = username
         self.sid = sid
         self.bot = bot

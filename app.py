@@ -136,16 +136,7 @@ def login():
 
 @app.route("/signup", methods=["POST"])
 def signup():
-    bot_names = ["Aaron", "Ace",
-                    "Bailee",
-                      "Buddy",
-                      "Chad",
-                      "Charles",
-                      "James",
-                      "Robert",
-                      "Patricia",
-                      "Barbara",
-                      "Jimmy"]
+    bot_names = ["Aaron", "Ace", "Bailee", "Buddy", "Chad", "Charles", "James", "Robert", "Patricia", "Barbara", "Jimmy"]
     request = flask.request.get_json(force=True)
     username = request.get("username", None)
     if username is None:
