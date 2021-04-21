@@ -326,7 +326,18 @@ def leave_game(json):
     if len(room.players) == 0:
         del rooms[room_id]
     elif room.host.username == current_user.username:
-        room.host.username = room.players[0].username
+        all_bots = True
+        host_name = ''
+        for idx, player in enumerate(room.players):
+            if not player.bot:
+                host_name = player.username
+                all_bots = False
+                room.players.insert(0, room.players.pop(idx))
+                break
+        if all_bots:
+            del rooms[room_id]
+        else:
+            room.host.username = host_name
     flask_socketio.emit('left_game', {
         'lobbyId': room_id,
         'players': [game_user.to_dict() for game_user in room.players],
