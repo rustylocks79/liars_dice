@@ -23,6 +23,10 @@ eventlet.monkey_patch()
 MAX_PLAYERS = 12
 TIME_DELAY = 2
 
+parser = argparse.ArgumentParser(description='Run the liars dice web app')
+parser.add_argument('-p', '--production', help='production mode')
+args = parser.parse_args()
+
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
 cors = flask_cors.CORS()
@@ -33,7 +37,7 @@ strategy = pickle.load(open('strategies/liars_dice.pickle', 'rb'))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Text, unique=True)
+    username = db.Column(db.String(32), unique=True)
     hashed_password = db.Column(db.Text)
     roles = db.Column(db.Text)
     games_played = db.Column(db.Integer, default=0)
@@ -73,7 +77,10 @@ app.config["SECRET_KEY"] = "top secret"
 app.config["JWT_ACCESS_LIFESPAN"] = {"hours": 24}
 app.config["JWT_REFRESH_LIFESPAN"] = {"days": 30}
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+if args.production:
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:Bookninja@2947@localhost/liarsdice"
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
 
 guard.init_app(app, User)
 db.init_app(app)
@@ -82,32 +89,6 @@ socketio.init_app(app)
 
 with app.app_context():
     db.create_all()
-    db.session.add(
-        User(
-            username="jeremy",
-            hashed_password=guard.hash_password("password"),
-        )
-    )
-    db.session.add(
-        User(
-            username="long",
-            hashed_password=guard.hash_password("password"),
-        )
-    )
-    db.session.add(
-        User(
-            username="ben",
-            hashed_password=guard.hash_password("password"),
-        )
-    )
-    db.session.add(
-        User(
-            username="nate",
-            hashed_password=guard.hash_password("password"),
-        )
-    )
-    db.session.commit()
-
 
 def get_current_user_from_token(jwt_token: str):
     data = guard.extract_jwt_token(jwt_token, access_type=AccessType.access)
@@ -517,9 +498,6 @@ def exit_game(json):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Run the liars dice web app')
-    parser.add_argument('-p', '--production', help='production mode')
-    args = parser.parse_args()
     if args.production is not None:
         wsgi.server(eventlet.listen(('', 8080)), app)
     else:
