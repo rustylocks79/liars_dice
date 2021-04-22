@@ -78,7 +78,7 @@ app.config["JWT_ACCESS_LIFESPAN"] = {"hours": 24}
 app.config["JWT_REFRESH_LIFESPAN"] = {"days": 30}
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 if args.production:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:Bookninja@2947@localhost/liarsdice"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:Bookninja@3527@localhost/liarsdice"
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
 
