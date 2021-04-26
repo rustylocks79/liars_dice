@@ -1,26 +1,26 @@
 import {withCookies} from "react-cookie";
-import {withRouter} from "react-router-dom";
+import {NavLink, withRouter} from "react-router-dom";
 import React from "react";
 import {AppBar, Button, IconButton, Link, Toolbar, Typography} from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
+import {withStyles} from "@material-ui/core/styles";
 import CasinoOutlinedIcon from '@material-ui/icons/CasinoOutlined';
 import AuthService from "../Services/AuthService";
 
 const styles = theme => ({
-        root: {
-            flexGrow: 1,
-        },
-        button: {
-            marginRight: theme.spacing(2)
-        },
-        title: {
-            flexGrow: 1,
-        },
-        other: {
-            marginLeft: theme.spacing(2),
-            fontSize: "large"
-        },
-    });
+    root: {
+        flexGrow: 1,
+    },
+    button: {
+        marginRight: theme.spacing(2)
+    },
+    title: {
+        flexGrow: 1,
+    },
+    other: {
+        marginLeft: theme.spacing(2),
+        fontSize: "large"
+    },
+});
 
 class TopBarComponent extends React.Component {
     state = {
@@ -48,7 +48,7 @@ class TopBarComponent extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const {classes} = this.props;
 
         return (
             <div>
@@ -57,9 +57,12 @@ class TopBarComponent extends React.Component {
                         <IconButton edge="start" className={classes.button} color="inherit" aria-label="logo">
                             <CasinoOutlinedIcon style={{fontSize: 40}}/>
                         </IconButton>
-                        <Link href={"/game/welcome"} color="inherit" variant="h6" className={classes.title}>
-                            Deceiver's Dice
-                        </Link>
+                        <NavLink to={"/game/welcome"} style={{textDecoration: 'none', color: "inherit"}}
+                                 className={classes.title}>
+                            <Link color="inherit" variant="h6">
+                                Deceiver's Dice
+                            </Link>
+                        </NavLink>
                         <p color="inherit" className={classes.other}>
                             Logged in as: {this.state.username}
                         </p>

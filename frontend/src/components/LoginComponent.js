@@ -1,5 +1,5 @@
 import {withCookies} from "react-cookie";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import React from "react";
 import {Button, Container, Grid, TextField} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
@@ -94,24 +94,27 @@ class LoginComponent extends React.Component {
                                 >
                                     Login
                                 </Button>
+
+                                <Link to={"/game/signup"} style={{textDecoration: 'none'}}>
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    href={"/game/signup"}
                                 >
                                     Sign Up
                                 </Button>
+                                </Link>
+
                             </div>
                         </Grid>
                         <Grid item xs={12} style={{textAlign:"center"}}>
                             <br/><br/>
+                            <Link to={"/"} style={{textDecoration: 'none'}}>
                             <Button
                                 variant="contained"
                                 color="secondary"
-                                href={"/"}
                             >
                                 Return to Promotional Website
-                            </Button></Grid>
+                            </Button></Link></Grid>
                     </Grid>
                 </Container>
             </div>

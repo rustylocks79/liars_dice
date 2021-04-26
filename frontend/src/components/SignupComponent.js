@@ -1,5 +1,5 @@
 import {withCookies} from "react-cookie";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import React from "react";
 import AuthService from "../Services/AuthService";
 import {Button, Container, Grid, TextField} from "@material-ui/core";
@@ -98,14 +98,30 @@ class SignupComponent extends React.Component {
                             </form>
                         </Grid>
                         <Grid item>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                type={"submit"}
-                                onClick={this.submitHandler}
-                            >
-                                Signup
-                            </Button>
+                            <div style={{
+                                width: "200px",
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    type={"submit"}
+                                    onClick={this.submitHandler}
+                                >
+                                    Signup
+                                </Button>
+
+                                <Link to={"/game/login"} style={{textDecoration: 'none'}}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                    >
+                                        Back
+                                    </Button>
+                                </Link>
+                            </div>
                         </Grid>
                     </Grid>
                 </Container>

@@ -1,5 +1,5 @@
 import {withCookies} from "react-cookie";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import React from "react";
 import {Button, Container, Grid} from "@material-ui/core";
 import AuthService from "../Services/AuthService";
@@ -131,10 +131,12 @@ class WelcomeComponent extends React.Component {
                             </Grid>
 
                             <Grid item>
-                                <Button variant="contained" color="default" href={"/game/profile"} size={"large"}
-                                        style={{height: "10vh", width: "20vw"}}>
-                                    View Statistics
-                                </Button>
+                                <Link to={"/game/profile"} style={{textDecoration: 'none'}}>
+                                    <Button variant="contained" color="default" size={"large"}
+                                            style={{height: "10vh", width: "20vw"}}>
+                                        View Statistics
+                                    </Button>
+                                </Link>
                             </Grid>
                         </Grid>
                     </Grid>

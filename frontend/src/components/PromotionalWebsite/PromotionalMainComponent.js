@@ -1,5 +1,5 @@
 import React from "react";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import YouTubePlayer from "react-player/youtube";
 import PromotionalTopBarComponent from "./PromotionalTopBarComponent";
 import {Button} from "@material-ui/core";
@@ -21,7 +21,10 @@ function PromotionalMainComponent() {
                 <h4>Promotional Video by Long Nguyen</h4>
                 <h4>Coming Soon</h4>
                 <br/>
-                <Button variant={'outlined'} href={'/game/login'} color={'primary'} endIcon={<PlayArrowIcon/>}>Check out the game!</Button>
+                <Link to={'/game/login'} style={{textDecoration: 'none'}}>
+                    <Button variant={'outlined'} color={'primary'} endIcon={<PlayArrowIcon/>}>Check
+                        out the game!</Button>
+                </Link>
             </div>
         </div>
     )

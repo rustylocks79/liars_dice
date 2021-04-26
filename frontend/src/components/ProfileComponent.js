@@ -1,8 +1,8 @@
 import {withCookies} from "react-cookie";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import React from "react";
 import AuthService from "../Services/AuthService";
-import {Container, Grid} from "@material-ui/core";
+import {Button, Container, Grid} from "@material-ui/core";
 import TopBarComponent from "./TopBarComponent";
 
 
@@ -63,7 +63,8 @@ class ProfileComponent extends React.Component {
                         </Grid>
                         <Grid item xs={6}>
                             {this.state.gamesPlayed === 0 && <h3 align={"right"}>---</h3>}
-                            {this.state.gamesPlayed !== 0 && <h3 align={"right"}>{(this.state.gamesWon/this.state.gamesPlayed) * 100}%</h3>}
+                            {this.state.gamesPlayed !== 0 &&
+                            <h3 align={"right"}>{(this.state.gamesWon / this.state.gamesPlayed) * 100}%</h3>}
                         </Grid>
 
                         <Grid item xs={6}>
@@ -92,6 +93,13 @@ class ProfileComponent extends React.Component {
                         </Grid>
                         <Grid item xs={6}>
                             <h3 align={"right"}>{this.state.caughtRaises}</h3>
+                        </Grid>
+
+                        <Grid item xs={12} style={{textAlign: "center"}}>
+                            <br/> <br/> <br/>
+                            <Link to={"/game/welcome"} style={{textDecoration: 'none'}}>
+                                <Button color={"secondary"} variant={"outlined"}>Return to Home</Button>
+                            </Link>
                         </Grid>
                     </Grid>
                 </Container>

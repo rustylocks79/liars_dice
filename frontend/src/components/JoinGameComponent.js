@@ -1,5 +1,5 @@
 import {withCookies} from "react-cookie";
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import React from "react";
 import {Button, TextField} from '@material-ui/core';
 import TopBarComponent from "./TopBarComponent";
@@ -67,11 +67,16 @@ class JoinGameComponent extends React.Component {
                     {/*<form noValidate autoComplete="off" onChange={this.handleInput} onSubmit={this.onJoinGame}>*/}
                     {/*    <TextField id="lobbyField" label="Lobby ID"/>*/}
                     {/*</form>*/}
-                    <TextField id="lobbyField" label="Lobby ID" onChange={this.handleInput} style={{marginBottom:"10px"}}/> <br/>
-                    <Button variant="contained" color="default" href="/game/welcome" style={{marginRight:"5px"}}>
-                        Cancel
-                    </Button>
-                    <Button variant="contained" color="secondary" onClick={this.onJoinGame} style={{marginLeft:"5px"}}>
+                    <TextField id="lobbyField" label="Lobby ID" onChange={this.handleInput}
+                               style={{marginBottom: "10px"}}/> <br/>
+
+                    <Link to={"/game/welcome"} style={{textDecoration: 'none'}}>
+                        <Button variant="contained" color="default" style={{marginRight: "5px"}}>
+                            Cancel
+                        </Button>
+                    </Link>
+
+                    <Button variant="contained" color="secondary" onClick={this.onJoinGame} style={{marginLeft: "5px"}}>
                         Join Game
                     </Button>
                 </div>

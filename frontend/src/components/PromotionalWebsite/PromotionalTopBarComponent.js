@@ -1,4 +1,5 @@
 import React from "react";
+import {NavLink, withRouter} from "react-router-dom";
 import {AppBar, IconButton, Link, Toolbar} from "@material-ui/core";
 import CasinoOutlinedIcon from "@material-ui/icons/CasinoOutlined";
 
@@ -13,18 +14,23 @@ function PromotionalTopBarComponent() {
                     <Link color="inherit" variant="h5" underline={"none"}>
                         Deceiver's Dice
                     </Link>
-                    <Link href={"/"} color="inherit" variant="h6" style={{marginLeft:"20px"}}>
-                            Home
-                    </Link>
-                    <Link href={"/documentation"} color="inherit" variant="h6" style={{marginLeft:"20px"}}>
-                            Documentation
-                    </Link>
-                    <Link href={"/support"} color="inherit" variant="h6" style={{marginLeft:"20px"}}>
-                            Support
-                    </Link>
-                    <Link href={"/about"} color="inherit" variant="h6" style={{marginLeft:"20px"}}>
-                            About Us
-                    </Link>
+
+                    <NavLink to={"/"} style={{textDecoration: 'none', color: "inherit", marginLeft: "20px"}}>
+                        <Link color="inherit" variant="h6" style={{}}>Home</Link>
+                    </NavLink>
+
+                    <NavLink to={"/documentation"}
+                             style={{textDecoration: 'none', color: "inherit", marginLeft: "20px"}}>
+                        <Link color="inherit" variant="h6">Documentation</Link>
+                    </NavLink>
+
+                    <NavLink to={"/support"} style={{textDecoration: 'none', color: "inherit", marginLeft: "20px"}}>
+                        <Link color="inherit" variant="h6">Support</Link>
+                    </NavLink>
+
+                    <NavLink to={"/about"} style={{textDecoration: 'none', color: "inherit", marginLeft: "20px"}}>
+                        <Link color="inherit" variant="h6">About Us</Link>
+                    </NavLink>
                 </Toolbar>
             </AppBar>
         </div>
@@ -32,4 +38,4 @@ function PromotionalTopBarComponent() {
     )
 }
 
-export default PromotionalTopBarComponent
+export default withRouter(PromotionalTopBarComponent)
