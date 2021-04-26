@@ -51,7 +51,7 @@ class SignupComponent extends React.Component {
                 <Container fixed>
                     <Grid container spacing={2} justify={"center"} alignItems={"center"}>
                         <Grid item xs={12}>
-                            <h2 align={"center"}>Login</h2>
+                            <h2 align={"center"}>Sign Up</h2>
                         </Grid>
                         <Grid item xs={6}>
                             <h3 align={"right"}>Username</h3>

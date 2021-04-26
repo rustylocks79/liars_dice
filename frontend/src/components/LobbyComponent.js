@@ -174,16 +174,21 @@ class LobbyComponent extends React.Component {
                                     <MenuItem value={"Hard"}>Hard</MenuItem>
                                 </Select>
                             </FormControl>
+                            <span style={{
+                                color: player.color,
+                            }}>{player.username}</span>
                         </div>
                         }
 
 
-
-                        {player.username === this.state.host && <div style={{textAlign: "center"}}><p style={{
-                            color: player.color,
-                            fontWeight: "bold",
-                            display: "inline"
-                        }}>{player.username} <p style={{color:"black",marginLeft:"10px",display:"inline"}}>[host]</p></p></div>}
+                        {player.username === this.state.host && <div style={{textAlign: "center"}}>
+                            <p style={{
+                                color: player.color,
+                                fontWeight: "bold",
+                                display: "inline"
+                            }}>{player.username} <p
+                                style={{color: "black", marginLeft: "10px", display: "inline"}}>[host]</p></p>
+                        </div>}
 
                         {player.username !== this.state.host && !player.bot && <div style={{textAlign: "center"}}><p
                             style={{
@@ -191,19 +196,21 @@ class LobbyComponent extends React.Component {
                                 display: "inline",
                                 verticalAlign: "middle"
                             }}>{player.username}</p></div>}
-                        {player.username !== this.state.host && player.bot && <p style={{
-                            color: player.color,
-                            display: "inline",
-                            verticalAlign: "middle"
-                        }}>{player.username}</p>}
 
-                        {(player.bot && this.state.username !== this.state.host) &&
-                        <p style={{
-                            display: "inline",
-                            marginLeft: "10px",
-                            verticalAlign: "middle"
-                        }}>[{player.level} Bot]</p>
-                        }
+                        {this.state.username !== this.state.host && player.bot && <div style={{textAlign: "center"}}>
+                            <p style={{
+                                color: player.color,
+                                display: "inline",
+                                verticalAlign: "middle"
+                            }}>{player.username}</p>
+                            <p style={{
+                                display: "inline",
+                                marginLeft: "10px",
+                                verticalAlign: "middle"
+                            }}>[{player.level} Bot]</p>
+                        </div>}
+
+
                     </div>
                 ))}
             </div>
