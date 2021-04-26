@@ -376,7 +376,7 @@ def test_terminal(room, lobby_id) -> bool:
                 user_account.games_played += 1
                 db.session.commit()
         flask_socketio.emit('terminal', {
-            'winner': int(np.argmax([game.utility(p) for p in range(game.num_players())]))
+            'winner': winner
         }, to=lobby_id)
         return True
     else:
