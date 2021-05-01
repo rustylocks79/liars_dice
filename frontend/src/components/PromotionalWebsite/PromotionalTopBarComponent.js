@@ -24,9 +24,9 @@ function PromotionalTopBarComponent() {
                         <Link color="inherit" variant="h6">Documentation</Link>
                     </NavLink>
 
-                    <NavLink to={"/support"} style={{textDecoration: 'none', color: "inherit", marginLeft: "20px"}}>
-                        <Link color="inherit" variant="h6">Support</Link>
-                    </NavLink>
+                    {/*<NavLink to={"/support"} style={{textDecoration: 'none', color: "inherit", marginLeft: "20px"}}>*/}
+                    {/*    <Link color="inherit" variant="h6">Support</Link>*/}
+                    {/*</NavLink>*/}
 
                     <NavLink to={"/about"} style={{textDecoration: 'none', color: "inherit", marginLeft: "20px"}}>
                         <Link color="inherit" variant="h6">About Us</Link>
