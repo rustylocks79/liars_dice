@@ -75,8 +75,7 @@ class WelcomeComponent extends React.Component {
                             <h3 align={"center"}>Tutorial</h3>
                             <ul>
                                 <li style={{marginBottom: "10px"}}>At the start of a game of Deceiver’s Dice, each
-                                    player receives a number of between
-                                    1 and 5
+                                    player receives a number of dice between 1 and 5
                                 </li>
                                 <li style={{marginBottom: "10px"}}>When a round begins, each player rolls their dice,
                                     resulting in a set of face values
